@@ -1,0 +1,22 @@
+{
+  "name": "qa-website",
+  "version": "1.0.0",
+  "description": "TechnoPark, sem_1 project",
+  "scripts": {
+    "clean": "rimraf dist .parcel-cache",
+    "start": "parcel src/html/*.html --open",
+    "build": "npm run clean && parcel build src/html/*.html --public-url ./",
+    "build:dev": "npm run clean && parcel build src/html/*.html --no-optimize --public-url ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-stepan:BurmatovStepan/QA-Website.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.16.0",
+    "parcel": "^2.16.0",
+    "rimraf": "^6.0.1"
+  }
+}
