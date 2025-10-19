@@ -1,0 +1,42 @@
+@use "../config.scss" as *;
+
+.profile-wrapper {
+    display: grid;
+    grid-template-areas:
+        "avatar name"
+        "avatar actions";
+
+    grid-template-columns: 80px 180px;
+}
+
+.avatar {
+    grid-area: avatar;
+}
+
+.profile-name {
+    grid-area: name;
+}
+
+.actions {
+    display: flex;
+    grid-area: actions;
+
+    align-items: center;
+    gap: 8px;
+
+    line-height: 1.1em;
+
+    &__theme-switch {
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    & > a {
+        color: $color-accent-main;
+        transition: font-size 0.3s ease;
+    }
+
+    & > a:hover {
+        font-size: 1.1em;
+    }
+}

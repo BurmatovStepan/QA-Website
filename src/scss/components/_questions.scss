@@ -1,0 +1,69 @@
+@use "../config.scss" as *;
+
+.questions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.question {
+    display: grid;
+    padding: 8px;
+
+    grid-template-areas:
+        "meta body"
+        "meta footer";
+    grid-template-columns: 80px 1fr;
+
+    gap: 16px;
+    border: 2px solid $color-text-main;
+
+    box-shadow: $shadow-main;
+
+    &__meta {
+        grid-area: meta;
+
+        &>input {
+            width: 40px;
+        }
+    }
+
+    &__body {
+        grid-area: body;
+    }
+
+    &__title {
+        color: $color-accent-main;
+        font: $h2;
+    }
+
+    &__snippet {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+    }
+
+    &__footer {
+        display: flex;
+        grid-area: footer;
+        gap: 24px;
+
+        & a {
+            @include light-up-link;
+        }
+    }
+
+    &__tags-list {
+        display: inline;
+    }
+
+    &__tag {
+        display: inline;
+
+        &:not(:last-child)::after {
+            content: ", ";
+        }
+    }
+}

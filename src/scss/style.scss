@@ -1,4 +1,20 @@
 @use 'base/reset';
 @use 'base/global';
+@use 'base/typography';
 
-@use 'components/footer';
+@use 'layout/layout';
+
+@use 'components/header';
+
+@use 'components/navigation';
+@use 'components/user-profile';
+@use 'components/new-question-button';
+@use 'components/search-bar';
+@use 'components/popular-tags';
+@use 'components/best-members';
+@use 'components/questions-header';
+@use 'components/questions';
+@use 'components/paginator';
+
+@use 'themes/dark';
+@use 'themes/light';

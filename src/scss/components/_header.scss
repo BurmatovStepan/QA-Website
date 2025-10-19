@@ -1,0 +1,14 @@
+@use "../config.scss" as *;
+
+header {
+    display: flex;
+
+    padding: 0px 0px 4px 0px;
+
+    align-items: center;
+    justify-content: space-around;
+    gap: 8px;
+
+    background-color: $color-bg-secondary;
+    border-bottom: 2px solid $color-accent-main;
+}

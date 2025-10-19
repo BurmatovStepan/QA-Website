@@ -1,0 +1,41 @@
+@use "../base/variables" as *;
+
+@mixin light-up-link {
+    color: $color-text-main;
+    text-decoration: 1px underline $color-text-main;
+    transition: color 0.15s ease, text-decoration 0.2s ease;
+
+    &:hover {
+        color: $color-accent-main;
+        text-decoration: 1px underline $color-accent-main;
+    }
+}
+
+@mixin default-button {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: $color-text-main;
+    text-wrap: nowrap;
+    background-color: $color-interactive-idle;
+
+    border: 4px solid $color-interactive-idle;
+    border-radius: 2px;
+    outline: 2px solid transparent;
+
+    box-shadow: $shadow-main;
+    transition: outline 0.15s ease;
+
+    &[disabled],
+    &--no-click {
+        opacity: 0.6;
+        cursor: default;
+    }
+
+    &:not([disabled]):not(&--no-click):hover,
+    &:not([disabled]):not(&--no-click):focus-visible {
+        outline-color: $color-accent-main;
+    }
+}

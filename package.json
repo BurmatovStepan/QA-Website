@@ -4,9 +4,10 @@
   "description": "TechnoPark, sem_1 project",
   "scripts": {
     "clean": "rimraf dist .parcel-cache",
-    "start": "parcel src/html/*.html --open",
+    "start": "concurrently \"parcel src/html/*.html --open\" \"npm run watch:scss\"",
+    "watch:scss": "chokidar \"src/scss/**/*.scss\" --initial=false --ignore src/scss/style.scss -c \"powershell -File ./touch.ps1\"",
     "build": "npm run clean && parcel build src/html/*.html --public-url ./",
-    "build:dev": "npm run clean && parcel build src/html/*.html --no-optimize --public-url ./"
+    "build:dev": "npm run clean && parcel build src/html/*.html --no-optimize --public-url /QA-Website/ --dist-dir dist/QA-Website"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,9 @@
   "license": "ISC",
   "devDependencies": {
     "@parcel/transformer-sass": "^2.16.0",
+    "@types/node": "^24.8.1",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.2.1",
     "parcel": "^2.16.0",
     "rimraf": "^6.0.1"
   }

@@ -1,0 +1,34 @@
+@use "../config.scss" as *;
+
+.search-bar {
+    position: relative;
+    max-width: 50vw;
+    flex-grow: 1;
+    box-shadow: $shadow-main;
+
+    &__input {
+        width: 100%;
+        height: 100%;
+        outline: none;
+    }
+
+    &::before {
+        position: absolute;
+        right: -8px;
+        bottom: -8px;
+        left: -8px;
+        height: 2px;
+
+        background-color: $color-interactive-idle;
+
+        transition: background-color 0.15s ease;
+        content: "";
+    }
+
+    &:focus-within {
+        &::before {
+            background-color: $color-accent-main
+        }
+    }
+
+}

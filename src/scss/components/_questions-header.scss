@@ -1,0 +1,12 @@
+@use '../config.scss' as *;
+
+.questions-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font: $h3;
+
+    & > a {
+        @include light-up-link;
+    }
+}

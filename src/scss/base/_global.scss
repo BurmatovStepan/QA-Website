@@ -1,5 +1,8 @@
-@use "../variables.scss" as *;
+@use "../config.scss" as *;
 
 body {
-    background-color: $main-black;
+    position: relative;
+    color: $color-text-main;
+    font-family: $ff;
+    background-color: $color-bg-main;
 }

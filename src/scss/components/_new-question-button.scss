@@ -1,0 +1,8 @@
+@use "../config.scss" as *;
+
+.new-question-button {
+    height: 32px;
+    padding: 2px;
+
+    @include default-button;
+}
