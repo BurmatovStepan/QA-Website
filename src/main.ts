@@ -1,5 +1,3 @@
-const BASE_PATH = "/QA-Website/"
-
 const THEME_CLASS = "theme-light";
 const THEME_STORAGE_KEY = "user-theme";
 
@@ -8,17 +6,13 @@ const DARK_ICON_PATH: string = require("../assets/dark-theme.svg");
 
 
 function checkActiveTab(): void {
-    let currentPath = window.location.pathname.substring(BASE_PATH.length);
-    if (currentPath === "") {
-        currentPath = "index";
-    }
+    let currentPath = window.location.pathname;
 
-    console.log(currentPath);
     const navLinks = document.querySelectorAll(".js-pages-list a");
 
     for (let i = 0; i < navLinks.length; ++i) {
         const link = navLinks[i];
-        console.log(link.getAttribute("href"));
+
         if (link.getAttribute("href") === currentPath) {
             link.classList.add("navigation__page-link--current");
             return;
