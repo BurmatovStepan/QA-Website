@@ -5,16 +5,21 @@
 @use 'layout/layout';
 
 @use 'components/header';
-
 @use 'components/navigation';
+
 @use 'components/user-profile';
 @use 'components/new-question-button';
 @use 'components/search-bar';
+
 @use 'components/popular-tags';
 @use 'components/best-members';
+
 @use 'components/questions-header';
 @use 'components/questions';
 @use 'components/paginator';
+
+@use 'components/new-question';
+@use 'components/answers';
 
 @use 'themes/dark';
 @use 'themes/light';

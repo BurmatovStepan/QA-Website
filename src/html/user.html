@@ -14,24 +14,24 @@
 
 <body>
     <header>
-        <img src="/assets/favicon.ico" alt="AskMe" width="40vw" height="40vh">
+        <img src="/assets/favicon.ico" alt="AskMe" class="website-icon">
         <span class="search-bar">
             <input type="text" class="search-bar__input" placeholder="Search">
         </span>
 
         <button class="new-question-button">New question</button>
 
-        <div class="profile-wrapper">
-            <img src="#" alt="avatar" class="avatar">
+        <div class="profile">
+            <img src="/assets/avatar.svg" alt="avatar" class="profile__avatar">
 
-            <div class="profile-name">Can't think of a name</div>
+            <div class="profile__name">Can't think of a name</div>
 
-            <div class="actions">
+            <div class="profile__actions">
                 <a href="#">Settings</a>
-                <span class="actions__separator">/</span>
+                <span class="profile__actions-separator">/</span>
                 <a href="#">Logout</a>
-                <div class="actions__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
-                    <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon" width="32vw" height="32vh">
+                <div class="profile__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
+                    <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon profile__theme-switch-icon">
                 </div>
             </div>
         </div>

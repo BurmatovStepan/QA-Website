@@ -12,35 +12,72 @@
     <script src="../main.ts" type="module" defer></script>
 </head>
 
-<body>
+<body class="new-question-page">
     <header>
-        <img src="/assets/favicon.ico" alt="AskMe" width="40vw" height="40vh">
+        <img src="/assets/favicon.ico" alt="AskMe" class="website-icon">
         <span class="search-bar">
             <input type="text" class="search-bar__input" placeholder="Search">
         </span>
 
         <button class="new-question-button">New question</button>
 
-        <div class="profile-wrapper">
-            <img src="#" alt="avatar" class="avatar">
-
-            <div class="profile-name">Can't think of a name</div>
-
-            <div class="actions">
-                <a href="#">Settings</a>
-                <span class="actions__separator">/</span>
-                <a href="#">Logout</a>
-                <div class="actions__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
-                    <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon" width="32vw" height="32vh">
+        <div class="profile profile--signed-out">
+            <div class="profile__actions">
+                <a href="#">Login</a>
+                <span class="profile__actions-separator">/</span>
+                <a href="#">Register</a>
+                <div class="profile__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
+                    <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon profile__theme-switch-icon">
                 </div>
             </div>
         </div>
     </header>
 
     <main>
+        <section class="new-question">
+            <div class="new-question__header">
+                <h1>New Question</h1>
+            </div>
+            <div class="new-question__body">
+                <label for="new-question__title">Title</label>
+                <input type="text" id="new-question__title" placeholder="Title of your post">
+
+                <label for="new-question__content">Text</label>
+                <textarea name="question_content" id="new-question__content" class="new-question__content" placeholder="Your full question here"></textarea>
+
+                <label for="new-question__tags">Tags</label>
+                <input type="text" id="new-question__tags" placeholder="some tag, another, third">
+
+                <button class="new-question__submit-button">Ask!</button>
+            </div>
+        </section>
     </main>
 
     <aside>
+        <section class="popular-tags">
+            <h1>Popular Tags</h1>
+            <div class="popular-tags__links">
+                <a href="#">perl</a>
+                <a href="#" class="python">python</a>
+                <a href="#">TechnoPark</a>
+                <a href="#" class="mysql">MySQL</a>
+                <a href="#" class="django">django</a>
+                <a href="#">Mail.Ru</a>
+                <a href="#">Voloshin</a>
+                <a href="#" class="firefox">Firefox</a>
+            </div>
+        </section>
+
+        <section class="best-members">
+            <h1>Best Members</h1>
+            <ul class="best-members__links-list">
+                <li class="best-members__member"><a href="#">Clantis</a></li>
+                <li class="best-members__member"><a href="#">That guy</a></li>
+                <li class="best-members__member"><a href="#">Victoria</a></li>
+                <li class="best-members__member"><a href="#">idk</a></li>
+                <li class="best-members__member"><a href="#">Don't care</a></li>
+            </ul>
+        </section>
     </aside>
 
     <footer class="navigation">

@@ -12,35 +12,116 @@
     <script src="../main.ts" type="module" defer></script>
 </head>
 
-<body>
+<body class="question-discussion-page">
     <header>
-        <img src="/assets/favicon.ico" alt="AskMe" width="40vw" height="40vh">
+        <img src="/assets/favicon.ico" alt="AskMe" class="website-icon">
         <span class="search-bar">
             <input type="text" class="search-bar__input" placeholder="Search">
         </span>
 
         <button class="new-question-button">New question</button>
 
-        <div class="profile-wrapper">
-            <img src="#" alt="avatar" class="avatar">
-
-            <div class="profile-name">Can't think of a name</div>
-
-            <div class="actions">
-                <a href="#">Settings</a>
-                <span class="actions__separator">/</span>
-                <a href="#">Logout</a>
-                <div class="actions__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
-                    <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon" width="32vw" height="32vh">
+        <div class="profile profile--signed-out">
+            <div class="profile__actions">
+                <a href="#">Login</a>
+                <span class="profile__actions-separator">/</span>
+                <a href="#">Register</a>
+                <div class="profile__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
+                    <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon profile__theme-switch-icon">
                 </div>
             </div>
         </div>
     </header>
 
     <main>
+        <section class="question">
+            <div class="question__meta">
+                <img src="/assets/avatar.svg" alt="avatar" class="question__avatar">
+                <input type="number" class="question__rating">
+            </div>
+            <div class="question__body">
+                <a href="#" class="question__title">Where do I find clothes?</a>
+                <p class="question__content">So I'm at a store and I can't find them, there's only soup. I
+                    went through every aisle but there was only more soup. What do I do? This question description
+                    is significantly longer than the over one so I have to add more styles to fix that. Quick brown
+                    fox jumped over the lazy dog. I don't have lorem ipsum copypasta.<br>Remebered that br exists.</p>
+            </div>
+            <div class="question__footer">
+                <div class="question__tags-section">
+                    Tags:
+                    <ul class="question__tags-list">
+                        <li class="question__tag"><a href="#">soup</a></li>
+                        <li class="question__tag"><a href="#">tf2</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="answers">
+            <div class="answer">
+                <div class="answer__meta">
+                    <img src="/assets/avatar.svg" alt="avatar" class="answer__avatar">
+                    <input type="number" class="answer__rating">
+                </div>
+                <div class="answer__body">
+                    <p class="answer__content">So I'm at a store and I can't find them, there's only soup. I went
+                        through every aisle but there was only more soup. What do I do?</p>
+                    <div class="answer__checkbox-wrapper">
+                        <input type="checkbox" name="correct_answer" id="answer__checkbox-correct"
+                            class="answer__checkbox-correct">
+                        <label for="answer__checkbox-correct" class="answer__checkbox-label">Correct!</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="answer">
+                <div class="answer__meta">
+                    <img src="/assets/avatar.svg" alt="avatar" class="answer__avatar">
+                    <input type="number" class="answer__rating">
+                </div>
+                <div class="answer__body">
+                    <p class="answer__content">So I'm at a store and I can't find them, there's only soup. I went
+                        through every aisle but there was only more soup. What do I do?</p>
+                    <div class="answer__checkbox-wrapper">
+                        <input type="checkbox" name="correct_answer" id="answer__checkbox-correct"
+                            class="answer__checkbox-correct">
+                        <label for="answer__checkbox-correct" class="answer__checkbox-label">Correct!</label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="user-answer">
+            <textarea name="user_answer_content" class="user-answer__content" placeholder="Enter your answer here"></textarea>
+            <button class="user-answer__submit-button">Answer</button>
+        </section>
     </main>
 
     <aside>
+        <section class="popular-tags">
+            <h1>Popular Tags</h1>
+            <div class="popular-tags__links">
+                <a href="#">perl</a>
+                <a href="#" class="python">python</a>
+                <a href="#">TechnoPark</a>
+                <a href="#" class="mysql">MySQL</a>
+                <a href="#" class="django">django</a>
+                <a href="#">Mail.Ru</a>
+                <a href="#">Voloshin</a>
+                <a href="#" class="firefox">Firefox</a>
+            </div>
+        </section>
+
+        <section class="best-members">
+            <h1>Best Members</h1>
+            <ul class="best-members__links-list">
+                <li class="best-members__member"><a href="#">Clantis</a></li>
+                <li class="best-members__member"><a href="#">That guy</a></li>
+                <li class="best-members__member"><a href="#">Victoria</a></li>
+                <li class="best-members__member"><a href="#">idk</a></li>
+                <li class="best-members__member"><a href="#">Don't care</a></li>
+            </ul>
+        </section>
     </aside>
 
     <footer class="navigation">

@@ -17,10 +17,10 @@ header {
 
 main {
     grid-area: main;
-    // overflow-y: hidden;
+    overflow-y: auto;
 
     & > section {
-        padding: 8px 16px;
+        margin: 8px 24px;
     }
 }
 

@@ -15,21 +15,6 @@
     &__page-link  {
         line-height: 1.05em;
 
-        & > a {
-            color: $color-text-main;
-            transition: font-size 0.3s ease, text-decoration 0.2s ease;
-
-            &:hover {
-                font-size: 1.05em;
-            }
-
-        }
-    }
-
-    &__page-link--current {
-        position: relative;
-        color: $color-accent-main;
-
         &::after {
             position: absolute;
             top: -10px;
@@ -37,9 +22,34 @@
             left: -8px;
             height: 2px;
 
-            background-color: $color-accent-main;
-
+            background-color: transparent;
+            transition: background-color 0.3s;
             content: "";
+        }
+
+        & > a {
+            color: $color-text-main;
+            outline: none;
+            transition: font-size 0.3s;
+        }
+
+        & > a:hover,
+        & > a:focus-visible {
+            font-size: 1.05em;
+        }
+    }
+
+    &__page-link:hover,
+    &__page-link:focus-within,
+    &__page-link--current {
+        position: relative;
+
+        &::after {
+            background-color: $color-accent-main;
+        }
+
+        & > a {
+            color: $color-accent-main;
         }
     }
 }

@@ -1,0 +1,25 @@
+@use '../config' as *;
+
+.new-question {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    &__body {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 24px 48px;
+    }
+
+    &__content {
+        min-height: 30vh;
+        resize: vertical;
+    }
+
+    &__submit-button {
+        width: 100px;
+        height: 40px;
+        grid-column: -1 / -2;
+        @include default-button;
+    }
+}

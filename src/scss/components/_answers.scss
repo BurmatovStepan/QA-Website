@@ -1,0 +1,81 @@
+@use '../config' as *;
+
+.answers {
+    display: flex;
+    padding: 4px 0px 20px 0px;
+    flex-direction: column;
+    gap: 20px;
+    border-bottom: 2px solid $color-accent-main;
+}
+
+.answer {
+    display: flex;
+
+    padding: 8px 16px;
+    gap: 16px;
+
+    border: 2px solid $color-text-main;
+    box-shadow: $shadow-main;
+
+    &__meta {
+        display: flex;
+        flex-direction: column;
+
+        grid-area: meta;
+        align-items: center;
+
+        gap: 16px;
+
+        & > input {
+            width: 40px;
+        }
+    }
+
+    &__avatar {
+        width: 60px;
+    }
+
+    &__rating {
+        align-self: flex-start;
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    &__checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__checkbox-correct {
+        width: 20px;
+        height: 20px;
+        accent-color: $color-accent-main;
+    }
+
+    &__checkbox-label {
+        font: $h3;
+    }
+}
+
+.user-answer {
+    display: flex;
+    margin-top: 20px;
+    flex-direction: column;
+
+    &__content {
+        min-height: 20vh;
+        resize: vertical;
+    }
+
+    &__submit-button {
+        width: 100px;
+        height: 40px;
+        margin-block: 28px;
+        @include default-button;
+    }
+}

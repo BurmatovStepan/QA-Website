@@ -3,7 +3,7 @@
 header {
     display: flex;
 
-    padding: 0px 0px 4px 0px;
+    height: 70px;
 
     align-items: center;
     justify-content: space-around;
@@ -11,4 +11,8 @@ header {
 
     background-color: $color-bg-secondary;
     border-bottom: 2px solid $color-accent-main;
+}
+
+.website-icon {
+    width: 40px;
 }

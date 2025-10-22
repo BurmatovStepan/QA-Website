@@ -14,7 +14,11 @@ function checkActiveTab(): void {
         const link = navLinks[i];
 
         if (link.getAttribute("href") === currentPath) {
-            link.classList.add("navigation__page-link--current");
+            const listItem = link.closest(".navigation__page-link");
+
+            if (listItem) {
+                listItem.classList.add("navigation__page-link--current");
+            }
             return;
         }
     }

@@ -6,12 +6,6 @@
     flex-grow: 1;
     box-shadow: $shadow-main;
 
-    &__input {
-        width: 100%;
-        height: 100%;
-        outline: none;
-    }
-
     &::before {
         position: absolute;
         right: -8px;
@@ -21,14 +15,17 @@
 
         background-color: $color-interactive-idle;
 
-        transition: background-color 0.15s ease;
+        transition: background-color 0.2s;
         content: "";
     }
 
-    &:focus-within {
-        &::before {
-            background-color: $color-accent-main
-        }
+    &:focus-within::before {
+        background-color: $color-accent-main
     }
 
+    &__input {
+        width: 100%;
+        height: 100%;
+        outline: none;
+    }
 }

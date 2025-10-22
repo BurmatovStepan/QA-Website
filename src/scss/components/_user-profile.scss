@@ -1,42 +1,62 @@
 @use "../config.scss" as *;
 
-.profile-wrapper {
-    display: grid;
-    grid-template-areas:
-        "avatar name"
-        "avatar actions";
+.profile {
+    &__actions {
+        display: flex;
+        grid-area: actions;
 
-    grid-template-columns: 80px 180px;
-}
+        align-items: center;
+        gap: 8px;
 
-.avatar {
-    grid-area: avatar;
-}
+        line-height: 1.1em;
 
-.profile-name {
-    grid-area: name;
-}
+        & > a {
+            color: $color-accent-main;
+            text-decoration: 1px underline transparent;
+            outline: none;
+            transition: font-size 0.3s, text-decoration-color 0.3s;
+        }
 
-.actions {
-    display: flex;
-    grid-area: actions;
-
-    align-items: center;
-    gap: 8px;
-
-    line-height: 1.1em;
+        & > a:hover,
+        & > a:focus-visible {
+            font-size: 1.1em;
+            text-decoration-color: $color-accent-main;
+        }
+    }
 
     &__theme-switch {
+        width: 32px;
         flex-shrink: 0;
+        outline: none;
+        transition: scale 0.3s;
         cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            filter: $color-icon-filter;
+            scale: 1.1;
+        }
     }
 
-    & > a {
-        color: $color-accent-main;
-        transition: font-size 0.3s ease;
+    &--signed-in {
+        display: grid;
+        grid-template-areas:
+            "avatar name"
+            "avatar actions";
+
+        grid-template-columns: 80px 180px;
+
+        & .profile__avatar {
+            width: 60px;
+            grid-area: avatar;
+        }
+
+        & .profile__name {
+            grid-area: name;
+        }
     }
 
-    & > a:hover {
-        font-size: 1.1em;
+    &--signed-out {
+        display: flex;
     }
 }

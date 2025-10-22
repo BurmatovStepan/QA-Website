@@ -3,11 +3,14 @@
 @mixin light-up-link {
     color: $color-text-main;
     text-decoration: 1px underline $color-text-main;
-    transition: color 0.15s ease, text-decoration 0.2s ease;
+    border-radius: 1px;
+    outline: none;
+    transition: color 0.2s, text-decoration-color 0.2s;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
         color: $color-accent-main;
-        text-decoration: 1px underline $color-accent-main;
+        text-decoration-color: $color-accent-main;
     }
 }
 
@@ -23,10 +26,10 @@
 
     border: 4px solid $color-interactive-idle;
     border-radius: 2px;
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
 
     box-shadow: $shadow-main;
-    transition: outline 0.15s ease;
+    transition: outline-color 0.2s;
 
     &[disabled],
     &--no-click {

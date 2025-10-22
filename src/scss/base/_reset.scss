@@ -186,8 +186,8 @@ svg * {
   Приведение рамок таблиц в классический 'collapse' вид
  */
 :where(table) {
-  border-collapse: collapse;
   border-color: currentColor;
+  border-collapse: collapse;
 }
 
 /**
@@ -198,9 +198,9 @@ svg * {
   *,
   ::before,
   ::after {
+    transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }
