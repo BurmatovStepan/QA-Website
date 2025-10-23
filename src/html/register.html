@@ -23,9 +23,9 @@
 
         <div class="profile profile--signed-out">
             <div class="profile__actions">
-                <a href="#">Log in</a>
+                <a href="/QA-Website/login">Log in</a>
                 <span class="profile__actions-separator">/</span>
-                <a href="#">Register</a>
+                <a href="/QA-Website/register">Register</a>
                 <div class="profile__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
                     <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon profile__theme-switch-icon">
                 </div>
@@ -61,13 +61,16 @@
 
             <div class="register-form__avatar-field custom-file-input">
                 <span class="custom-file-input__filename js-file-input-filename">No file selected</span>
-                <input type="file" accept="image/*" id="file-upload" class="custom-file-input__input js-file-input">
 
                 <div class="custom-file-input__shadow-wrapper">
                     <label class="custom-file-input__button" for="file-upload">
+                        <div class="custom-file-input__button-background"></div>
+
+                        <input type="file" accept="image/*" id="file-upload" class="custom-file-input__input js-file-input">
+
                         <span class="custom-file-input__button-text">Choose</span>
+                        <div class="custom-file-input__button-outline"></div>
                     </label>
-                    <div class="custom-file-input__button-outline"></div>
                 </div>
             </div>
 

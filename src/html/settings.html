@@ -27,7 +27,7 @@
             <div class="profile__name">Can't think of a name</div>
 
             <div class="profile__actions">
-                <a href="#">Settings</a>
+                <a href="/QA-Website/settings">Settings</a>
                 <span class="profile__actions-separator">/</span>
                 <a href="#">Logout</a>
                 <div class="profile__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
@@ -58,11 +58,15 @@
 
             <div class="user-settings__avatar-field custom-file-input">
                 <span class="custom-file-input__filename js-file-input-filename">No file selected</span>
-                <input type="file" accept="image/*" id="file-upload" class="custom-file-input__input js-file-input">
 
                 <div class="custom-file-input__shadow-wrapper">
                     <label class="custom-file-input__button" for="file-upload">
+                        <div class="custom-file-input__button-background"></div>
+
+                        <input type="file" accept="image/*" id="file-upload" class="custom-file-input__input js-file-input">
+
                         <span class="custom-file-input__button-text">Choose</span>
+                        <div class="custom-file-input__button-outline"></div>
                     </label>
                 </div>
             </div>
