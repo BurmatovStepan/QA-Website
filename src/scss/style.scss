@@ -4,28 +4,22 @@
 
 @use 'layout/layout';
 
-@use 'components/header';
-@use 'components/navigation';
-
-@use 'components/user-profile';
-@use 'components/new-question-button';
-@use 'components/search-bar';
-
-@use 'components/popular-tags';
-@use 'components/best-members';
-
-@use 'components/main-header';
-@use 'components/questions';
-@use 'components/paginator';
-
-@use 'components/new-question';
 @use 'components/answers';
-
-@use 'components/user-settings';
+@use 'components/best-members';
 @use 'components/custom-file-input';
-
+@use 'components/header';
 @use 'components/login';
+@use 'components/main-header';
+@use 'components/navigation';
+@use 'components/new-question';
+@use 'components/new-question-button';
+@use 'components/paginator';
+@use 'components/popular-tags';
+@use 'components/questions';
 @use 'components/register';
+@use 'components/search-bar';
+@use 'components/user-profile';
+@use 'components/user-settings';
 
 @use 'themes/dark';
 @use 'themes/light';
