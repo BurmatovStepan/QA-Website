@@ -73,9 +73,10 @@
     }
 
     &__submit-button {
+        @include default-button;
+        
         width: 100px;
         height: 40px;
         margin-block: 28px;
-        @include default-button;
     }
 }

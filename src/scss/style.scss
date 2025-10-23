@@ -14,12 +14,18 @@
 @use 'components/popular-tags';
 @use 'components/best-members';
 
-@use 'components/questions-header';
+@use 'components/main-header';
 @use 'components/questions';
 @use 'components/paginator';
 
 @use 'components/new-question';
 @use 'components/answers';
+
+@use 'components/user-settings';
+@use 'components/custom-file-input';
+
+@use 'components/login';
+@use 'components/register';
 
 @use 'themes/dark';
 @use 'themes/light';

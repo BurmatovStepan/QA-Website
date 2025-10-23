@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log in</title>
+    <title>User Profile</title>
 
     <link rel="icon" href="/assets/favicon.ico">
     <link rel="stylesheet" href="../scss/style.scss">
@@ -21,11 +21,15 @@
 
         <button class="new-question-button">New question</button>
 
-        <div class="profile profile--signed-out">
+        <div class="profile profile--signed-in">
+            <img src="/assets/avatar.svg" alt="avatar" class="profile__avatar">
+
+            <div class="profile__name">Can't think of a name</div>
+
             <div class="profile__actions">
-                <a href="#">Log in</a>
+                <a href="#">Settings</a>
                 <span class="profile__actions-separator">/</span>
-                <a href="#">Register</a>
+                <a href="#">Logout</a>
                 <div class="profile__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
                     <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon profile__theme-switch-icon">
                 </div>
@@ -35,21 +39,35 @@
 
     <main>
         <section class="main-header">
-            <h1>Log In</h1>
+            <h1>Settings:</h1>
+            <h1>Can't think of a name</h1>
         </section>
 
-        <section class="login-form">
-            <span class="login-form__info-message">Sorry, wrong password!</span>
+        <section class="user-settings">
+            <label for="user-settings__login">Login</label>
+            <input type="text" class="user-settings__login" id="user-settings__login">
 
-            <label for="login-form__login">Login</label>
-            <input type="text" id="login-form__login" class="login-form__login" placeholder="Enter login" required>
+            <label for="user-settings__email">Email</label>
+            <input type="email" autocomplete="email" class="user-settings__email" id="user-settings__email">
 
-            <label for="login-form__password">Password</label>
-            <input type="password" id="login-form__password" class="login-form__password" placeholder="Enter password" required>
+            <label for="user-settings__name">Displayed name</label>
+            <input type="text" class="user-settings__name" id="user-settings__name">
 
-            <button class="login-form__login-button">Log in!</button>
+            <label for="user-settings__avatar">Upload avatar</label>
+            <img src="/assets/avatar.svg" alt="avatar" class="user-settings__avatar" id="user-settings__avatar">
 
-            <div class="login-form__register-redirect"><a href="/QA-Website/register">create new account</a></div>
+            <div class="user-settings__avatar-field custom-file-input">
+                <span class="custom-file-input__filename js-file-input-filename">No file selected</span>
+                <input type="file" accept="image/*" id="file-upload" class="custom-file-input__input js-file-input">
+
+                <div class="custom-file-input__shadow-wrapper">
+                    <label class="custom-file-input__button" for="file-upload">
+                        <span class="custom-file-input__button-text">Choose</span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="user-settings__save-button">Save</button>
         </section>
     </main>
 

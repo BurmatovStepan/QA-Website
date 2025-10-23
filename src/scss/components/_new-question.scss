@@ -17,9 +17,10 @@
     }
 
     &__submit-button {
+        @include default-button;
+
         width: 100px;
         height: 40px;
         grid-column: -1 / -2;
-        @include default-button;
     }
 }

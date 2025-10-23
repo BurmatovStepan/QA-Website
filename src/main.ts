@@ -72,5 +72,20 @@ function initTheme(): void {
 }
 
 
+function initCustomFileInput(): void {
+    const fileInput = document.querySelector(".js-file-input");
+    fileInput.addEventListener("change", updateFileName);
+}
+
+function updateFileName(event: Event): void {
+    const fileNameDisplay = document.querySelector(".js-file-input-filename");
+
+    const input = event.target as HTMLInputElement;
+    const file = input.files ? input.files[0] : null;
+
+    fileNameDisplay.textContent = file ? file.name : "No file selected";
+}
+
 document.addEventListener("DOMContentLoaded", checkActiveTab);
 document.addEventListener("DOMContentLoaded", initTheme);
+document.addEventListener("DOMContentLoaded", initCustomFileInput);

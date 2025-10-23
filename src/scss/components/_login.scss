@@ -1,0 +1,30 @@
+@use '../config' as *;
+
+.login-form {
+    display: grid;
+    margin-top: 16px;
+    grid-template-columns: max-content 30vw;
+    gap: 20px 60px;
+
+    &__info-message {
+        grid-column: 1 / -1;
+        color: $color-text-error;
+        font: $h3;
+    }
+
+    &__login-button {
+        @include default-button;
+        width: 100px;
+        height: 36px;
+        margin-block: 12px;
+        grid-column: -1 / -2;
+    }
+
+    &__register-redirect {
+        grid-column: -1 / -2;
+
+        & > a {
+            @include light-up-link;
+        }
+    }
+}

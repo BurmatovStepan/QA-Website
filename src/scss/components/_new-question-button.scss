@@ -1,8 +1,9 @@
 @use "../config.scss" as *;
 
 .new-question-button {
+    @include default-button;
+
     height: 32px;
     padding: 2px;
-
-    @include default-button;
+    box-shadow: $shadow-small;
 }

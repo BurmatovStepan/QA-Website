@@ -9,7 +9,7 @@
 
     & > a {
         color: $color-text-main;
-        transition: font-size 0.3s, text-decoration 0.2s;
+        transition: font-size 0.3s, text-decoration 0.15s;
 
         &.python {
             color: hsl(0, 85%, 51%);

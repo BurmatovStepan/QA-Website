@@ -1,12 +1,11 @@
 @use '../config.scss' as *;
 
-.questions-header {
+.main-header {
     display: flex;
     align-items: center;
     gap: 24px;
-    font: $h3;
+}
 
-    & > a {
-        @include light-up-link;
-    }
+.hot-questions {
+    @include light-up-link;
 }
