@@ -53,7 +53,7 @@
 
         background-color: transparent;
         border-radius: 2px;
-        
+
         clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
         transition: background-color 0.15s;
         content: "";
@@ -61,7 +61,7 @@
 
     &__button-text {
         z-index: 20;
-        transform: translateX(-7%);
+        translate:-7%;
     }
 
     &__input {

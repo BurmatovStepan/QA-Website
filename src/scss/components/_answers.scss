@@ -9,45 +9,32 @@
 }
 
 .answer {
-    display: flex;
-
+    display: grid;
     padding: 8px 16px;
-    gap: 16px;
+    grid-template-areas:
+        "avatar body"
+        "rating footer";
+    place-items: center;
 
+
+    gap: 8px 16px;
     border: 2px solid $color-text-main;
     box-shadow: $shadow-main;
 
-    &__meta {
-        display: flex;
-        flex-direction: column;
-
-        grid-area: meta;
-        align-items: center;
-
-        gap: 16px;
-
-        & > input {
-            width: 40px;
-        }
-    }
-
     &__avatar {
         width: 60px;
+        height: 60px;
+        grid-area: avatar;
     }
 
     &__rating {
-        align-self: flex-start;
-    }
-
-    &__body {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        grid-area: rating;
     }
 
     &__checkbox-wrapper {
         display: flex;
         align-items: center;
+        place-self: center start;
         gap: 8px;
     }
 
@@ -74,7 +61,7 @@
 
     &__submit-button {
         @include default-button;
-        
+
         width: 100px;
         height: 40px;
         margin-block: 28px;

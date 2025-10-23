@@ -9,25 +9,18 @@
 .question {
     display: grid;
     grid-template-areas:
-        "meta body"
-        "meta footer";
+        "avatar body"
+        "rating footer";
+    place-items: center;
 
-    gap: 16px;
+    column-gap: 16px;
 
-    &__meta {
-        display: flex;
-        flex-direction: column;
-
-        grid-area: meta;
-        align-items: center;
-
-        & > input {
-            width: 40px;
-        }
+    &__avatar {
+        grid-area: avatar;
     }
 
     &__rating {
-        align-self: flex-start;
+        grid-area: rating;
     }
 
     &__body {
@@ -52,6 +45,7 @@
     &__footer {
         display: flex;
         grid-area: footer;
+        justify-self: start;
         gap: 24px;
 
         & a {
@@ -79,10 +73,6 @@
     border: 2px solid $color-text-main;
     box-shadow: $shadow-main;
 
-    &__meta {
-        gap: 16px;
-    }
-
     &__avatar {
         width: 60px;
     }
@@ -97,12 +87,13 @@
     grid-template-columns: 140px 1fr;
     border-bottom: 2px solid $color-accent-main;
 
-    &__meta {
-        gap: 32px;
-    }
-
     &__avatar {
         width: 120px;
+    }
+
+    &__rating {
+        align-self: stretch;
+        justify-self: stretch;
     }
 
     &__title {

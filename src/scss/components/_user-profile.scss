@@ -33,7 +33,7 @@
 
         &:hover,
         &:focus-visible {
-            filter: $color-icon-filter;
+            filter: $filter-accent-main;
             scale: 1.1;
         }
     }

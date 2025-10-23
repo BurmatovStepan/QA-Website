@@ -42,3 +42,16 @@
         outline-color: $color-accent-main;
     }
 }
+
+@mixin rating-button {
+    outline: none;
+    filter: $filter-text-main;
+    transition: scale 0.3s;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+        filter: $filter-accent-main;
+        scale: 1.1;
+    }
+}
