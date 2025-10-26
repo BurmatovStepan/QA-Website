@@ -14,10 +14,10 @@
 
 <body class="question-discussion-page">
   <header>
-    <img src="/assets/favicon.ico" alt="AskMe" class="website-icon">
-    <span class="search-bar">
-      <input type="search" class="search-bar__input" placeholder="Search">
-    </span>
+    <a href="/QA-Website/"><img src="/assets/favicon.ico" alt="AskMe" class="website-icon"></a>
+    <form class="search-bar">
+      <input type="search" name="query" class="search-bar__input" placeholder="Search" required>
+    </form>
 
     <button class="new-question-button">New question</button>
 
@@ -68,7 +68,7 @@
     </section>
 
     <section class="answers">
-      <div class="answer">
+      <div class="answer answer--correct">
         <img src="/assets/avatar.svg" alt="avatar" class="answer__avatar">
 
         <div class="answer__rating rating-input">
@@ -85,10 +85,7 @@
 
         <p class="answer__content">So I'm at a store and I can't find them, there's only soup. I went
           through every aisle but there was only more soup. What do I do?</p>
-        <div class="answer__checkbox-wrapper">
-          <input type="checkbox" name="correct_answer" id="answer__checkbox-correct" class="answer__checkbox-correct">
-          <label for="answer__checkbox-correct" class="answer__checkbox-label">Correct!</label>
-        </div>
+        <button class="answer__button-correct">Mark as correct!</button>
       </div>
 
       <div class="answer">
@@ -108,17 +105,15 @@
 
         <p class="answer__content">So I'm at a store and I can't find them, there's only soup. I went
           through every aisle but there was only more soup. What do I do?</p>
-        <div class="answer__checkbox-wrapper">
-          <input type="checkbox" name="correct_answer" id="answer__checkbox-correct" class="answer__checkbox-correct">
-          <label for="answer__checkbox-correct" class="answer__checkbox-label">Correct!</label>
-        </div>
+        <button class="answer__button-correct">Mark as correct!</button>
       </div>
     </section>
 
-    <section class="user-answer">
-      <textarea name="user_answer_content" class="user-answer__content" placeholder="Enter your answer here"></textarea>
+    <form class="user-answer">
+      <textarea name="user_answer_content" class="user-answer__content" placeholder="Enter your answer here"
+        required></textarea>
       <button class="user-answer__submit-button">Answer</button>
-    </section>
+    </form>
   </main>
 
   <aside>

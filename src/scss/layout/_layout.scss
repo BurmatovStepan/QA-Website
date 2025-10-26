@@ -19,7 +19,8 @@ main {
     grid-area: main;
     overflow-y: auto;
 
-    & > section {
+    & > section,
+    & > form {
         margin: 8px 24px;
     }
 }

@@ -12,8 +12,8 @@
     display: grid;
     padding: 8px 16px;
     grid-template-areas:
-        "avatar body"
-        "rating footer";
+        "avatar content"
+        "rating correct-btn";
     place-items: center;
 
 
@@ -27,25 +27,29 @@
         grid-area: avatar;
     }
 
+    &__content {
+        grid-area: content;
+    }
+
     &__rating {
         grid-area: rating;
     }
 
-    &__checkbox-wrapper {
-        display: flex;
-        align-items: center;
-        place-self: center start;
-        gap: 8px;
-    }
-
-    &__checkbox-correct {
-        width: 20px;
-        height: 20px;
+    &__button-correct {
+        @include default-button;
+        height: 28px;
+        grid-area: correct-btn;
+        place-self: center end;
         accent-color: $color-accent-main;
     }
 
-    &__checkbox-label {
-        font: $h3;
+    &--correct {
+        border-color: $color-accent-main;
+        box-shadow: 0px 0px 4px $color-accent-main;
+
+        .answer__button-correct {
+            display: none;
+        }
     }
 }
 
