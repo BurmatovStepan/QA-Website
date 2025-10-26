@@ -1,0 +1,19 @@
+@use "../config.scss" as *;
+
+body {
+    position: relative;
+    color: $color-text-main;
+    font-family: $ff;
+    background-color: $color-bg-main;
+}
+
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+:focus-visible {
+    outline: 3px solid transparent;
+    outline-color: $color-accent-main;
+    outline-offset: 1px;
+    transition: outline-color 0.15s;
+}

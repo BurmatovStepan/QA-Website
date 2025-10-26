@@ -1,0 +1,15 @@
+.theme-light {
+    --color-bg-main: #FFFFFF;
+    --color-bg-secondary: hsl(60, 80%, 97%);
+    --color-bg-filename: #FFFFFF;
+    --color-interactive-idle: hsl(50, 100%, 85%);
+    --color-text-main: #1A1A1A;
+    --color-text-filename: #1A1A1A;
+    --color-text-error: #ec0800;
+    --color-border-filename: #97979e;
+    --color-accent-main: hsl(50, 100%, 50%);
+    --filter-accent-main: brightness(0) saturate(100%) invert(11%) sepia(19%) saturate(5816%) hue-rotate(187deg) brightness(99%) contrast(104%);
+    --filter-text-main: brightness(0) saturate(100%) invert(0%) sepia(4%) saturate(2594%) hue-rotate(10deg) brightness(83%) contrast(80%);
+    --shadow-main: 4px 4px 10px rgba(0, 0, 0, 0.1);
+    --shadow-small: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
