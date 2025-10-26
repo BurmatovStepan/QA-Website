@@ -1,0 +1,11 @@
+@use '../config.scss' as *;
+
+.main-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.hot-questions {
+    @include light-up-link;
+}

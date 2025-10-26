@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AskMe</title>
+
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="stylesheet" href="../scss/style.scss">
+
+  <script src="../main.ts" type="module" defer></script>
+</head>
+
+<body class="tag-search-page">
+  <header>
+    <img src="/assets/favicon.ico" alt="AskMe" class="website-icon">
+    <span class="search-bar">
+      <input type="search" class="search-bar__input" placeholder="Search">
+    </span>
+
+    <button class="new-question-button">New question</button>
+
+    <div class="profile profile--signed-in">
+      <img src="/assets/avatar.svg" alt="avatar" class="profile__avatar">
+
+      <div class="profile__name">Can't think of a name</div>
+
+      <div class="profile__actions">
+        <a href="/QA-Website/settings">Settings</a>
+        <span class="profile__actions-separator">/</span>
+        <a href="#">Logout</a>
+        <div class="profile__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
+          <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon profile__theme-switch-icon">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="main-header">
+      <h1>Tag:</h1>
+      <h1>soup</h1>
+    </section>
+    
+    <section class="questions">
+      <div class="question question--bordered">
+        <img src="/assets/avatar.svg" alt="avatar" class="question__avatar">
+
+        <div class="question__rating rating-input">
+          <span class="rating-input__total-rating">5</span>
+
+          <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
+            <img src="/assets/up-arrow.svg" alt="like-icon" class="rating-input__like-button-icon">
+          </div>
+
+          <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
+            <img src="/assets/down-arrow.svg" alt="dislike-icon" class="rating-input__dislike-button-icon">
+          </div>
+        </div>
+
+        <div class="question__body">
+          <a href="#" class="question__title">Where do I find clothes?</a>
+          <p class="question__content--clamped">So I'm at a store and I can't find them, there's only soup. I went
+            through every aisle but there was only more soup. What do I do?</p>
+        </div>
+
+        <div class="question__footer">
+          <a href="#">answer (3)</a>
+          <div class="question__tags-section">
+            Tags:
+            <ul class="question__tags-list">
+              <li class="question__tag"><a href="#">soup</a></li>
+              <li class="question__tag"><a href="#">tf2</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="question question--bordered">
+        <img src="/assets/avatar.svg" alt="avatar" class="question__avatar">
+
+        <div class="question__rating rating-input">
+          <span class="rating-input__total-rating">5</span>
+
+          <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
+            <img src="/assets/up-arrow.svg" alt="like-icon" class="rating-input__like-button-icon">
+          </div>
+
+          <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
+            <img src="/assets/down-arrow.svg" alt="dislike-icon" class="rating-input__dislike-button-icon">
+          </div>
+        </div>
+
+        <div class="question__body">
+          <a href="#" class="question__title">Where do I find clothes?</a>
+          <p class="question__content--clamped">So I'm at a store and I can't find them, there's only soup. I went
+            through every aisle but there was only more soup. What do I do?</p>
+        </div>
+
+        <div class="question__footer">
+          <a href="#">answer (3)</a>
+          <div class="question__tags-section">
+            Tags:
+            <ul class="question__tags-list">
+              <li class="question__tag"><a href="#">soup</a></li>
+              <li class="question__tag"><a href="#">tf2</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="question question--bordered">
+        <img src="/assets/avatar.svg" alt="avatar" class="question__avatar">
+
+        <div class="question__rating rating-input">
+          <span class="rating-input__total-rating">5</span>
+
+          <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
+            <img src="/assets/up-arrow.svg" alt="like-icon" class="rating-input__like-button-icon">
+          </div>
+
+          <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
+            <img src="/assets/down-arrow.svg" alt="dislike-icon" class="rating-input__dislike-button-icon">
+          </div>
+        </div>
+
+        <div class="question__body">
+          <a href="#" class="question__title">Where do I find clothes?</a>
+          <p class="question__content--clamped">So I'm at a store and I can't find them, there's only soup. I went
+            through every aisle but there was only more soup. What do I do?</p>
+        </div>
+
+        <div class="question__footer">
+          <a href="#">answer (3)</a>
+          <div class="question__tags-section">
+            Tags:
+            <ul class="question__tags-list">
+              <li class="question__tag"><a href="#">soup</a></li>
+              <li class="question__tag"><a href="#">tf2</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="paginator">
+      <button disabled title="Already on this page" class="paginator__button">1</button>
+      <button class="paginator__button">2</button>
+      <button class="paginator__button">3</button>
+      <button class="paginator__button paginator__button--no-click">...</button>
+      <button class="paginator__button">53</button>
+    </section>
+  </main>
+
+  <aside>
+    <section class="popular-tags">
+      <h1>Popular Tags</h1>
+      <div class="popular-tags__links">
+        <a href="#">perl</a>
+        <a href="#" class="python">python</a>
+        <a href="#">TechnoPark</a>
+        <a href="#" class="mysql">MySQL</a>
+        <a href="#" class="django">django</a>
+        <a href="#">Mail.Ru</a>
+        <a href="#">Voloshin</a>
+        <a href="#" class="firefox">Firefox</a>
+      </div>
+    </section>
+
+    <section class="best-members">
+      <h1>Best Members</h1>
+      <ul class="best-members__links-list">
+        <li class="best-members__member"><a href="#">Clantis</a></li>
+        <li class="best-members__member"><a href="#">That guy</a></li>
+        <li class="best-members__member"><a href="#">Victoria</a></li>
+        <li class="best-members__member"><a href="#">idk</a></li>
+        <li class="best-members__member"><a href="#">Don't care</a></li>
+      </ul>
+    </section>
+  </aside>
+
+  <footer class="navigation">
+    <ul class="navigation__pages-list js-pages-list">
+      <li class="navigation__page-link"><a href="/QA-Website/ask">Ask</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/question">Question</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/tag">Tag</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/register">Register</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/login">Log in</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/settings">Settings</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/">Homepage</a></li>
+    </ul>
+  </footer>
+</body>
+
+</html>
