@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AskMe</title>
 
-  <link rel="icon" href="/assets/favicon.ico">
-  <link rel="stylesheet" href="../scss/style.scss">
+  <link rel="icon" href="{% static "assets/favicon.ico" %}">
+  <link rel="stylesheet" href="{% static "style.css" %}">
 
-  <script src="../main.ts" type="module" defer></script>
+  <script src="{% static "main.js" %}" type="module" defer></script>
 </head>
 
 <body class="homepage">
   <header>
-    <a href="/QA-Website/"><img src="/assets/favicon.ico" alt="AskMe" class="website-icon"></a>
+    <a href="/QA-Website/"><img src="{% static "assets/favicon.ico" %}" alt="AskMe" class="website-icon"></a>
     <form class="search-bar">
       <input type="search" name="query" class="search-bar__input" placeholder="Search" required>
     </form>
@@ -22,7 +24,7 @@
     <button class="new-question-button">New question</button>
 
     <div class="profile profile--signed-in">
-      <img src="/assets/avatar.svg" alt="avatar" class="profile__avatar">
+      <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="profile__avatar">
 
       <div class="profile__name">Can't think of a name</div>
 
@@ -45,17 +47,17 @@
 
     <section class="questions">
       <div class="question question--bordered">
-        <img src="/assets/avatar.svg" alt="avatar" class="question__avatar">
+        <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="question__avatar">
 
         <div class="question__rating rating-input">
           <span class="rating-input__total-rating">5</span>
 
           <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
-            <img src="/assets/up-arrow.svg" alt="like-icon" class="rating-input__like-button-icon">
+            <img src="{% static "/assets/up-arrow.svg" %}" alt="like-icon" class="rating-input__like-button-icon">
           </div>
 
           <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
-            <img src="/assets/down-arrow.svg" alt="dislike-icon" class="rating-input__dislike-button-icon">
+            <img src="{% static "/assets/down-arrow.svg" %}" alt="dislike-icon" class="rating-input__dislike-button-icon">
           </div>
         </div>
 
@@ -78,17 +80,17 @@
       </div>
 
       <div class="question question--bordered">
-        <img src="/assets/avatar.svg" alt="avatar" class="question__avatar">
+        <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="question__avatar">
 
         <div class="question__rating rating-input">
           <span class="rating-input__total-rating">5</span>
 
           <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
-            <img src="/assets/up-arrow.svg" alt="like-icon" class="rating-input__like-button-icon">
+            <img src="{% static "/assets/up-arrow.svg" %}" alt="like-icon" class="rating-input__like-button-icon">
           </div>
 
           <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
-            <img src="/assets/down-arrow.svg" alt="dislike-icon" class="rating-input__dislike-button-icon">
+            <img src="{% static "/assets/down-arrow.svg" %}" alt="dislike-icon" class="rating-input__dislike-button-icon">
           </div>
         </div>
 
@@ -111,17 +113,17 @@
       </div>
 
       <div class="question question--bordered">
-        <img src="/assets/avatar.svg" alt="avatar" class="question__avatar">
+        <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="question__avatar">
 
         <div class="question__rating rating-input">
           <span class="rating-input__total-rating">5</span>
 
           <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
-            <img src="/assets/up-arrow.svg" alt="like-icon" class="rating-input__like-button-icon">
+            <img src="{% static "/assets/up-arrow.svg" %}" alt="like-icon" class="rating-input__like-button-icon">
           </div>
 
           <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
-            <img src="/assets/down-arrow.svg" alt="dislike-icon" class="rating-input__dislike-button-icon">
+            <img src="{% static "/assets/down-arrow.svg" %}" alt="dislike-icon" class="rating-input__dislike-button-icon">
           </div>
         </div>
 
@@ -188,7 +190,7 @@
       <li class="navigation__page-link"><a href="/QA-Website/register">Register</a></li>
       <li class="navigation__page-link"><a href="/QA-Website/login">Log in</a></li>
       <li class="navigation__page-link"><a href="/QA-Website/settings">Settings</a></li>
-      <li class="navigation__page-link"><a href="/QA-Website/">Homepage</a></li>
+      <li class="navigation__page-link"><a href="{% url "homepage" %}">Homepage</a></li>
     </ul>
   </footer>
 </body>

@@ -3,13 +3,13 @@
     --color-bg-secondary: #323232;
     --color-bg-filename: #FFFFFF;
     --color-interactive-idle: #5e5d5d;
-    --color-text-main: #F4FDFF;
+    --color-text-main: hsl(202, 100%, 98%);
     --color-text-filename: #1f1f1f;
     --color-text-error: #ff0800;
     --color-border-filename: transparent;
     --color-accent-main: #ffff47;
     --filter-accent-main: brightness(0) saturate(100%) invert(82%) sepia(98%) saturate(351%) hue-rotate(355deg) brightness(104%) contrast(102%);
-    --filter-text-main: brightness(0) saturate(100%) invert(79%) sepia(88%) saturate(960%) hue-rotate(181deg) brightness(112%) contrast(127%);
+    --filter-text-main: brightness(0) saturate(100%) invert(84%) sepia(74%) saturate(1021%) hue-rotate(180deg) brightness(111%) contrast(108%);
     --shadow-main: 4px 4px 8px rgba(0, 0, 0, 0.4);
     --shadow-small: 4px 4px 8px rgba(0, 0, 0, 0.4);
 }
