@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="stylesheet" href="../scss/style.scss">
+
+  <script src="../main.ts" type="module" defer></script>
+</head>
+
+<body>
+  <header>
+    <a href="/QA-Website/"><img src="/assets/favicon.ico" alt="AskMe" class="website-icon"></a>
+    <form class="search-bar">
+      <input type="search" name="query" class="search-bar__input" placeholder="Search" required>
+    </form>
+
+    <button class="new-question-button">New question</button>
+
+    <div class="profile profile--signed-out">
+      <div class="profile__actions">
+        <a href="/QA-Website/login">Log in</a>
+        <span class="profile__actions-separator">/</span>
+        <a href="/QA-Website/register">Register</a>
+        <div class="profile__theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
+          <img src="#" alt="theme-switch-icon" class="js-theme-switch-icon profile__theme-switch-icon">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="main-header">
+      <h1>Registration</h1>
+    </section>
+
+    <form class="register-form">
+      <span class="register-form__info-message">Sorry, this email address is already registred!</span>
+
+      <label for="register-form__login">Login</label>
+      <input type="text" name="login" id="register-form__login" class="register-form__login" placeholder="Enter login"
+        autocomplete="username" minlength="4" required>
+
+      <label for="register-form__email">Email</label>
+      <input type="email" name="email" id="register-form__email" class="register-form__email"
+        placeholder="example@google.com" autocomplete="email">
+
+      <label for="register-form__name">Displayed name</label>
+      <input type="text" name="displayed_name" id="register-form__name" class="register-form__name"
+        placeholder="Enter displayed name">
+
+      <label for="register-form__password">Password</label>
+      <input type="password" name="password" id="register-form__password" class="register-form__password"
+        placeholder="Enter password" autocomplete="new-password" minlength="8" required>
+
+      <label for="">Repeat password</label>
+      <input type="password" name="repeat_password" id="register-form__repeat-password"
+        class="register-form__repeat-password" placeholder="Repeat password" minlength="8" required>
+
+      <div class="register-form__avatar-field custom-file-input">
+        <span class="custom-file-input__filename js-file-input-filename">No file selected</span>
+
+        <div class="custom-file-input__shadow-wrapper">
+          <label class="custom-file-input__button" for="file-upload">
+            <div class="custom-file-input__button-background"></div>
+
+            <input type="file" name="avatar" accept="image/*" id="file-upload"
+              class="custom-file-input__input js-file-input">
+
+            <span class="custom-file-input__button-text">Choose</span>
+            <div class="custom-file-input__button-outline"></div>
+          </label>
+        </div>
+      </div>
+
+      <button class="register-form__register-button">Register!</button>
+    </form>
+
+  </main>
+
+  <aside>
+    <section class="popular-tags">
+      <h1>Popular Tags</h1>
+      <div class="popular-tags__links">
+        <a href="#">perl</a>
+        <a href="#" class="python">python</a>
+        <a href="#">TechnoPark</a>
+        <a href="#" class="mysql">MySQL</a>
+        <a href="#" class="django">django</a>
+        <a href="#">Mail.Ru</a>
+        <a href="#">Voloshin</a>
+        <a href="#" class="firefox">Firefox</a>
+      </div>
+    </section>
+
+    <section class="best-members">
+      <h1>Best Members</h1>
+      <ul class="best-members__links-list">
+        <li class="best-members__member"><a href="#">Clantis</a></li>
+        <li class="best-members__member"><a href="#">That guy</a></li>
+        <li class="best-members__member"><a href="#">Victoria</a></li>
+        <li class="best-members__member"><a href="#">idk</a></li>
+        <li class="best-members__member"><a href="#">Don't care</a></li>
+      </ul>
+    </section>
+  </aside>
+
+  <footer class="navigation">
+    <ul class="navigation__pages-list js-pages-list">
+      <li class="navigation__page-link"><a href="/QA-Website/ask">Ask</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/question">Question</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/tag">Tag</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/register">Register</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/login">Log in</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/settings">Settings</a></li>
+      <li class="navigation__page-link"><a href="/QA-Website/">Homepage</a></li>
+    </ul>
+  </footer>
+</body>
+
+</html>

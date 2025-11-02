@@ -1,0 +1,13 @@
+@use "../config.scss" as *;
+
+.best-members {
+    &__links-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    &__member > a {
+        @include light-up-link;
+    }
+}

@@ -1,0 +1,34 @@
+body {
+    display: grid;
+    height: 100vh;
+    grid-template-areas:
+        "header header"
+        "main aside"
+        "footer footer";
+    grid-template-columns: 1fr 20vw;
+    grid-template-rows: auto 1fr auto;
+    column-gap: 48px;
+    overflow-x: hidden;
+}
+
+header {
+    grid-area: header;
+}
+
+main {
+    grid-area: main;
+    overflow-y: auto;
+
+    & > section,
+    & > form {
+        margin: 8px 24px;
+    }
+}
+
+aside {
+    grid-area: aside;
+}
+
+footer {
+    grid-area: footer;
+}
