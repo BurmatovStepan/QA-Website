@@ -1,7 +1,7 @@
 var THEME_CLASS = "theme-light";
 var THEME_STORAGE_KEY = "user-theme";
-var LIGHT_ICON_PATH = "static/assets/light-theme.svg";
-var DARK_ICON_PATH = "static/assets/dark-theme.svg";
+var LIGHT_ICON_PATH = "/static/assets/light-theme.svg";
+var DARK_ICON_PATH = "/static/assets/dark-theme.svg";
 function checkActiveTab() {
     var currentPath = window.location.pathname;
     var navLinks = document.querySelectorAll(".js-pages-list a");
@@ -18,7 +18,7 @@ function checkActiveTab() {
 }
 function initTheme() {
     var body = document.body;
-    var icon = document.querySelector(".js-theme-switch-icon");
+    var icon = document.querySelector(".js-theme-switch__icon");
     var savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
     if (icon && savedTheme === "light") {
         icon.src = DARK_ICON_PATH;
@@ -37,7 +37,7 @@ function initTheme() {
 }
 function toggleTheme() {
     var body = document.body;
-    var icon = document.querySelector(".js-theme-switch-icon");
+    var icon = document.querySelector(".js-theme-switch__icon");
     body.classList.toggle(THEME_CLASS);
     var isLight = body.classList.contains(THEME_CLASS);
     if (icon) {

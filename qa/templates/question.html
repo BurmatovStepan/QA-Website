@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}Question | {{question.title}} {% endblock page_title %}
+
+{% block body_class %}question-discussion-page{% endblock body_class %}
+{% block main_header %}{% endblock main_header %}
+{% block main_content %}
+<section class="question">
+    <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="question__avatar">
+
+    <div class="question__rating rating-input">
+    <span class="rating-input__total-rating">{{ question.rating }}</span>
+
+    <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
+        <img src="{% static "/assets/up-arrow.svg" %}" alt="like-icon" class="rating-input__like-button-icon">
+    </div>
+
+    <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
+        <img src="{% static "/assets/down-arrow.svg" %}" alt="dislike-icon" class="rating-input__dislike-button-icon">
+    </div>
+    </div>
+
+    <div class="question__body">
+    <a href="#" class="question__title">{{ question.title }}</a>
+    <p class="question__content">{{ question.content }}</p>
+    </div>
+    <div class="question__footer">
+    <div class="question__tags-section">
+        Tags:
+        <ul class="question__tags-list">
+        <li class="question__tag"><a href="#">soup</a></li>
+        <li class="question__tag"><a href="#">tf2</a></li>
+        </ul>
+    </div>
+    </div>
+</section>
+<form class="user-answer">
+    <textarea name="user_answer_content" class="user-answer__content" placeholder="Enter your answer here"
+    required></textarea>
+    <button class="user-answer__submit-button">Answer</button>
+</form>
+
+<section class="answers">
+    <div class="answer answer--correct">
+    <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="answer__avatar">
+
+    <div class="answer__rating rating-input">
+        <span class="rating-input__total-rating">5</span>
+
+        <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
+        <img src="{% static "/assets/up-arrow.svg" %}" alt="like-icon" class="rating-input__like-button-icon">
+        </div>
+
+        <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
+        <img src="{% static "/assets/down-arrow.svg" %}" alt="dislike-icon" class="rating-input__dislike-button-icon">
+        </div>
+    </div>
+
+    <p class="answer__content">So I'm at a store and I can't find them, there's only soup. I went
+        through every aisle but there was only more soup. What do I do?</p>
+    <button class="answer__button-correct">Mark as correct!</button>
+    </div>
+
+    <div class="answer">
+    <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="answer__avatar">
+
+    <div class="answer__rating rating-input">
+        <span class="rating-input__total-rating">5</span>
+
+        <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
+        <img src="{% static "/assets/up-arrow.svg" %}" alt="like-icon" class="rating-input__like-button-icon">
+        </div>
+
+        <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
+        <img src="{% static "/assets/down-arrow.svg" %}" alt="dislike-icon" class="rating-input__dislike-button-icon">
+        </div>
+    </div>
+
+    <p class="answer__content">So I'm at a store and I can't find them, there's only soup. I went
+        through every aisle but there was only more soup. What do I do?</p>
+    <button class="answer__button-correct">Mark as correct!</button>
+    </div>
+</section>
+{% endblock main_content %}

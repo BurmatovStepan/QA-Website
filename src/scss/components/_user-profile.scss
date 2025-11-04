@@ -1,6 +1,35 @@
 @use "../config.scss" as *;
 
 .profile {
+    display: grid;
+    margin-top: 24px;
+    grid-template-areas:
+        "avatar name"
+        "avatar stats";
+    grid-template-columns: max-content max-content;
+    align-items: center;
+    gap: 8px 36px;
+
+    &__avatar {
+        width: 200px;
+        grid-area: avatar;
+    }
+
+    &__name {
+        @include light-up-link;
+        grid-area: name;
+        font: $h1;
+        text-decoration: none;
+    }
+
+    &__stats {
+        display: flex;
+        flex-direction: column;
+        grid-area: stats;
+        gap: 12px;
+        font: $h2
+    }
+
     &__actions {
         display: flex;
         grid-area: actions;
@@ -25,16 +54,18 @@
     }
 
     &__theme-switch {
-        width: 32px;
         flex-shrink: 0;
-        outline: none;
-        transition: scale 0.3s;
-        cursor: pointer;
+    }
 
-        &:hover,
-        &:focus-visible {
-            filter: $filter-accent-main;
-            scale: 1.1;
+    &--mini {
+        margin: 0px;
+        .profile__avatar {
+            width: 60px;
+            grid-area: avatar;
+        }
+
+        .profile__name {
+            font: $text-default;
         }
     }
 
@@ -46,10 +77,7 @@
 
         grid-template-columns: 80px 180px;
 
-        .profile__avatar {
-            width: 60px;
-            grid-area: avatar;
-        }
+        gap: 0px;
 
         .profile__name {
             grid-area: name;

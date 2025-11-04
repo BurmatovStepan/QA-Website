@@ -7,6 +7,7 @@
 @use 'components/answers';
 @use 'components/best-members';
 @use 'components/custom-file-input';
+@use 'components/error-info';
 @use 'components/header';
 @use 'components/login';
 @use 'components/main-header';
@@ -19,7 +20,9 @@
 @use 'components/rating-input';
 @use 'components/register';
 @use 'components/search-bar';
+@use 'components/theme-switch';
 @use 'components/user-profile';
+@use 'components/user-recent-activity';
 @use 'components/user-settings';
 
 @use 'themes/dark';

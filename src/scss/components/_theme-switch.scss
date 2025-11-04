@@ -1,0 +1,15 @@
+@use "../config.scss" as *;
+
+.theme-switch {
+    width: 32px;
+    outline: none;
+    transition: scale 0.3s;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+        filter: $filter-accent-main;
+        scale: 1.1;
+    }
+
+}

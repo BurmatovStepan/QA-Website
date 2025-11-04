@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}[404] Not Found{% endblock page_title %}
+{% block main_header %}{% endblock main_header %}
+
+{% block body_class %}error-page 404{% endblock body_class %}
+{% block main_content %}
+  <section class="error-info">
+    <span class="error-info__code">404</span>
+    <span class="error-info__description">Not Found</span>
+    <span class="error-info__detail">Sorry, page that you requested does <span class="error-info__critical-word">NOT</span> exist.</span>
+  </section>
+{% endblock main_content %}
+
+{% block aside_content %}{% endblock aside_content %}

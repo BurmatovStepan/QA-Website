@@ -245,6 +245,10 @@ body {
   column-gap: 48px;
   overflow-x: hidden;
 }
+body.error-page {
+  grid-template-columns: 1fr;
+  column-gap: 0px;
+}
 
 header {
   grid-area: header;
@@ -271,7 +275,6 @@ footer {
   padding: 4px 0px 20px 0px;
   flex-direction: column;
   gap: 20px;
-  border-bottom: 2px solid var(--color-accent-main);
 }
 
 .answer {
@@ -437,6 +440,24 @@ footer {
   height: 0.1px;
   opacity: 0;
   overflow: hidden;
+}
+
+.error-info {
+  display: flex;
+  flex-direction: column;
+}
+.error-info__code {
+  margin-bottom: 16px;
+  font: bold 1.6rem/1em Verdana;
+  font-size: 80px;
+}
+.error-info__description {
+  margin-bottom: 32px;
+  font: bold 1.6rem/1em Verdana;
+  font-size: 40px;
+}
+.error-info__detail {
+  font: bold 1.6rem/1em Verdana;
 }
 
 header {
@@ -745,18 +766,18 @@ header {
 }
 
 .homepage .question,
-.tag-search-page .question {
+.question-listing .question {
   padding: 8px;
   grid-template-columns: 80px 1fr;
   border: 2px solid var(--color-text-main);
   box-shadow: var(--shadow-main);
 }
 .homepage .question__avatar,
-.tag-search-page .question__avatar {
+.question-listing .question__avatar {
   width: 60px;
 }
 .homepage .question__body,
-.tag-search-page .question__body {
+.question-listing .question__body {
   gap: 4px;
 }
 
@@ -781,7 +802,7 @@ header {
 .rating-input {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  row-gap: 8px;
+  gap: 8px 4px;
 }
 .rating-input__total-rating {
   grid-row: 1/span 2;
@@ -883,6 +904,52 @@ header {
   outline: none;
 }
 
+.theme-switch {
+  width: 32px;
+  outline: none;
+  transition: scale 0.3s;
+  cursor: pointer;
+}
+.theme-switch:hover, .theme-switch:focus-visible {
+  filter: var(--filter-accent-main);
+  scale: 1.1;
+}
+
+.profile {
+  display: grid;
+  margin-top: 24px;
+  grid-template-areas: "avatar name" "avatar stats";
+  grid-template-columns: max-content max-content;
+  align-items: center;
+  gap: 8px 36px;
+}
+.profile__avatar {
+  width: 200px;
+  grid-area: avatar;
+}
+.profile__name {
+  color: var(--color-text-main);
+  text-decoration: 1px underline var(--color-text-main);
+  border-radius: 1px;
+  outline: none;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.profile__name:hover, .profile__name:focus-visible {
+  color: var(--color-accent-main);
+  text-decoration-color: var(--color-accent-main);
+}
+.profile__name {
+  grid-area: name;
+  font: bold 1.6rem/1em Verdana;
+  text-decoration: none;
+}
+.profile__stats {
+  display: flex;
+  flex-direction: column;
+  grid-area: stats;
+  gap: 12px;
+  font: bold 1.2rem/1.2em Verdana;
+}
 .profile__actions {
   display: flex;
   grid-area: actions;
@@ -901,30 +968,54 @@ header {
   text-decoration-color: var(--color-accent-main);
 }
 .profile__theme-switch {
-  width: 32px;
   flex-shrink: 0;
-  outline: none;
-  transition: scale 0.3s;
-  cursor: pointer;
 }
-.profile__theme-switch:hover, .profile__theme-switch:focus-visible {
-  filter: var(--filter-accent-main);
-  scale: 1.1;
+.profile--mini {
+  margin: 0px;
+}
+.profile--mini .profile__avatar {
+  width: 60px;
+  grid-area: avatar;
+}
+.profile--mini .profile__name {
+  font: 1em/1em Verdana;
 }
 .profile--signed-in {
   display: grid;
   grid-template-areas: "avatar name" "avatar actions";
   grid-template-columns: 80px 180px;
-}
-.profile--signed-in .profile__avatar {
-  width: 60px;
-  grid-area: avatar;
+  gap: 0px;
 }
 .profile--signed-in .profile__name {
   grid-area: name;
 }
 .profile--signed-out {
   display: flex;
+}
+
+.recent-activity {
+  margin-top: 24px;
+  border-top: 2px solid var(--color-accent-main);
+}
+.recent-activity__records {
+  display: flex;
+  padding-left: 16px;
+  flex-direction: column;
+  gap: 8px;
+}
+.recent-activity__record > a {
+  color: var(--color-text-main);
+  text-decoration: 1px underline var(--color-text-main);
+  border-radius: 1px;
+  outline: none;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.recent-activity__record > a:hover, .recent-activity__record > a:focus-visible {
+  color: var(--color-accent-main);
+  text-decoration-color: var(--color-accent-main);
+}
+.recent-activity__record > a {
+  text-decoration: none;
 }
 
 .user-settings {

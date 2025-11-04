@@ -1,0 +1,97 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    {% block page_title %}{% endblock page_title %}
+  </title>
+
+  <link rel="icon" href="{% static "assets/favicon.ico" %}">
+  <link rel="stylesheet" href="{% static "style.css" %}">
+
+  <script src="{% static "main.js" %}" type="module" defer></script>
+</head>
+
+<body class="{% block body_class %}{% endblock body_class %}">
+  <header>
+    <a href="/QA-Website/"><img src="{% static "assets/favicon.ico" %}" alt="AskMe" class="website-icon"></a>
+    <form class="search-bar">
+      <input type="search" name="query" class="search-bar__input" placeholder="Search" required>
+    </form>
+
+    <button class="new-question-button">New question</button>
+
+    <div class="profile profile--mini profile--signed-in">
+      <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="profile__avatar">
+
+      <a href="http://localhost:8000/users/1/" class="profile__name">Can't think of a name</a>
+
+      <div class="profile__actions">
+        <a href="/QA-Website/settings">Settings</a>
+        <span class="profile__actions-separator">/</span>
+        <a href="#">Logout</a>
+        <div class="profile__theme-switch theme-switch js-theme-switch" role="button" aria-label="Switch theme" tabindex="0">
+          <img src="#" alt="theme-switch-icon" class="js-theme-switch__icon theme-switch__icon">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% block main_header %}
+    <section class="main-header">
+      <h1>{% block main_title %}{% endblock main_title %}</h1>
+      <h2>{% block main_title_extra %}{% endblock main_title_extra %}</h2>
+    </section>
+    {% endblock main_header %}
+
+    {% block main_content %}{% endblock main_content %}
+  </main>
+
+  {% block aside_content %}
+  <aside>
+    <section class="popular-tags">
+      <h1>Popular Tags</h1>
+      <div class="popular-tags__links">
+        <a href="#">perl</a>
+        <a href="#" class="python">python</a>
+        <a href="#">TechnoPark</a>
+        <a href="#" class="mysql">MySQL</a>
+        <a href="#" class="django">django</a>
+        <a href="#">Mail.Ru</a>
+        <a href="#">Voloshin</a>
+        <a href="#" class="firefox">Firefox</a>
+      </div>
+    </section>
+
+    <section class="best-members">
+      <h1>Best Members</h1>
+      <ul class="best-members__links-list">
+        <li class="best-members__member"><a href="#">Clantis</a></li>
+        <li class="best-members__member"><a href="#">That guy</a></li>
+        <li class="best-members__member"><a href="#">Victoria</a></li>
+        <li class="best-members__member"><a href="#">idk</a></li>
+        <li class="best-members__member"><a href="#">Don't care</a></li>
+      </ul>
+    </section>
+  </aside>
+  {% endblock aside_content %}
+
+  <footer class="navigation">
+    <ul class="navigation__pages-list js-pages-list">
+      <li class="navigation__page-link"><a href="{% url "new-question" %}">Ask</a></li>
+      <li class="navigation__page-link"><a href="{% url "question_discussion" 6 %}">Question</a></li>
+      <li class="navigation__page-link"><a href="{% url "question-listing" %}">Tag</a></li>
+      <li class="navigation__page-link"><a href="{% url "register" %}">Register</a></li>
+      <li class="navigation__page-link"><a href="{% url "login" %}">Log in</a></li>
+      <li class="navigation__page-link"><a href="{% url "settings" %}">Settings</a></li>
+      <li class="navigation__page-link"><a href="{% url "homepage" %}">Homepage</a></li>
+    </ul>
+  </footer>
+</body>
+
+</html>

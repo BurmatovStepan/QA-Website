@@ -3,7 +3,7 @@
 .rating-input {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    row-gap: 8px;
+    gap: 8px 4px;
 
     &__total-rating {
         grid-row: 1 / span 2;

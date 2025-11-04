@@ -9,6 +9,11 @@ body {
     grid-template-rows: auto 1fr auto;
     column-gap: 48px;
     overflow-x: hidden;
+
+    &.error-page {
+        grid-template-columns: 1fr;
+        column-gap: 0px;
+    }
 }
 
 header {

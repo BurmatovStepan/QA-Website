@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}User Settings{% endblock title %}
+{% block main_title %}Settings: {% endblock main_title %}
+{% block main_title_extra %}Can't think of a name{% endblock main_title_extra %}
+
+{% block main_content %}
+    <form class="user-settings">
+      <label for="user-settings__login">Login</label>
+      <input type="text" name="login" class="user-settings__login" id="user-settings__login" minlength="4" required>
+
+      <label for="user-settings__email">Email</label>
+      <input type="email" name="email" class="user-settings__email" id="user-settings__email" autocomplete="email">
+
+      <label for="user-settings__name">Displayed name</label>
+      <input type="text" name="username" class="user-settings__name" id="user-settings__name" minlength="2">
+
+      <label for="user-settings__avatar">Upload avatar</label>
+      <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="user-settings__avatar" id="user-settings__avatar">
+
+      <div class="user-settings__avatar-field custom-file-input">
+        <span class="custom-file-input__filename js-file-input-filename">No file selected</span>
+
+        <div class="custom-file-input__shadow-wrapper">
+          <label class="custom-file-input__button" for="file-upload">
+            <div class="custom-file-input__button-background"></div>
+
+            <input type="file" name="avatar" accept="image/*" id="file-upload"
+              class="custom-file-input__input js-file-input">
+
+            <span class="custom-file-input__button-text">Choose</span>
+            <div class="custom-file-input__button-outline"></div>
+          </label>
+        </div>
+      </div>
+
+      <button class="user-settings__save-button">Save</button>
+    </form>
+
+{% endblock main_content %}

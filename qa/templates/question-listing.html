@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block page_title %}Question Listing{% endblock page_title %}
+
+{% block main_title %}Tag: {% endblock main_title %}
+{% block main_title_extra %}soup{% endblock main_title_extra %}
+
+{% block body_class %}question-listing{% endblock body_class %}
+
+
+{% block main_content %}
+    <section class="questions">
+      {% for question in mock_questions %}
+      <div class="question question--bordered">
+        <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="question__avatar">
+
+        <div class="question__rating rating-input">
+          <span class="rating-input__total-rating">{{ question.rating }}</span>
+
+          <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
+            <img src="{% static "/assets/up-arrow.svg" %}" alt="like-icon" class="rating-input__like-button-icon">
+          </div>
+
+          <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
+            <img src="{% static "/assets/down-arrow.svg" %}" alt="dislike-icon" class="rating-input__dislike-button-icon">
+          </div>
+        </div>
+
+        <div class="question__body">
+          <a href="#" class="question__title">{{ question.title }}</a>
+          <p class="question__content--clamped">{{ question.content }}</p>
+        </div>
+
+        <div class="question__footer">
+          <a href="#">answer (3)</a>
+          <div class="question__tags-section">
+            Tags:
+            <ul class="question__tags-list">
+              <li class="question__tag"><a href="#">soup</a></li>
+              <li class="question__tag"><a href="#">tf2</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+
+    <section class="paginator">
+      <button disabled title="Already on this page" class="paginator__button">1</button>
+      <button class="paginator__button">2</button>
+      <button class="paginator__button">3</button>
+      <button class="paginator__button paginator__button--no-click">...</button>
+      <button class="paginator__button">53</button>
+    </section>
+{% endblock main_content %}
