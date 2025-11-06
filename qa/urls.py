@@ -5,6 +5,6 @@ from qa.views import HomepageView, NewQuestionView, QuestionDiscussionView, Ques
 urlpatterns = [
     path("", HomepageView.as_view(), name="homepage"),
     path("question/<int:id>/", QuestionDiscussionView.as_view(), name="question_discussion"),
-    path("listing/", QuestionListingView.as_view(), name="question-listing"),
-    path("new-question/", NewQuestionView.as_view(), name="new-question")
+    path("listing/", QuestionListingView.as_view(), name="question_listing"),
+    path("new-question/", NewQuestionView.as_view(), name="new_question")
 ]

@@ -1,0 +1,26 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block page_title %}{% endblock page_title %}
+
+{% block main_content_header %}{% endblock main_content_header %}
+
+{% block body_class %}error-page {{ error_code }}{% endblock body_class %}
+
+{% block main_content %}
+  <section class="error-info">
+    <span class="error-info__code">
+      {% block error_code %}{% endblock error_code %}
+    </span>
+
+    <span class="error-info__description">
+      {% block error_description %}{% endblock error_description %}
+    </span>
+
+    <span class="error-info__detail">
+    {% block error_detail %}{% endblock error_detail %}
+  </span>
+</section>
+{% endblock main_content %}
+
+{% block aside_content %}{% endblock aside_content %}

@@ -1,0 +1,43 @@
+{% load static %}
+
+<header>
+  <a href="/QA-Website/">
+    <img src="{% static "assets/favicon.ico" %}"
+         alt="AskMe"
+         class="website-icon"
+    >
+  </a>
+  <form class="search-bar" action="{% url "question_listing" %}" method="GET">
+    <input type="search"
+           name="query"
+           class="search-bar__input"
+           placeholder="Search"
+           required
+    >
+  </form>
+  <button class="new-question-button">New question</button>
+
+  <div class="profile profile--mini profile--signed-in">
+    <img src="{% static "/assets/avatar.svg" %}"
+         alt="avatar"
+         class="profile__avatar"
+    >
+    <a href="http://localhost:8000/user/1/" class="profile__name">Can't think of a name</a>
+
+    <div class="profile__actions">
+      <a href="/QA-Website/settings">Settings</a>
+      <span class="profile__actions-separator">/</span>
+      <a href="#">Logout</a>
+
+      <div class="profile__theme-switch theme-switch js-theme-switch"
+           role="button"
+           aria-label="Switch theme"
+           tabindex="0">
+        <img src="#"
+             alt="theme-switch-icon"
+             class="js-theme-switch__icon theme-switch__icon"
+        >
+      </div>
+    </div>
+  </div>
+</header>

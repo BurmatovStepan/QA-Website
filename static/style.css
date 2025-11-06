@@ -459,6 +459,9 @@ footer {
 .error-info__detail {
   font: bold 1.6rem/1em Verdana;
 }
+.error-info__critical-word {
+  color: var(--color-text-error);
+}
 
 header {
   display: flex;
@@ -531,17 +534,30 @@ header {
   align-items: center;
   gap: 24px;
 }
-
-.hot-questions {
+.main-header .hot-questions {
   color: var(--color-text-main);
   text-decoration: 1px underline var(--color-text-main);
   border-radius: 1px;
   outline: none;
   transition: color 0.15s, text-decoration-color 0.15s;
 }
-.hot-questions:hover, .hot-questions:focus-visible {
+.main-header .hot-questions:hover, .main-header .hot-questions:focus-visible {
   color: var(--color-accent-main);
   text-decoration-color: var(--color-accent-main);
+}
+.main-header .user-name {
+  color: var(--color-text-main);
+  text-decoration: 1px underline var(--color-text-main);
+  border-radius: 1px;
+  outline: none;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.main-header .user-name:hover, .main-header .user-name:focus-visible {
+  color: var(--color-accent-main);
+  text-decoration-color: var(--color-accent-main);
+}
+.main-header .user-name {
+  text-decoration: none;
 }
 
 .navigation {

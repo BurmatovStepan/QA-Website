@@ -1,0 +1,14 @@
+{% load static %}
+
+<img src="{% static "/assets/avatar.svg" %}"
+     alt="avatar"
+     class="answer__avatar"
+>
+
+<div class="answer__rating rating-input">{% include "snippets/rating-input.html" with content_item=answer %}</div>
+
+<p class="answer__content">
+  {{ answer.content }}
+</p>
+
+<button class="answer__button-correct">Mark as correct!</button>

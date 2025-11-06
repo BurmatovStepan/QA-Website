@@ -1,0 +1,23 @@
+{% load static %}
+
+<span class="rating-input__total-rating">{{ content_item.rating }}</span>
+
+<div class="rating-input__like-button"
+     role="button"
+     aria-label="Like this rating-input"
+     tabindex="0">
+  <img src="{% static "/assets/up-arrow.svg" %}"
+       alt="like-icon"
+       class="rating-input__like-button-icon"
+  >
+</div>
+
+<div class="rating-input__dislike-button"
+     role="button"
+     aria-label="Dislike this rating-input"
+     tabindex="0">
+  <img src="{% static "/assets/down-arrow.svg" %}"
+       alt="dislike-icon"
+       class="rating-input__dislike-button-icon"
+  >
+</div>

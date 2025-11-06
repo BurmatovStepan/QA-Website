@@ -75,11 +75,11 @@ function themeSwitchKeyboardHandler(event: KeyboardEvent): void {
 function initCustomFileInput(): void {
     const fileInput = document.querySelector(".js-file-input");
     if (fileInput) {
-        fileInput.addEventListener("change", updateFileName);
+        fileInput.addEventListener("change", updateFile);
     }
 }
 
-function updateFileName(event: Event): void {
+function updateFile(event: Event): void {
     const fileNameDisplay = document.querySelector(".js-file-input-filename");
 
     const input = event.target as HTMLInputElement;

@@ -1,0 +1,24 @@
+{% load static %}
+
+<img src="{% static "/assets/avatar.svg" %}"
+     alt="avatar"
+     class="question__avatar">
+
+<div class="question__rating rating-input">{% include "snippets/rating-input.html" with content_item=question %}</div>
+
+<div class="question__body">
+  <a href="{% url "question_discussion" question.id %}" class="question__title">{{ question.title }}</a>
+  <p class="question__content {% if is_clamped is not False %}question__content--clamped{% endif %}">{{ question.content }}</p>
+</div>
+
+<div class="question__footer">
+  {% if show_answer_amount is not False %}<a href="#">answers ({{ question.answer_amount }})</a>{% endif %}
+  <div class="question__tags-section">
+    Tags:
+    <ul class="question__tags-list">
+      {% for tag in question.tags %}
+        <li class="question__tag"><a href="#">{{ tag }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>

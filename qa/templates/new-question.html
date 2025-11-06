@@ -1,29 +1,42 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 {% load static %}
 
-
-{% block page_title %}New Question{% endblock page_title %}
-
-{% block main_title %}New Question{% endblock main_title %}
+{% block main_title %}
+  <h1>{{ main_title }}</h1>
+{% endblock main_title %}
 
 {% block body_class %}new-question-page{% endblock body_class %}
 
-
 {% block main_content %}
-<form class="new-question">
+  <form class="new-question">
     <div class="new-question__body">
-    <label for="new-question__title">Title</label>
-    <input type="text" name="title" id="new-question__title" placeholder="Title of your post" minlength="7"
-        maxlength="100" required>
+      <label for="new-question__title">Title</label>
+      <input type="text"
+            name="title"
+            id="new-question__title"
+            placeholder="Title of your post"
+            minlength="7"
+            maxlength="100"
+            required
+      >
 
-    <label for="new-question__content">Text</label>
-    <textarea name="body" id="new-question__content" class="new-question__content"
-        placeholder="Your full question here" minlength="25" required></textarea>
+      <label for="new-question__content">Text</label>
+      <textarea name="body"
+                id="new-question__content"
+                class="new-question__content"
+                placeholder="Your full question here"
+                minlength="25"
+                required>
+      </textarea>
 
-    <label for="new-question__tags">Tags</label>
-    <input type="text" name="tags" id="new-question__tags" placeholder="some tag, another, third">
+      <label for="new-question__tags">Tags</label>
+      <input type="text"
+            name="tags"
+            id="new-question__tags"
+            placeholder="some tag, another, third"
+      >
 
-    <button class="new-question__submit-button">Ask!</button>
+      <button class="new-question__submit-button">Ask!</button>
     </div>
-</form>
+  </form>
 {% endblock main_content %}

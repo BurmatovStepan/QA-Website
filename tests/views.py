@@ -1,7 +1,10 @@
-from django.http.request import HttpRequest
-from django.http.response import HttpResponse
-from django.shortcuts import render
+from typing import Any
+from django.views.generic import TemplateView
+
+from common.mixins import BaseContextViewMixin
 
 
-def test_404(request: HttpRequest) -> HttpResponse:
-    return render(request, "404.html")
+class Error404View(BaseContextViewMixin, TemplateView):
+    template_name = "404.html"
+    page_title = "[404] Page Not Found"
+

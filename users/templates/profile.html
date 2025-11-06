@@ -1,31 +1,26 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}User | Can't think of a name{% endblock title %}
-{% block main_header %}{% endblock main_header %}
+{% block title %}User | {{ user.displayed_name }}{% endblock title %}
+{% block main_content_header %}{% endblock main_content_header %}
 
 {% block main_content %}
 <section class="profile">
   <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="profile__avatar">
-  <a href="http://localhost:8000/users/1/" class="profile__name">Can't think of a name</a>
+  <a href="http://localhost:8000/user/1/" class="profile__name">{{ user.displayed_name }}</a>
   <div class="profile__stats">
-    <span>User rating: </span>
-    <span>Questions asked: </span>
-    <span>Answers written: </span>
+    <span>User rating: {{ user.rating }}</span>
+    <span>Questions asked: {{ user.total_questions_asked }}</span>
+    <span>Answers posted: {{ user.total_answers_posted }}</span>
   </div>
 </section>
 
 <section class="recent-activity">
   <h1>Recent activity</h1>
   <ul class="recent-activity__records">
-    <li class="recent-activity__record"><a href="#">Created a new question "Where do I find clothes?"</a></li>
-    <li class="recent-activity__record"><a href="#">Created a new question "Where do I find clothes?"</a></li>
-    <li class="recent-activity__record"><a href="#">Created a new question "Where do I find clothes?"</a></li>
-    <li class="recent-activity__record"><a href="#">Created a new question "Where do I find clothes?"</a></li>
-    <li class="recent-activity__record"><a href="#">Created a new question "Where do I find clothes?"</a></li>
-    <li class="recent-activity__record"><a href="#">Created a new question "Where do I find clothes?"</a></li>
-    <li class="recent-activity__record"><a href="#">Created a new question "Where do I find clothes?"</a></li>
-    <li class="recent-activity__record"><a href="#">Created a new question "Where do I find clothes?"</a></li>
+    {% for activity in user.recent_activities %}
+      <li class="recent-activity__record"><a href="{{ activity.link_url }}">{{ activity.text }}</a></li>
+    {% endfor %}
   </ul>
 </section>
 {% endblock main_content %}

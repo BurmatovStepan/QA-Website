@@ -1,55 +1,28 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 {% load static %}
 
-{% block page_title %}AskMe{% endblock page_title %}
+{% block main_title %}
+  <h1>{{ main_title }}</h1>
+{% endblock main_title %}
 
-{% block main_title %}New Questions{% endblock main_title %}
-{% block main_title_extra %}<a href="#" class="hot-questions">Hot Questions</a>{% endblock main_title_extra %}
+{% block main_title_extra %}
+  <h3><a href="{% url "question_listing" %}" class="hot-questions">{{ main_title_extra }}</a></h3>
+{% endblock main_title_extra %}
 
 {% block body_class %}homepage{% endblock body_class %}
 
 {% block main_content %}
-    <section class="questions">
+  <section class="questions">
+
     {% for question in mock_questions %}
-    <div class="question question--bordered">
-        <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="question__avatar">
-
-        <div class="question__rating rating-input">
-        <span class="rating-input__total-rating">{{ question.rating }}</span>
-
-        <div class="rating-input__like-button" role="button" aria-label="Like this rating-input" tabindex="0">
-            <img src="{% static "/assets/up-arrow.svg" %}" alt="like-icon" class="rating-input__like-button-icon">
-        </div>
-
-        <div class="rating-input__dislike-button" role="button" aria-label="Dislike this rating-input" tabindex="0">
-            <img src="{% static "/assets/down-arrow.svg" %}" alt="dislike-icon" class="rating-input__dislike-button-icon">
-        </div>
-        </div>
-
-        <div class="question__body">
-        <a href="{% url "question_discussion" question.id %}" class="question__title">{{ question.title }}</a>
-        <p class="question__content--clamped">{{ question.content }}</p>
-        </div>
-
-        <div class="question__footer">
-        <a href="#">answer (3)</a>
-        <div class="question__tags-section">
-            Tags:
-            <ul class="question__tags-list">
-            <li class="question__tag"><a href="#">soup</a></li>
-            <li class="question__tag"><a href="#">tf2</a></li>
-            </ul>
-        </div>
-        </div>
-    </div>
+      <div class="question question--bordered">
+        {% include "snippets/question-card.html" %}
+      </div>
     {% endfor %}
+    
+  </section>
 
-<section class="paginator">
-    <button disabled title="Already on this page" class="paginator__button">1</button>
-    <button class="paginator__button">2</button>
-    <button class="paginator__button">3</button>
-    <button class="paginator__button paginator__button--no-click">...</button>
-    <button class="paginator__button">53</button>
-</section>
-
+  <section class="paginator">
+    {% include "snippets/paginator.html" %}
+  </section>
 {% endblock main_content %}
