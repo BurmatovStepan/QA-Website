@@ -6,7 +6,7 @@
 {% endblock main_title %}
 
 {% block main_title_extra %}
-  <h1><a href="{% url "user" user.id %}" class="user-name">{{ main_title_extra }}</a></h1>
+  <h1><a href="{% url "user" current_user.id %}" class="user-name">{{ main_title_extra }}</a></h1>
 {% endblock  %}
 
 {% block main_content %}
@@ -14,7 +14,7 @@
       <label for="user-settings__login">Login</label>
       <input type="text"
              name="login"
-             value="{{ user.login }}"
+             value="{{ current_user.login }}"
              class="user-settings__login"
              id="user-settings__login"
              minlength="4"
@@ -24,7 +24,7 @@
       <label for="user-settings__email">Email</label>
       <input type="email"
              name="email"
-             value="{{ user.email }}"
+             value="{{ current_user.email }}"
              class="user-settings__email"
              id="user-settings__email"
              autocomplete="email"
@@ -33,14 +33,14 @@
       <label for="user-settings__name">Displayed name</label>
       <input type="text"
              name="username"
-             value="{{ user.displayed_name }}"
+             value="{{ current_user.displayed_name }}"
              class="user-settings__name"
              id="user-settings__name"
              minlength="2"
       >
 
       <label for="user-settings__avatar">Upload avatar</label>
-      <img src="{% static "/assets/avatar.svg" %}"
+      <img src="{% static current_user.avatar %}"
            alt="avatar"
            class="user-settings__avatar"
            id="user-settings__avatar"

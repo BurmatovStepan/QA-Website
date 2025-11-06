@@ -6,10 +6,8 @@
 {% block main_content_header %}{% endblock main_content_header %}
 
 {% block main_content %}
-<section class="question">
-  {% include "snippets/question-card.html" with is_clamped=False show_answer_amount=False %}
-</section>
 
+{% include "snippets/question-card.html" with is_clamped=False show_answer_amount=False %}
 <form class="user-answer">
     <textarea name="user_answer_content"
               class="user-answer__content"
@@ -22,10 +20,15 @@
 <section class="answers">
 
   {% for answer in mock_answers %}
-    <div class="answer {% if answer.is_correct %}answer--correct{% endif %}">
-      {% include "snippets/answer-card.html" %}
-    </div>
+    {% if answer.is_correct %}
+      {% include "snippets/answer-card.html" with modifier_classes="answer--correct"%}
+    {% else %}
+      {% include "snippets/answer-card.html"%}
+    {% endif %}
   {% endfor %}
 
 </section>
+
+{% include "snippets/paginator.html" %}
+
 {% endblock main_content %}

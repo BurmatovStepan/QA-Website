@@ -54,10 +54,10 @@ function themeSwitchKeyboardHandler(event) {
 function initCustomFileInput() {
     var fileInput = document.querySelector(".js-file-input");
     if (fileInput) {
-        fileInput.addEventListener("change", updateFileName);
+        fileInput.addEventListener("change", updateFile);
     }
 }
-function updateFileName(event) {
+function updateFile(event) {
     var fileNameDisplay = document.querySelector(".js-file-input-filename");
     var input = event.target;
     var file = input.files ? input.files[0] : null;

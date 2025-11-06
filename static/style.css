@@ -245,10 +245,6 @@ body {
   column-gap: 48px;
   overflow-x: hidden;
 }
-body.error-page {
-  grid-template-columns: 1fr;
-  column-gap: 0px;
-}
 
 header {
   grid-area: header;
@@ -798,6 +794,7 @@ header {
 }
 
 .question-discussion-page .question {
+  margin: 8px 24px;
   padding: 16px;
   grid-template-columns: 140px 1fr;
   border-bottom: 2px solid var(--color-accent-main);

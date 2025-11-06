@@ -6,7 +6,7 @@
 
 {% block main_content %}
 <section class="profile">
-  <img src="{% static "/assets/avatar.svg" %}" alt="avatar" class="profile__avatar">
+  <img src="{% static user.avatar %}" alt="avatar" class="profile__avatar">
   <a href="http://localhost:8000/user/1/" class="profile__name">{{ user.displayed_name }}</a>
   <div class="profile__stats">
     <span>User rating: {{ user.rating }}</span>
@@ -19,7 +19,7 @@
   <h1>Recent activity</h1>
   <ul class="recent-activity__records">
     {% for activity in user.recent_activities %}
-      <li class="recent-activity__record"><a href="{{ activity.link_url }}">{{ activity.text }}</a></li>
+      <li class="recent-activity__record"><a href="{{ activity.link_url }}">{{ activity.description }}</a></li>
     {% endfor %}
   </ul>
 </section>

@@ -58,9 +58,7 @@
            required
     >
 
-    <div class="register-form__avatar-field custom-file-input">
-      {% include "snippets/custom-file-input.html" %}
-    </div>
+    {% include "snippets/custom-file-input.html" with component_name="register-form__avatar-field"%}
 
     <button class="register-form__register-button">Register!</button>
   </form>

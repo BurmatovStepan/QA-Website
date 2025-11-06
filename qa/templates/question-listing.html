@@ -6,7 +6,9 @@
 {% endblock main_title %}
 
 {% block main_title_extra %}
-  <h2>{{ main_title_extra }}</h2>
+  {% if main_title_extra %}
+    <h2>{{ main_title_extra }}</h2>
+  {% endif %}
 {% endblock main_title_extra %}
 
 {% block body_class %}question-listing{% endblock body_class %}
@@ -15,14 +17,10 @@
   <section class="questions">
 
     {% for question in mock_questions %}
-      <div class="question question--bordered">
-        {% include "snippets/question-card.html" %}
-      </div>
+      {% include "snippets/question-card.html" with modifier_classes="question--bordered" %}
     {% endfor %}
 
   </section>
 
-  <section class="paginator">
-    {% include "snippets/paginator.html" %}
-  </section>
+  {% include "snippets/paginator.html" %}
 {% endblock main_content %}
