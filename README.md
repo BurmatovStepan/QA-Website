@@ -17,7 +17,7 @@ npm install
 pip install -r requirements.txt
 ```
 
-1. Создатей файл `.env` в корневой директории. Данные переменные используются в `settings.py` django-проекта
+3. Создатей файл `.env` в корневой директории. Данные переменные используются в `settings.py` django-приложения
 ```
 SECRET_KEY=<YOUR_SECRET_KEY>
 DEBUG=True
@@ -27,10 +27,10 @@ ALLOWED_HOSTS=["127.0.0.1", "localhost"]
 # Сборка статических файлов
 В `package.json`  предусмотрено 2 скрипта для сборки:
 - `npm run build:dev` - копирует `assets/` и собирает `scss/style.scss` и `ts/main.ts` в `static/` без оптимизаций.
-- `npm run build` - собирает проект в `static/` со сжатием `.css`.
+- `npm run build` - собирает проект в `static/` со сжатием `style.css`.
 
 # Запуск/Отладка
-`npm start` - выполняет команду `build:dev` и запускает сервер Django на http://127.0.0.1:8000/ и файловые наблюдатели для `assets/`, `scss/` и `ts/`, обеспечивая **Hot Module Replacement (HMR)** при изменении файлов.
+`npm start` - выполняет команду `build:dev`, запускает сервер Django на http://127.0.0.1:8000/ и создает файловые наблюдатели для `assets/`, `scss/` и `ts/`, обеспечивая **HMR** при изменении файлов.
 
 > [!WARNING]
 > Команды `npm start`, `npm run build:dev` и `npm run build` удаляют директорию `static/` перед выполнением.
