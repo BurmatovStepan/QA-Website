@@ -1,20 +1,18 @@
 from typing import Any
 
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.http import Http404
 from django.http.response import HttpResponse as HttpResponse
-from django.views.generic import TemplateView, ListView, DetailView
-from django.core.paginator import Paginator
+from django.shortcuts import redirect
+from django.views.generic import DetailView, ListView, TemplateView
 
-from common.mixins import BaseContextViewMixin, MOCK_QUESTIONS, MOCK_ANSWERS, MOCK_USERS, MOCK_ACTIVITIES
+from common.mixins import (MOCK_ACTIVITIES, MOCK_ANSWERS, MOCK_QUESTIONS,
+                           MOCK_USERS, BaseContextViewMixin)
+from common.utils import get_author_info
 
-def get_author_info(author_id: int) -> dict[str, Any]:
-    return next(
-        (user for user in MOCK_USERS if user.get("id") == author_id),
-        {}
-    )
-
+DEFAULT_PAGINATION_SIZE = 10
 
 class HomepageView(BaseContextViewMixin, ListView):
     template_name = "index.html"
@@ -22,7 +20,7 @@ class HomepageView(BaseContextViewMixin, ListView):
     main_title = "New Questions"
     main_title_extra = "Hot Questions"
 
-    paginate_by = 10
+    paginate_by = DEFAULT_PAGINATION_SIZE
     context_object_name = "mock_questions"
 
     def get(self, request, *args, **kwargs):
@@ -32,13 +30,13 @@ class HomepageView(BaseContextViewMixin, ListView):
     def get_queryset(self) -> QuerySet[Any]:
         mock_questions_with_author = MOCK_QUESTIONS[:]
         for question in mock_questions_with_author:
-            question["author_avatar"] = get_author_info(question["id"])["avatar"]
+            question["author"] = get_author_info(question["id"])
 
         if (self.current_user is not None):
             disliked_ids = self.current_user.get("disliked_questions", [])
             mock_questions_with_author.sort(key=lambda question: question["id"] in disliked_ids)
 
-        return mock_questions_with_author # type: ignore
+        return mock_questions_with_author
 
 
 class QuestionDiscussionView(BaseContextViewMixin, DetailView):
@@ -60,7 +58,7 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         if (found_question is None):
             raise Http404(f"Question with ID '{question_id}' does not exist.")
 
-        found_question["author_avatar"] = get_author_info(question_id)["avatar"] #type: ignore
+        found_question["author"] = get_author_info(question_id)
         return found_question
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -75,16 +73,16 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
 
         found_answers_with_author = found_answers[:]
         for answer in found_answers_with_author:
-            answer["author_avatar"] = get_author_info(answer["author_id"])["avatar"]
+            answer["author"] = get_author_info(answer["author_id"])
 
-        paginator = Paginator(found_answers_with_author, self.items_per_page or 10)
+        paginator = Paginator(found_answers_with_author, self.items_per_page or DEFAULT_PAGINATION_SIZE)
 
         page_number = self.request.GET.get("page")
-        answer_page_obj = paginator.get_page(page_number)
+        answer_page_object = paginator.get_page(page_number)
 
-        context["page_obj"] = answer_page_obj
+        context["page_obj"] = answer_page_object
         context["paginator"] = paginator
-        context["mock_answers"] = answer_page_obj.object_list
+        context["mock_answers"] = answer_page_object.object_list
 
         return context
 
@@ -93,7 +91,7 @@ class QuestionListingView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
     page_title = "Question Listing"
 
-    paginate_by = 10
+    paginate_by = DEFAULT_PAGINATION_SIZE
     context_object_name = "mock_questions"
 
     def get(self, request, *args, **kwargs):
@@ -107,15 +105,21 @@ class QuestionListingView(BaseContextViewMixin, ListView):
 
         filtered_mock_questions = []
         for question in MOCK_QUESTIONS:
-            if (search_query not in question.get("title").lower()): continue
-            if (tag and tag not in [tag.lower() for tag in question.get("tags")]): continue
-            if (hot_period and not question.get("is_hot")): continue
+            if (search_query not in question.get("title").lower()):
+                continue
+
+            tags_lowercase = [tag.lower() for tag in question.get("tags")]
+            if (tag and tag not in tags_lowercase):
+                continue
+
+            if (hot_period and not question.get("is_hot")):
+                continue
 
             filtered_mock_questions.append(question)
 
         mock_questions_with_author = filtered_mock_questions
         for question in mock_questions_with_author:
-            question["author_avatar"] = get_author_info(question["id"])["avatar"]
+            question["author"] = get_author_info(question["id"])
 
         if (self.current_user is not None):
             disliked_ids = self.current_user.get("disliked_questions", [])

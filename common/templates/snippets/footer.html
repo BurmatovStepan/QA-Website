@@ -1,13 +1,16 @@
 <footer class="navigation">
   <ul class="navigation__pages-list js-pages-list">
     <li class="navigation__page-link"><a href="{% url "new_question" %}">Ask</a></li>
+
     {% if not current_user %}
       <li class="navigation__page-link"><a href="{% url "register" %}">Register</a></li>
       <li class="navigation__page-link"><a href="{% url "login" %}">Log in</a></li>
     {% endif %}
+
     {% if current_user %}
       <li class="navigation__page-link"><a href="{% url "settings" %}">Settings</a></li>
     {% endif %}
+    
     <li class="navigation__page-link"><a href="{% url "homepage" %}">Homepage</a></li>
   </ul>
 </footer>

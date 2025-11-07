@@ -1,10 +1,8 @@
 <section class="best-members">
   <h1>Best Members</h1>
   <ul class="best-members__links-list">
-    <li class="best-members__member"><a href="#">Clantis</a></li>
-    <li class="best-members__member"><a href="#">That guy</a></li>
-    <li class="best-members__member"><a href="#">Victoria</a></li>
-    <li class="best-members__member"><a href="#">idk</a></li>
-    <li class="best-members__member"><a href="#">Don't care</a></li>
+    {% for member in best_members %}
+      <li class="best-members__member"><a href="{% url "user" member.id %}">{{ member.displayed_name }}</a></li>
+    {% endfor %}
   </ul>
 </section>

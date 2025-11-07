@@ -1,7 +1,7 @@
 {% load static %}
 
 <header>
-  <a href="/QA-Website/">
+  <a href="{% url "homepage" %}">
     <img src="{% static "assets/favicon.ico" %}"
          alt="AskMe"
          class="website-icon"
@@ -24,12 +24,12 @@
           alt="avatar"
           class="profile__avatar"
       >
-      <a href="http://localhost:8000/user/1/" class="profile__name">{{ current_user.displayed_name }}</a>
+      <a href="{% url "user" current_user.id %}" class="profile__name">{{ current_user.displayed_name }}</a>
 
       <div class="profile__actions">
-        <a href="/QA-Website/settings">Settings</a>
+        <a href="{% url "settings" %}">Settings</a>
         <span class="profile__actions-separator">/</span>
-        <a href="#">Logout</a>
+        <a href="{{ request.path }}">Logout</a>
 
         {% include "snippets/theme-switch.html" with component_name="profile__theme-switch" %}
       </div>
@@ -39,9 +39,9 @@
 
     <div class="profile profile--mini profile--signed-out">
       <div class="profile__actions">
-        <a href="/QA-Website/login">Log in</a>
+        <a href="{% url "login" %}">Log in</a>
         <span class="profile__actions-separator">/</span>
-        <a href="/QA-Website/register">Register</a>
+        <a href="{% url "register" %}">Register</a>
 
         {% include "snippets/theme-switch.html" with component_name="profile__theme-switch" %}
         </div>

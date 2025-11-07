@@ -1,0 +1,11 @@
+{% extends "base/base_error.html" %}
+
+{% block body_class %}error-page 401{% endblock body_class %}
+
+{% block error_code %}401{% endblock error_code %}
+
+{% block error_description %}Unauthorized{% endblock error_description %}
+
+{% block error_detail %}
+  Sorry, you need to <a href="{% url "login" %}">Login</a> or <a href="{% url "register" %}">Register</a> to access this page.
+{% endblock error_detail %}

@@ -9,7 +9,7 @@
 
     & > a {
         color: $color-text-main;
-        transition: font-size 0.3s, text-decoration 0.15s;
+        transition: font-size 0.3s;
 
         &.python {
             color: hsl(0, 85%, 51%);
@@ -27,7 +27,8 @@
             color: hsl(39, 100%, 50%);
         }
 
-        &:hover {
+        &:hover,
+        &:focus-visible {
             font-size: 1.05em;
         }
     }

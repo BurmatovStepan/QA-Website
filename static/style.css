@@ -305,9 +305,10 @@ footer {
   outline: 3px solid transparent;
   box-shadow: var(--shadow-main);
   transition: outline-color 0.15s;
+  cursor: pointer;
 }
 .answer__button-correct[disabled], .answer__button-correct--no-click {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: default;
 }
 .answer__button-correct:not([disabled]):not(.answer__button-correct--no-click):hover, .answer__button-correct:not([disabled]):not(.answer__button-correct--no-click):focus-visible {
@@ -348,9 +349,10 @@ footer {
   outline: 3px solid transparent;
   box-shadow: var(--shadow-main);
   transition: outline-color 0.15s;
+  cursor: pointer;
 }
 .user-answer__submit-button[disabled], .user-answer__submit-button--no-click {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: default;
 }
 .user-answer__submit-button:not([disabled]):not(.user-answer__submit-button--no-click):hover, .user-answer__submit-button:not([disabled]):not(.user-answer__submit-button--no-click):focus-visible {
@@ -454,6 +456,14 @@ footer {
 }
 .error-info__detail {
   font: bold 1.6rem/1em Verdana;
+  line-height: 1.05em;
+}
+.error-info__detail > a {
+  color: var(--color-accent-main);
+  transition: font-size 0.3s;
+}
+.error-info__detail > a:hover, .error-info__detail > a:focus-visible {
+  font-size: 1.05em;
 }
 .error-info__critical-word {
   color: var(--color-text-error);
@@ -496,9 +506,10 @@ header {
   outline: 3px solid transparent;
   box-shadow: var(--shadow-main);
   transition: outline-color 0.15s;
+  cursor: pointer;
 }
 .login-form__login-button[disabled], .login-form__login-button--no-click {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: default;
 }
 .login-form__login-button:not([disabled]):not(.login-form__login-button--no-click):hover, .login-form__login-button:not([disabled]):not(.login-form__login-button--no-click):focus-visible {
@@ -568,6 +579,7 @@ header {
   gap: 8px;
 }
 .navigation__page-link {
+  position: relative;
   line-height: 1.05em;
 }
 .navigation__page-link::after {
@@ -587,9 +599,6 @@ header {
 }
 .navigation__page-link > a:hover, .navigation__page-link > a:focus-visible {
   font-size: 1.05em;
-}
-.navigation__page-link:hover, .navigation__page-link:focus-within, .navigation__page-link--current {
-  position: relative;
 }
 .navigation__page-link:hover::after, .navigation__page-link:focus-within::after, .navigation__page-link--current::after {
   background-color: var(--color-accent-main);
@@ -624,9 +633,10 @@ header {
   outline: 3px solid transparent;
   box-shadow: var(--shadow-main);
   transition: outline-color 0.15s;
+  cursor: pointer;
 }
 .new-question__submit-button[disabled], .new-question__submit-button--no-click {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: default;
 }
 .new-question__submit-button:not([disabled]):not(.new-question__submit-button--no-click):hover, .new-question__submit-button:not([disabled]):not(.new-question__submit-button--no-click):focus-visible {
@@ -650,9 +660,10 @@ header {
   outline: 3px solid transparent;
   box-shadow: var(--shadow-main);
   transition: outline-color 0.15s;
+  cursor: pointer;
 }
 .new-question-button[disabled], .new-question-button--no-click {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: default;
 }
 .new-question-button:not([disabled]):not(.new-question-button--no-click):hover, .new-question-button:not([disabled]):not(.new-question-button--no-click):focus-visible {
@@ -667,6 +678,7 @@ header {
 .paginator {
   display: flex;
   margin-top: 16px;
+  padding-bottom: 8px;
   gap: 12px;
 }
 .paginator__button {
@@ -681,13 +693,41 @@ header {
   outline: 3px solid transparent;
   box-shadow: var(--shadow-main);
   transition: outline-color 0.15s;
+  cursor: pointer;
 }
 .paginator__button[disabled], .paginator__button--no-click {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: default;
 }
 .paginator__button:not([disabled]):not(.paginator__button--no-click):hover, .paginator__button:not([disabled]):not(.paginator__button--no-click):focus-visible {
   outline-color: var(--color-accent-main);
+}
+.paginator__button {
+  position: relative;
+  width: 40px;
+  outline: none;
+}
+.paginator__button::after {
+  position: absolute;
+  right: -8px;
+  bottom: -12px;
+  left: -8px;
+  height: 2px;
+  background-color: transparent;
+  transition: background-color 0.3s;
+  content: "";
+}
+.paginator__button:not(.paginator__button--no-click):hover::after, .paginator__button:not(.paginator__button--no-click):focus-within::after, .paginator__button--current-page::after {
+  background-color: var(--color-accent-main);
+}
+.paginator__button > a {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  color: var(--color-text-main);
+  text-align: center;
 }
 
 .popular-tags__links {
@@ -698,7 +738,7 @@ header {
 }
 .popular-tags__links > a {
   color: var(--color-text-main);
-  transition: font-size 0.3s, text-decoration 0.15s;
+  transition: font-size 0.3s;
 }
 .popular-tags__links > a.python {
   color: hsl(0, 85%, 51%);
@@ -712,7 +752,7 @@ header {
 .popular-tags__links > a.firefox {
   color: hsl(39, 100%, 50%);
 }
-.popular-tags__links > a:hover {
+.popular-tags__links > a:hover, .popular-tags__links > a:focus-visible {
   font-size: 1.05em;
 }
 
@@ -877,9 +917,10 @@ header {
   outline: 3px solid transparent;
   box-shadow: var(--shadow-main);
   transition: outline-color 0.15s;
+  cursor: pointer;
 }
 .register-form__register-button[disabled], .register-form__register-button--no-click {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: default;
 }
 .register-form__register-button:not([disabled]):not(.register-form__register-button--no-click):hover, .register-form__register-button:not([disabled]):not(.register-form__register-button--no-click):focus-visible {
@@ -941,20 +982,8 @@ header {
   grid-area: avatar;
 }
 .profile__name {
-  color: var(--color-text-main);
-  text-decoration: 1px underline var(--color-text-main);
-  border-radius: 1px;
-  outline: none;
-  transition: color 0.15s, text-decoration-color 0.15s;
-}
-.profile__name:hover, .profile__name:focus-visible {
-  color: var(--color-accent-main);
-  text-decoration-color: var(--color-accent-main);
-}
-.profile__name {
   grid-area: name;
   font: bold 1.6rem/1em Verdana;
-  text-decoration: none;
 }
 .profile__stats {
   display: flex;
@@ -989,6 +1018,17 @@ header {
 .profile--mini .profile__avatar {
   width: 60px;
   grid-area: avatar;
+}
+.profile--mini .profile__name {
+  color: var(--color-text-main);
+  text-decoration: 1px underline var(--color-text-main);
+  border-radius: 1px;
+  outline: none;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.profile--mini .profile__name:hover, .profile--mini .profile__name:focus-visible {
+  color: var(--color-accent-main);
+  text-decoration-color: var(--color-accent-main);
 }
 .profile--mini .profile__name {
   font: 1em/1em Verdana;
@@ -1055,9 +1095,10 @@ header {
   outline: 3px solid transparent;
   box-shadow: var(--shadow-main);
   transition: outline-color 0.15s;
+  cursor: pointer;
 }
 .user-settings__save-button[disabled], .user-settings__save-button--no-click {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: default;
 }
 .user-settings__save-button:not([disabled]):not(.user-settings__save-button--no-click):hover, .user-settings__save-button:not([disabled]):not(.user-settings__save-button--no-click):focus-visible {

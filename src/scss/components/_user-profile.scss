@@ -16,10 +16,8 @@
     }
 
     &__name {
-        @include light-up-link;
         grid-area: name;
         font: $h1;
-        text-decoration: none;
     }
 
     &__stats {
@@ -65,7 +63,8 @@
         }
 
         .profile__name {
-            font: $text-default;
+            @include light-up-link;
+            font: $font-text-default;
         }
     }
 

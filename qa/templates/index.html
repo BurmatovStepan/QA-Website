@@ -6,7 +6,7 @@
 {% endblock main_title %}
 
 {% block main_title_extra %}
-  <h3><a href="{% url "question_listing" %}" class="hot-questions">{{ main_title_extra }}</a></h3>
+  <h3><a href="{% url "question_listing" %}?hot=3d" class="hot-questions">{{ main_title_extra }}</a></h3>
 {% endblock main_title_extra %}
 
 {% block body_class %}homepage{% endblock body_class %}

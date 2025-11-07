@@ -1,5 +1,10 @@
 from typing import Any
 
+from django.core.cache import cache
+
+from .utils import (safe_int_conversion, update_best_members,
+                    update_popular_tags)
+
 MOCK_QUESTIONS = []
 MOCK_ANSWERS = []
 MOCK_USERS = []
@@ -69,23 +74,12 @@ class BaseContextViewMixin:
     main_title = None
     main_title_extra = None
 
-    #! REMOVE LATER
     current_user = None
+
     items_per_page = None
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs) # type: ignore
-
-        context["page_title"] = self.page_title or "Default Page Name"
-        context["main_title"] = self.main_title
-        context["main_title_extra"] = self.main_title_extra
-
-        context["current_user"] = self.current_user
-
-        return context
-
     def dispatch(self, request, *args, **kwargs):
-        user_id = self.request.GET.get("user", None) # type: ignore
+        user_id = self.request.GET.get("user", None)
         user_id = safe_int_conversion(user_id)
 
         if (user_id is not None):
@@ -94,11 +88,30 @@ class BaseContextViewMixin:
                 None
             )
 
-        page_size = self.request.GET.get("page-size", None) # type: ignore
+        page_size = self.request.GET.get("page-size", None)
         self.items_per_page = safe_int_conversion(page_size)
 
-        return super().dispatch(request, *args, **kwargs) # type: ignore
+        return super().dispatch(request, *args, **kwargs)
 
-def safe_int_conversion(value: str):
-    try: return int(value)
-    except (ValueError, TypeError): return None
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+
+        context["page_title"] = self.page_title or "Default Page Name"
+        context["main_title"] = self.main_title
+        context["main_title_extra"] = self.main_title_extra
+
+        context["current_user"] = self.current_user
+
+        best_members = cache.get("best_members")
+        popular_tags = cache.get("popular_tags")
+
+        if (best_members is None):
+            best_members = update_best_members()
+            
+        if (popular_tags is None):
+            popular_tags = update_popular_tags()
+
+        context["best_members"] = best_members
+        context["popular_tags"] = popular_tags
+
+        return context

@@ -1,11 +1,11 @@
 {% load static %}
 
 <div class="question {{ modifier_classes }}">
-  <img src="{% static question.author_avatar %}"
+  <img src="{% static question.author.avatar %}"
        alt="avatar"
        class="question__avatar">
 
-  <div class="question__rating rating-input">{% include "snippets/rating-input.html" with content_item=question %}</div>
+  {% include "snippets/rating-input.html" with content_item=question component_name="question__rating" %}
 
   <div class="question__body">
     <a href="{% url "question_discussion" question.id %}" class="question__title">{{ question.title }}</a>
@@ -13,12 +13,12 @@
   </div>
 
   <div class="question__footer">
-    {% if show_answer_amount is not False %}<a href="#">answers ({{ question.answer_amount }})</a>{% endif %}
+    {% if show_answer_amount is not False %}<a href="{% url "question_discussion" question.id %}#first-answer">answers ({{ question.answer_amount }})</a>{% endif %}
     <div class="question__tags-section">
       Tags:
       <ul class="question__tags-list">
         {% for tag in question.tags %}
-          <li class="question__tag"><a href="#">{{ tag }}</a></li>
+          <li class="question__tag"><a href="{% url "question_listing" %}?tag={{ tag|urlencode }}">{{ tag }}</a></li>
         {% endfor %}
       </ul>
     </div>

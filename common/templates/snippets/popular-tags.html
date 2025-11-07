@@ -1,13 +1,8 @@
 <section class="popular-tags">
   <h1>Popular Tags</h1>
   <div class="popular-tags__links">
-    <a href="#">perl</a>
-    <a href="#" class="python">python</a>
-    <a href="#">TechnoPark</a>
-    <a href="#" class="mysql">MySQL</a>
-    <a href="#" class="django">django</a>
-    <a href="#">Mail.Ru</a>
-    <a href="#">Voloshin</a>
-    <a href="#" class="firefox">Firefox</a>
+    {% for tag in popular_tags %}
+      <a href="{% url "question_listing" %}?tag={{ tag|urlencode }}" class="{{ tag|slugify }}">{{ tag }}</a>
+    {% endfor %}
   </div>
 </section>

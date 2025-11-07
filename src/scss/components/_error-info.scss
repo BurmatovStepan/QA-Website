@@ -18,9 +18,21 @@
 
     &__detail {
         font: $h1;
+        line-height: 1.05em;
+
+        & > a {
+            color: $color-accent-main;
+            transition: font-size 0.3s;
+        }
+
+        & > a:hover,
+        & > a:focus-visible {
+            font-size: 1.05em;
+        }
     }
 
     &__critical-word {
         color: $color-text-error;
     }
+
 }

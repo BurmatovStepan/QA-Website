@@ -1,13 +1,19 @@
 {% load custom_tags %}
 
 <section class="paginator">
-  {% if page_obj.has_previous %}
-    <a href="?{% url_replace page=page_obj.previous_page_number %}" class="paginator__button">&laquo;</a>
-  {% endif %}
+  {% with page_range=page_obj|get_elided_page_range:1 %}
+    {% for i in page_range %}
 
-  <button disabled title="Already on this page" class="paginator__button">Page {{ page_obj.number }} of {{ paginator.num_pages }}</button>
+      {% if i == paginator.ELLIPSIS %}
+        <div class="paginator__button paginator__button--no-click">
+          {{ i }}
+        </div>
+      {% else %}
+        <div class="paginator__button {% if page_obj.number == i %}paginator__button--current-page{% endif %}">
+          <a href="?{% url_replace page=i %}">{{ i }}</a>
+        </div>
+      {% endif %}
 
-  {% if page_obj.has_next %}
-    <a href="?{% url_replace page=page_obj.next_page_number %}" class="paginator__button">&raquo;</a>
-  {% endif %}
+    {% endfor %}
+  {% endwith %}
 </section>

@@ -3,9 +3,45 @@
 .paginator {
     display: flex;
     margin-top: 16px;
+    padding-bottom: 8px;
     gap: 12px;
 
     &__button {
         @include default-button;
+        position: relative;
+        width: 40px;
+        outline: none;
+
+        &::after {
+            position: absolute;
+            right: -8px;
+            bottom: -12px;
+            left: -8px;
+            height: 2px;
+
+            background-color: transparent;
+            transition: background-color 0.3s;
+            content: "";
+        }
+
+        &:not(&--no-click):hover,
+        &:not(&--no-click):focus-within,
+        &--current-page {
+            &::after {
+                background-color: $color-accent-main;
+            }
+        }
+
+
+        & > a {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            color: $color-text-main;
+            text-align: center;
+        }
     }
 }

@@ -1,7 +1,7 @@
 {% load static %}
 
-<div class="answer {{ modifier_classes }}">
-  <img src="{% static answer.author_avatar %}"
+<div class="answer {{ modifier_classes }}" {% if forloop.first %}id="first-answer"{% endif %}">
+  <img src="{% static answer.author.avatar %}"
       alt="avatar"
       class="answer__avatar"
   >
