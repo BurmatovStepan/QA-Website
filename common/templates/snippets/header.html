@@ -7,7 +7,7 @@
          class="website-icon"
     >
   </a>
-  <form class="search-bar" action="{% url "question_listing" %}" method="GET">
+  <form class="search-bar" method="GET">
     <input type="search"
            name="query"
            class="search-bar__input"
@@ -15,7 +15,7 @@
            required
     >
   </form>
-  <button class="new-question-button">New question</button>
+  <a class="new-question-button" href="{% url "new_question" %}">New question</a>
 
   {% if current_user %}
 

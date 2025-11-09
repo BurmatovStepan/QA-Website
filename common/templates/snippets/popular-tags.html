@@ -2,7 +2,7 @@
   <h1>Popular Tags</h1>
   <div class="popular-tags__links">
     {% for tag in popular_tags %}
-      <a href="{% url "question_listing" %}?tag={{ tag|urlencode }}" class="{{ tag|slugify }}">{{ tag }}</a>
+      <a href="{% url "tag_question_listing" tag %}" class="{{ tag|slugify }}">{{ tag }}</a>
     {% endfor %}
   </div>
 </section>

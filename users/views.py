@@ -13,7 +13,7 @@ class LoginView(BaseContextViewMixin, TemplateView):
     template_name = "login.html"
     page_title = "AskMe | Log in"
     main_title = "Log In"
-    
+
 
 class RegisterView(BaseContextViewMixin, TemplateView):
     template_name = "register.html"
@@ -28,17 +28,15 @@ class ProfileView(BaseContextViewMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         user_id = kwargs.get("id")
-        user = next(
-            (user for user in MOCK_USERS if user.get("id") == user_id),
-            None
-        )
+        user = MOCK_USERS.get(user_id)
+
         if (user is None):
             raise Http404(f"User with ID '{user_id}' does not exist.")
 
         user["recent_activities"] = get_recent_activities(user_id)[:MAX_RECENT_ACTIVITIES]
 
         context["user"] = user
-        context["page_title"] = f"User | {user.get("displayed_name")}"
+        context["page_title"] = f"User | {user["displayed_name"]}"
 
         return context
 

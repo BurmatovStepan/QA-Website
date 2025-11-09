@@ -10,6 +10,7 @@
         @include default-button;
         position: relative;
         width: 40px;
+        min-height: 32px;
         outline: none;
 
         &::after {

@@ -277,7 +277,6 @@ footer {
   display: grid;
   padding: 8px 16px;
   grid-template-areas: "avatar content" "rating correct-btn";
-  place-items: center;
   gap: 8px 16px;
   border: 2px solid var(--color-text-main);
   box-shadow: var(--shadow-main);
@@ -705,6 +704,7 @@ header {
 .paginator__button {
   position: relative;
   width: 40px;
+  min-height: 32px;
   outline: none;
 }
 .paginator__button::after {

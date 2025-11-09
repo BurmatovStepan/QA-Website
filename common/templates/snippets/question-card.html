@@ -18,7 +18,7 @@
       Tags:
       <ul class="question__tags-list">
         {% for tag in question.tags %}
-          <li class="question__tag"><a href="{% url "question_listing" %}?tag={{ tag|urlencode }}">{{ tag }}</a></li>
+          <li class="question__tag"><a href="{% url "tag_question_listing" tag %}">{{ tag }}</a></li>
         {% endfor %}
       </ul>
     </div>
