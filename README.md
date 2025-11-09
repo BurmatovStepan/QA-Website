@@ -2,29 +2,40 @@
 > Семестровый проект ТехноПарк (осень 2025)
 
 # Установка
-Перед установкой необходимо иметь **[Node.js](https://nodejs.org/en) (v20+)** и **[npm](https://www.npmjs.com/)**.
+Перед установкой необходимо иметь **[Python](https://www.python.org/downloads/) (v3.10+)**, **[Node.js](https://nodejs.org/en) (v20+)** и **[npm](https://www.npmjs.com/)**.
 
 Откройте проект и выполните команды.
+1. Создайте проект
 ```
 git clone https://github.com/BurmatovStepan/QA-Website.git
 cd qa-website
-npm install
 ```
 
-# Сборка
+2. Установите зависимости
+```
+npm install
+pip install -r requirements.txt
+```
+
+3. Создатей файл `.env` в корневой директории. Данные переменные используются в `settings.py` django-приложения
+```
+SECRET_KEY=<YOUR_SECRET_KEY>
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1|localhost
+```
+
+# Сборка статических файлов
 В `package.json`  предусмотрено 2 скрипта для сборки:
-- `npm run build:dev` - собирает проект в `dist/QA-Website` без оптимизаций
-- `npm run build` - собирает проект в `/dist`
+- `npm run build:dev` - копирует `assets/` и собирает `scss/style.scss` и `ts/main.ts` в `static/` без оптимизаций.
+- `npm run build` - собирает проект в `static/` со сжатием `style.css`.
 
-# Отладка
-`npm start` - открывает сервер с HMR на http://localhost:1234.
+# Запуск/Отладка
+`npm start` - выполняет команду `build:dev`, запускает сервер Django на http://127.0.0.1:8000/ и создает файловые наблюдатели для `assets/`, `scss/` и `ts/`, обеспечивая **HMR** при изменении файлов.
 
-# Развертывание
-Проект использует **GitHub Actions** для автоматического развертывания приложения на **GitHub Pages**.
-### Процесс
-1. Отправьте код (Push/Merge) в ветку `main`
-2. Автоматически запускается `deploy.yaml`
-3. Выполняется команда `npm run build`
-4. Содержимое папки `./dist` загружается и публикуется на ваших GitHub Pages
+> [!WARNING]
+> Команды `npm start`, `npm run build:dev` и `npm run build` удаляют директорию `static/` перед выполнением.
 
-Примечание: запустить развертывание можно вручную через вкладку "Actions" в GitHub.
+> [!TIP]
+> Для тестирования mock-данных доступны следующие теги (?tag=value в строке поиска)
+> 1. `user=<user_id>` - авторизация под пользователем с `id=user_id`
+> 2. `page-size=<int>` - задание размера пагинации

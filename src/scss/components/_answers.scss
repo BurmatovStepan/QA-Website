@@ -5,7 +5,6 @@
     padding: 4px 0px 20px 0px;
     flex-direction: column;
     gap: 20px;
-    border-bottom: 2px solid $color-accent-main;
 }
 
 .answer {
@@ -14,7 +13,8 @@
     grid-template-areas:
         "avatar content"
         "rating correct-btn";
-    place-items: center;
+    // grid-template-columns: max-content 1fr;
+    // place-items: center;
 
 
     gap: 8px 16px;

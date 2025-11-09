@@ -1,0 +1,19 @@
+{% load custom_tags %}
+
+<section class="paginator">
+  {% with page_range=page_obj|get_elided_page_range:1 %}
+    {% for i in page_range %}
+
+      {% if i == paginator.ELLIPSIS %}
+        <div class="paginator__button paginator__button--no-click">
+          {{ i }}
+        </div>
+      {% else %}
+        <div class="paginator__button {% if page_obj.number == i %}paginator__button--current-page{% endif %}">
+          <a href="?{% url_replace page=i %}">{{ i }}</a>
+        </div>
+      {% endif %}
+
+    {% endfor %}
+  {% endwith %}
+</section>

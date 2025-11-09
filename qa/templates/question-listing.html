@@ -1,0 +1,26 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block main_title %}
+  <h1>{{ main_title }}</h1>
+{% endblock main_title %}
+
+{% block main_title_extra %}
+  {% if main_title_extra %}
+    <h2>{{ main_title_extra }}</h2>
+  {% endif %}
+{% endblock main_title_extra %}
+
+{% block body_class %}question-listing{% endblock body_class %}
+
+{% block main_content %}
+  <section class="questions">
+
+    {% for question in mock_questions %}
+      {% include "snippets/question-card.html" with modifier_classes="question--bordered" %}
+    {% endfor %}
+
+  </section>
+
+  {% include "snippets/paginator.html" %}
+{% endblock main_content %}

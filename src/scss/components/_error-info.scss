@@ -1,0 +1,38 @@
+@use '../config' as *;
+
+.error-info {
+    display: flex;
+    flex-direction: column;
+
+    &__code {
+        margin-bottom: 16px;
+        font: $h1;
+        font-size: 80px;
+    }
+
+    &__description {
+        margin-bottom: 32px;
+        font: $h1;
+        font-size: 40px;
+    }
+
+    &__detail {
+        font: $h1;
+        line-height: 1.05em;
+
+        & > a {
+            color: $color-accent-main;
+            transition: font-size 0.3s;
+        }
+
+        & > a:hover,
+        & > a:focus-visible {
+            font-size: 1.05em;
+        }
+    }
+
+    &__critical-word {
+        color: $color-text-error;
+    }
+
+}
