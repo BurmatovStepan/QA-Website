@@ -30,7 +30,7 @@ class ProfileView(BaseContextViewMixin, TemplateView):
         user_id = kwargs.get("id")
         user = MOCK_USERS.get(user_id)
 
-        if (user is None):
+        if user is None:
             raise Http404(f"User with ID '{user_id}' does not exist.")
 
         user["recent_activities"] = get_recent_activities(user_id)[:MAX_RECENT_ACTIVITIES]
@@ -47,7 +47,7 @@ class SettingsView(BaseContextViewMixin, TemplateView):
     main_title = "Settings: "
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if (self.current_user is None):
+        if self.current_user is None:
             return redirect("error_401")
 
         return super().get(request, *args, **kwargs)

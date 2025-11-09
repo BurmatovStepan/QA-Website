@@ -39,7 +39,7 @@ class HomepageView(BaseContextViewMixin, ListView):
         for question in questions:
             question["author"] = MOCK_USERS.get(question["author_id"])
 
-        if (self.current_user is not None):
+        if self.current_user is not None:
             disliked_ids = self.current_user["disliked_questions"]
             questions.sort(key=lambda question: question["id"] in disliked_ids)
 
@@ -60,7 +60,7 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         question_id = self.kwargs.get("id")
         question = queryset.get(question_id)
 
-        if (question is None):
+        if question is None:
             raise Http404(f"Question with ID '{question_id}' does not exist.")
 
         question["author"] = MOCK_USERS.get(question["author_id"])
@@ -113,10 +113,10 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
 
         questions = []
         for question in MOCK_QUESTIONS.values():
-            if (search_query not in question["title"].lower()):
+            if search_query not in question["title"].lower():
                 continue
 
-            if (self.hot_period and not question["is_hot"]):
+            if self.hot_period and not question["is_hot"]:
                 continue
 
             questions.append(copy.deepcopy(question))
@@ -124,7 +124,7 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
         for question in questions:
             question["author"] = MOCK_USERS.get(question["author_id"])
 
-        if (self.current_user is not None):
+        if self.current_user is not None:
             disliked_ids = self.current_user["disliked_questions"]
             questions.sort(key=lambda question: question["id"] in disliked_ids)
 
@@ -160,11 +160,11 @@ class TagsQuestionListingView(BaseContextViewMixin, ListView):
 
         questions = []
         for question in MOCK_QUESTIONS.values():
-            if (search_query not in question["title"].lower()):
+            if search_query not in question["title"].lower():
                 continue
 
             question_tags_lowercase = {tag.lower() for tag in question["tags"]}
-            if (not self.tags <= question_tags_lowercase):
+            if not self.tags <= question_tags_lowercase:
                 continue
 
             questions.append(copy.deepcopy(question))
@@ -172,7 +172,7 @@ class TagsQuestionListingView(BaseContextViewMixin, ListView):
         for question in questions:
             question["author"] = MOCK_USERS.get(question["author_id"])
 
-        if (self.current_user is not None):
+        if self.current_user is not None:
             disliked_ids = self.current_user["disliked_questions"]
             questions.sort(key=lambda question: question["id"] in disliked_ids)
 

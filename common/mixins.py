@@ -82,7 +82,7 @@ class BaseContextViewMixin:
         user_id = self.request.GET.get("user")
         user_id = safe_int_conversion(user_id)
 
-        if (user_id is not None):
+        if user_id is not None:
             self.current_user = MOCK_USERS.get(user_id)
 
         page_size = self.request.GET.get("page-size")
@@ -102,10 +102,10 @@ class BaseContextViewMixin:
         best_members = cache.get("best_members")
         popular_tags = cache.get("popular_tags")
 
-        if (best_members is None):
+        if best_members is None:
             best_members = update_best_members()
 
-        if (popular_tags is None):
+        if popular_tags is None:
             popular_tags = update_popular_tags()
 
         context["best_members"] = best_members
