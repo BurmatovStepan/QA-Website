@@ -24,7 +24,7 @@
           alt="avatar"
           class="profile__avatar"
       >
-      <a href="{% url "user" current_user.id %}" class="profile__name">{{ current_user.displayed_name }}</a>
+      <a href="{% url "user" current_user.id %}" class="profile__name">{{ current_user.display_name }}</a>
 
       <div class="profile__actions">
         <a href="{% url "settings" %}">Settings</a>

@@ -5,11 +5,11 @@ from django.core.paginator import Paginator
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.http import Http404
+from qa.models import Question
 from django.http.response import HttpResponse as HttpResponse
 from django.views.generic import DetailView, ListView, TemplateView
 
-from common.mixins import (MOCK_ANSWERS, MOCK_QUESTIONS, MOCK_USERS,
-                           BaseContextViewMixin)
+from common.mixins import BaseContextViewMixin
 
 DEFAULT_PAGINATION_SIZE = 10
 DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS = 3
@@ -22,7 +22,7 @@ class HomepageView(BaseContextViewMixin, ListView):
     main_title_extra = "Hot Questions"
 
     paginate_by = DEFAULT_PAGINATION_SIZE
-    context_object_name = "mock_questions"
+    context_object_name = "questions"
 
     def get(self, request, *args, **kwargs):
         self.paginate_by = self.items_per_page or self.paginate_by
@@ -30,20 +30,11 @@ class HomepageView(BaseContextViewMixin, ListView):
 
     def get_queryset(self) -> QuerySet[Any]:
         search_query = self.request.GET.get("query", "").lower()
+        queryset = Question.objects.get_homepage_list(
+            search_query=search_query
+        )
 
-        questions = [
-            copy.deepcopy(question) for question in MOCK_QUESTIONS.values()
-            if search_query in question["title"].lower()
-        ]
-
-        for question in questions:
-            question["author"] = MOCK_USERS.get(question["author_id"])
-
-        if self.current_user is not None:
-            disliked_ids = self.current_user["disliked_questions"]
-            questions.sort(key=lambda question: question["id"] in disliked_ids)
-
-        return questions
+        return queryset
 
 
 class QuestionDiscussionView(BaseContextViewMixin, DetailView):

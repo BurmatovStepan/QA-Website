@@ -2,39 +2,6 @@ from typing import Any
 
 from django.core.cache import cache
 
-MOCK_USERS = {}
-MOCK_ACTIVITIES = {}
-for i in range(1, 101):
-    MOCK_USERS[i] = {
-        "id": i,
-        "login": f"[{i}] idk",
-        "password": f"[{i}] still no clue",
-        "email": f"[{i}] whydidi@add.this",
-        "displayed_name": f"[{i}] Remembered",
-        "avatar": "assets/avatar.svg" if i % 2 else "assets/better-avatar.jpeg",
-        "rating": i,
-        "total_questions_asked": i,
-        "total_answers_posted": i,
-        "disliked_questions": [i + j for j in range(5)],
-    }
-
-    MOCK_ACTIVITIES[i] = {
-        "id": i,
-        "user_id": i,
-        "type": i % 3 + 1,
-        "target_id": i,
-        "date": "5-11-2025",
-    }
-
-    MOCK_ACTIVITIES[i + 100] = {
-        "id": i + 101,
-        "user_id": 1,
-        "type": i % 3 + 1,
-        "target_id": i,
-        "date": "5-11-2025",
-    }
-
-
 CACHE_TTL = 60 * 60 * 24
 
 

@@ -6,7 +6,7 @@
 {% block main_content %}
 <section class="profile">
   <img src="{% static user.avatar %}" alt="avatar" class="profile__avatar">
-  <span class="profile__name">{{ user.displayed_name }}</span>
+  <span class="profile__name">{{ user.display_name }}</span>
   <div class="profile__stats">
     <span>User rating: {{ user.rating }}</span>
     <span>Questions asked: {{ user.total_questions_asked }}</span>

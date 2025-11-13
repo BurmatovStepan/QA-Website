@@ -36,7 +36,7 @@ class ProfileView(BaseContextViewMixin, TemplateView):
         user["recent_activities"] = get_recent_activities(user_id)[:MAX_RECENT_ACTIVITIES]
 
         context["user"] = user
-        context["page_title"] = f"User | {user["displayed_name"]}"
+        context["page_title"] = f"User | {user["display_name"]}"
 
         return context
 

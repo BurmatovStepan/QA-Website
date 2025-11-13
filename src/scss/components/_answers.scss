@@ -13,8 +13,7 @@
     grid-template-areas:
         "avatar content"
         "rating correct-btn";
-    // grid-template-columns: max-content 1fr;
-    // place-items: center;
+    grid-template-columns: max-content 1fr;
 
 
     gap: 8px 16px;

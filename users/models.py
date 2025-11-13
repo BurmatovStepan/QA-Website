@@ -7,6 +7,8 @@ from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
 from django.utils import timezone
 
+from common.base_models import TimeStampedModel
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, login, email, password=None, **extra_fields):
@@ -32,21 +34,19 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(login, email, password, **extra_fields)
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class CustomUser(TimeStampedModel, AbstractBaseUser, PermissionsMixin):
+    objects: CustomUserManager = CustomUserManager()
+
     login = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
 
-    displayed_name = models.CharField(max_length=150, blank=True, null=True)
+    display_name = models.CharField(max_length=150, blank=True, null=True)
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     rating = models.IntegerField(default=0)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    objects = CustomUserManager()
 
     USERNAME_FIELD = "login"
     REQUIRED_FIELDS = ["email"]
@@ -65,14 +65,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Activity(models.Model):
-    ACTIVITY_TYPES = (
+    ACTIVITY_TYPES = [
         ("Q_RECEIVED_LIKE", "Question received a like"),
         ("Q_RECEIVED_ANSWER", "Question received an answer"),
         ("A_RECEIVED_LIKE", "Answer received a like"),
         ("A_MARKED_CORRECT", "Answer was marked correct"),
         ("U_CHANGED_AVATAR", "Changed avatar"),
         ("U_CHANGED_NAME", "Changed name"),
-    )
+    ]
 
     type = models.CharField(choices=ACTIVITY_TYPES)
     user = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, related_name="activities")

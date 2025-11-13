@@ -6,7 +6,7 @@
 {% endblock main_title %}
 
 {% block main_title_extra %}
-  <h1><a href="{% url "user" current_user.id %}" class="user-name">{{ current_user.displayed_name }}</a></h1>
+  <h1><a href="{% url "user" current_user.id %}" class="user-name">{{ current_user.display_name }}</a></h1>
 {% endblock  %}
 
 {% block main_content %}
@@ -33,7 +33,7 @@
       <label for="user-settings__name">Displayed name</label>
       <input type="text"
              name="username"
-             value="{{ current_user.displayed_name }}"
+             value="{{ current_user.display_name }}"
              class="user-settings__name"
              id="user-settings__name"
              minlength="2"
