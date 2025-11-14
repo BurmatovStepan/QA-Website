@@ -2,9 +2,9 @@ from typing import Any
 
 from django.core.cache import cache
 
+from common.constants import DEFAULT_PAGINATION_SIZE
 from qa.models import Tag
 from users.models import CustomUser
-from common.constants import DEFAULT_PAGINATION_SIZE
 
 CACHE_TTL = 60 * 60 * 24
 
@@ -13,7 +13,7 @@ class BaseContextViewMixin:
     main_title = None
     main_title_extra = None
 
-    current_user: CustomUser = None
+    current_user = None
 
     page_size = None
 

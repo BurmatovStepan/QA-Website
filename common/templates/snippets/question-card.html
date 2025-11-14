@@ -1,6 +1,10 @@
 {% load static %}
 
 <div class="question {{ modifier_classes }}">
+  {% comment %}
+    TODO Make all avatar/username ifelse a snippet
+    TODO Make default avatar switch color depending on theme
+  {% endcomment %}
   {% if question.author.profile.avatar %}
     <img src="{{ question.author.profile.avatar.url }}"
         alt="avatar"
@@ -21,7 +25,7 @@
   <div class="question__footer">
     {% if show_answer_amount is not False %}
       {% if question.answer_count > 0  %}
-        <a href="{% url "question_discussion" question.id question.slug %}#{{ question.best_answer_id }}">answers ({{ question.answer_count }})</a>
+        <a href="{% url "question_discussion" question.id question.slug %}#first-answer">answers ({{ question.answer_count }})</a>
         {% else %}
         <a href="{% url "question_discussion" question.id question.slug %}">no answers yet</a>
       {% endif %}

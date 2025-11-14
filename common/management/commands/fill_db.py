@@ -2,17 +2,22 @@ from math import inf
 from random import choice, randint, sample
 from time import time
 
+import inflect
 from django.contrib.auth.hashers import make_password
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction
+from django.db import connections, transaction
 from django.utils.text import slugify
 from faker import Faker
-import inflect
+
 from qa.models import Answer, Question, Tag, Vote
 from users.models import Activity, CustomUser, UserProfile
 
-BATCH_SIZE = 5000
+# TODO Add support for appending data
+# TODO Create script that recalculates rating based on DB
+# TODO Disable some users
+
+BATCH_SIZE = 10_000
 DEFAULT_PASSWORD = "qwerty"
 
 INFLECT_ENGINE = inflect.engine()
@@ -57,13 +62,6 @@ class ProgressTracker:
 
         return (None, False)
 
-    def reset(self, report_threshold=None, total=None):
-        self.report_threshold = self.report_threshold if report_threshold is None else report_threshold
-        self.next_report_threshold = self.report_threshold
-        self.entities_created = 0
-        self.entities_created_between_thresholds = 0
-        self.target_total = self.target_total if total is None else total
-
 
 class Command(BaseCommand):
     help = "Fills the database with test data: users, questions, answers, tags, and votes."
@@ -80,7 +78,6 @@ class Command(BaseCommand):
             nargs="+",
             help="Models for which data will be created.",
         )
-
 
     def handle(self, *args, **options):
         CREATION_FUNCTIONS = {
@@ -122,8 +119,18 @@ class Command(BaseCommand):
 
         new_entities = []
 
+        should_optimize = False
+        if EntityModel.__name__ in ["Question", "Answer"]:
+            db_conn = connections[EntityModel.objects.db]
+            should_optimize = True
+
         try:
             with transaction.atomic():
+                if should_optimize:
+                    with db_conn.cursor() as cursor:
+                        self.stdout.write(self.style.NOTICE("  -> Disabling Foreign Key checks..."))
+                        cursor.execute("SET session_replication_role = 'replica';")
+
                 for i in range(1, total + 1):
                     entity = entity_generator(i)
                     new_entities.append(entity)
@@ -141,6 +148,11 @@ class Command(BaseCommand):
                     progress, to_print = progress_tracker.create_entities(len(new_entities))
 
                 self.stdout.write(f"  >> Bulk created final {progress:,} {entity_name_plural}.")
+
+                if should_optimize:
+                    with db_conn.cursor() as cursor:
+                        self.stdout.write(self.style.NOTICE("  -> Re-enabling Foreign Key checks..."))
+                        cursor.execute("SET session_replication_role = 'origin';")
 
         except Exception as e:
             raise CommandError(f"Database creation failed: {e}")
@@ -171,7 +183,7 @@ class Command(BaseCommand):
     def create_user_profiles(self, total):
         fake = Faker()
 
-        user_ids = list(CustomUser.objects.values_list("id", flat=True))
+        user_ids = list(CustomUser.objects.filter(profile__isnull=True).values_list("id", flat=True))
 
         if len(user_ids) == 0:
             raise CommandError("No users were found to link profiles.")
@@ -232,9 +244,10 @@ class Command(BaseCommand):
                 author_id=author_id,
                 title=title,
                 slug=slugify(title),
-                rating_total=randint(-50, 50),
+                rating_total=randint(-(total // 50), total // 50),
+                answer_count=randint(0, 15),
                 content=content,
-                view_count=randint(0, 1000),
+                view_count=randint(0, total),
                 is_active=(i % 100 != 0)
             )
 
@@ -245,7 +258,7 @@ class Command(BaseCommand):
             entity_generator=question_generator
         )
 
-        REPORT_THRESHOLD = max(BATCH_SIZE * 2, total // 20)
+        REPORT_THRESHOLD = max(BATCH_SIZE * 2, (total * 3) // 20)
 
         question_ids = list(Question.objects.values_list("id", flat=True))
         QuestionTagModel = Question.tags.through
@@ -298,10 +311,10 @@ class Command(BaseCommand):
             author_id = choice(user_ids)
             content = fake.paragraph(nb_sentences=8)
 
-            return  Answer(
+            return Answer(
                 question_id=question_id,
                 author_id=author_id,
-                rating_total=randint(-20, 20),
+                rating_total=randint(-(total // 2000), total // 2000),
                 content=content,
                 is_correct=(i % 10 == 0),
                 is_active=(i % 100 != 0)
@@ -312,7 +325,6 @@ class Command(BaseCommand):
             entity_name="answer",
             entity_generator=answer_generator
         )
-
 
     def create_votes(self, total):
         self.stdout.write(f"\nCreating {total:,} {self.style.SQL_TABLE("votes")}...")
@@ -339,8 +351,14 @@ class Command(BaseCommand):
             answer_content_type = ContentType.objects.get_for_model(Answer)
             TARGET_OPTIONS.append((answer_content_type.id, answer_ids))
 
+        db_conn = connections[Vote.objects.db]
+
         try:
             with transaction.atomic():
+                with db_conn.cursor() as cursor:
+                    self.stdout.write(self.style.NOTICE("  -> Disabling Foreign Key checks..."))
+                    cursor.execute("SET session_replication_role = 'replica';")
+
                 attempts = 0
                 while len(created_vote_tuples) < total:
                     attempts += 1
@@ -373,7 +391,7 @@ class Command(BaseCommand):
                         if to_print:
                             self.stdout.write(f"  -> Bulk created {progress:,} votes so far...")
 
-                    if attempts % 100_000 == 0:
+                    if attempts % (REPORT_THRESHOLD * 5) == 0:
                         self.stdout.write(self.style.NOTICE(f"  -> Generated {len(created_vote_tuples):,} unique votes in {attempts:,} attempts..."))
 
                 if new_votes:
@@ -381,6 +399,10 @@ class Command(BaseCommand):
                     progress, to_print = progress_tracker.create_entities(len(new_votes))
 
                 self.stdout.write(f"  >> Bulk created final {progress:,} votes.")
+
+                with db_conn.cursor() as cursor:
+                    self.stdout.write(self.style.NOTICE("  -> Re-enabling Foreign Key checks..."))
+                    cursor.execute("SET session_replication_role = 'origin';")
 
         except Exception as e:
             raise CommandError(f"Vote creation failed: {e}")
@@ -413,8 +435,14 @@ class Command(BaseCommand):
 
         new_activities = []
 
+        db_conn = connections[Activity.objects.db]
+
         try:
             with transaction.atomic():
+                with db_conn.cursor() as cursor:
+                    self.stdout.write(self.style.NOTICE("  -> Disabling Foreign Key checks..."))
+                    cursor.execute("SET session_replication_role = 'replica';")
+
                 for i in range(1, total + 1):
                     user_id = choice(user_ids)
                     target_content_type_id, target_ids = choice(TARGET_OPTIONS)
@@ -452,6 +480,10 @@ class Command(BaseCommand):
                     progress, to_print = progress_tracker.create_entities(len(new_activities))
 
                 self.stdout.write(f"  >> Bulk created final {progress:,} activities.")
+
+                with db_conn.cursor() as cursor:
+                    self.stdout.write(self.style.NOTICE("  -> Re-enabling Foreign Key checks..."))
+                    cursor.execute("SET session_replication_role = 'origin';")
 
         except Exception as e:
             raise CommandError(f"Vote creation failed: {e}")

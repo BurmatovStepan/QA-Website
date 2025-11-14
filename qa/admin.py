@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from qa.models import Answer, Question, Tag, Vote
 
+# TODO Fix, like, the whole admin panel
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):

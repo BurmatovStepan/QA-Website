@@ -1,22 +1,21 @@
-import copy
 from typing import Any
-from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, When, Value
-from django.urls import reverse
+
 from django.core.paginator import Paginator
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
-from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect
-from qa.models import Question
 from django.http.response import HttpResponse as HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.views.generic import DetailView, ListView, TemplateView
-from common.constants import DEFAULT_PAGINATION_SIZE
 
+from common.constants import DEFAULT_PAGINATION_SIZE
 from common.mixins import BaseContextViewMixin
+from qa.models import Question
 
 DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS = 3
 TAG_DELIMITER = "~"
+
+# TODO Decide if you type-hint
 
 class HomepageView(BaseContextViewMixin, ListView):
     template_name = "index.html"
@@ -87,19 +86,20 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         context["paginator"] = paginator
         context["answers"] = answer_page_object.object_list
 
+        # TODO Check if this work
         question.view_count = question.view_count + 1
         question.save(update_fields=["view_count"])
 
         return context
 
-
+# TODO Make this accessible from footer or smth
 class HotQuestionsView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
     page_title = "Hot Questions"
     main_title = "Hot: "
 
     paginate_by = DEFAULT_PAGINATION_SIZE
-    context_object_name = "mock_questions"
+    context_object_name = "questions"
 
     hot_period = DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS
 
@@ -113,7 +113,9 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
         search_query = self.request.GET.get("query", "").lower()
 
         queryset = Question.objects.get_question_list(search_query)
-        queryset = Question.objects.get_hot_questions(queryset, self.hot_period, self.current_user) #* it's just ORDER BY rating_total DESC
+
+        #* this just ORDER BY rating_total DESC
+        queryset = Question.objects.get_hot_questions(queryset, self.hot_period, self.current_user)
 
         return queryset
 
@@ -125,6 +127,7 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
         return context
 
 
+# TODO Make this accessible from footer or smth
 class TagsQuestionListingView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
     page_title = "Tags Question Listing"
@@ -149,7 +152,7 @@ class TagsQuestionListingView(BaseContextViewMixin, ListView):
 
         if self.tag_slugs:
             for tag_slug in self.tag_slugs:
-                queryset = queryset.filter(tags__slug__iexact=tag_slug) #? Maybe __icontains
+                queryset = queryset.filter(tags__slug__iexact=tag_slug) #? Maybe use __icontains
 
         return queryset
 

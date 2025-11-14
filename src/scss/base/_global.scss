@@ -7,6 +7,10 @@ body {
     background-color: $color-bg-main;
 }
 
+main {
+    scroll-padding-top: 40px;
+}
+
 :focus:not(:focus-visible) {
     outline: none;
 }

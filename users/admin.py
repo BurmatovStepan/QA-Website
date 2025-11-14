@@ -3,6 +3,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from users.models import Activity, CustomUser, UserProfile
 
+# TODO Fix this admin panel too
+
 @admin.register(CustomUser)
 class CustomUserAdmin(BaseUserAdmin):
     def has_add_permission(self, request):

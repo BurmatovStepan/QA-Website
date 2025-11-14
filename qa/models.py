@@ -1,20 +1,17 @@
+from datetime import timedelta
+
 from django.contrib.contenttypes.fields import (GenericForeignKey,
                                                 GenericRelation)
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Count, Sum, UniqueConstraint
+from django.db.models import (IntegerField, OuterRef, Q, Subquery, Sum,
+                              UniqueConstraint)
 from django.db.models.functions import Lower
-from django.utils.text import slugify
-from django.db.models.query import QuerySet
-from django.db.models import Q
-from django.db.models import Sum, Q
 from django.utils import timezone
-from datetime import timedelta
+from django.utils.text import slugify
+
 from common.base_models import TimeStampedModel
 from users.models import CustomUser
-from django.db.models import Sum, Count, Q, Subquery, OuterRef, Value, IntegerField
-from django.db.models.functions import Coalesce
-from django.contrib.contenttypes.models import ContentType
 
 
 class TagManager(models.Manager):
@@ -64,7 +61,6 @@ class QuestionManager(models.Manager):
             .filter(is_active=True)
             .select_related("author")
             .annotate(
-                answer_count=Count("answers", distinct=True),
                 best_answer_id=best_answer_id_subquery
             )
             .order_by("-created_at")
@@ -108,6 +104,7 @@ class QuestionManager(models.Manager):
         )
 
     def get_hot_questions(self, queryset, lookback_period, user):
+        # TODO Probably remove because too hard
         lookback_period_ago = timezone.now() - timedelta(days=lookback_period)
 
         if user is not None:
@@ -117,14 +114,18 @@ class QuestionManager(models.Manager):
         return queryset.order_by("-rating_total", "-created_at")
 
 
+# TODO Add views and timestamp to question-card
 class Question(TimeStampedModel):
     objects: QuestionManager = QuestionManager()
 
     slug = models.SlugField(max_length=100, unique=True)
     author = models.ForeignKey(to=CustomUser, on_delete=models.SET_NULL, related_name="questions", null=True)
+
     view_count = models.IntegerField(default=0)
     rating = GenericRelation("Vote", related_query_name="question_votes")
     rating_total = models.IntegerField(default=0)
+    answer_count = models.IntegerField(default=0)
+
     tags = models.ManyToManyField(to=Tag, related_name="questions")
 
     title = models.CharField(max_length=100)
@@ -146,13 +147,8 @@ class Question(TimeStampedModel):
         return self.title
 
 
-class AnswerManager(models.Manager):
-    ...
-
-
+# TODO Add timestamp to answer-card
 class Answer(TimeStampedModel):
-    objects: AnswerManager = AnswerManager()
-
     question = models.ForeignKey(to=Question, on_delete=models.CASCADE, related_name="answers")
     author = models.ForeignKey(to=CustomUser, on_delete=models.SET_NULL, related_name="answers", null=True)
     rating = GenericRelation("Vote", related_query_name="answer_votes")

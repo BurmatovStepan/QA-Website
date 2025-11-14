@@ -1,6 +1,10 @@
 {% load static %}
 
 <div class="answer {{ modifier_classes }}" id="{{ answer.id }}">
+  {% if forloop.first %}
+    <a name="first-answer"></a>
+  {% endif %}
+
   {% if answer.author.profile.avatar %}
     <img src="{{ answer.author.profile.avatar.url }}"
         alt="avatar"

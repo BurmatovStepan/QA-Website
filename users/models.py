@@ -3,13 +3,10 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import UniqueConstraint
+from django.db.models import Count, UniqueConstraint
 from django.db.models.functions import Lower
-from django.utils import timezone
 from django.urls import reverse
-from django.db.models.query import QuerySet
-from django.db.models import Count, Sum, UniqueConstraint
-
+from django.utils import timezone
 
 from common.base_models import TimeStampedModel
 
@@ -37,6 +34,7 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(login, email, password, **extra_fields)
 
+    # TODO Remove magic numbers
     def get_best_members(self, count=5):
         return self.select_related("profile").order_by("-profile__rating")[:count]
 
@@ -162,6 +160,8 @@ class Activity(models.Model):
             title = question.title
             link_kwargs = {"id": question.id, "slug": question.slug}
 
+            # TODO Fix incorrect linking to answers not on the first page
+            #? (but they are correct why aren't they on the first page)
             if self.type == "A_MARKED_CORRECT":
                 fragment = f"#{target_object.id}"
 

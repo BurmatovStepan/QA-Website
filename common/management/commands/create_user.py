@@ -1,5 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
+
 from users.models import CustomUser
+
+
 class Command(BaseCommand):
     help = "Creates a normal user with the specified login, email, and password."
 

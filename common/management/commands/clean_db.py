@@ -6,6 +6,7 @@ from django.db import transaction
 from qa.models import Answer, Question, Tag, Vote
 from users.models import Activity, CustomUser, UserProfile
 
+# TODO Add partial deletion
 
 class Command(BaseCommand):
     help = "Wipes all content data from the database, leaving one specified user."
@@ -16,6 +17,7 @@ class Command(BaseCommand):
             type=str,
             help="The login of the User to keep in the database.",
         )
+
         parser.add_argument(
             "--skip-confirm",
             action="store_true",
@@ -31,6 +33,7 @@ class Command(BaseCommand):
             Activity,
             Vote,
             Answer,
+            Question.tags.through,
             Question,
             Tag,
         ]
@@ -69,7 +72,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f"\nCleanup complete in {time() - start_time:.2f}s."))
 
         except CustomUser.DoesNotExist:
-            raise CommandError(f"User with login {user_login} not found. Abourting.")
+            raise CommandError(f"User with login {user_login} not found.")
 
         except Exception as e:
             raise CommandError(f"Database cleanup failed: {e}")

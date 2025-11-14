@@ -1,8 +1,9 @@
 import mimetypes
-import os
 from pathlib import Path
 
 from decouple import config
+
+# TODO Organize settings
 
 mimetypes.add_type("application/javascript", ".js", True)
 
