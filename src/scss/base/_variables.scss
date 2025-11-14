@@ -6,6 +6,8 @@ $h3: bold 1rem / 1.2em $ff;
 
 $p: 0.9rem / 1.6em $ff;
 
+$font-text-default: 1em / 1em $ff;
+
 $color-bg-main: var(--color-bg-main);
 $color-bg-secondary: var(--color-bg-secondary);
 $color-bg-filename: var(--color-bg-filename);
@@ -18,8 +20,12 @@ $color-border-filename: var(--color-border-filename);
 
 $color-interactive-idle: var(--color-interactive-idle);
 $color-accent-main: var(--color-accent-main);
+
 $filter-accent-main: var(--filter-accent-main);
 $filter-text-main: var(--filter-text-main);
 
 $shadow-main: var(--shadow-main);
 $shadow-small: var(--shadow-small);
+
+$timing-animation-long: 0.3s;
+$timing-animation-short: 0.15s;

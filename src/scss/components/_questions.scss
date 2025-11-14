@@ -20,6 +20,7 @@
     }
 
     &__rating {
+        padding-top: 4px;
         grid-area: rating;
     }
 
@@ -27,6 +28,7 @@
         display: flex;
         flex-direction: column;
         grid-area: body;
+        place-self: start;
     }
 
     &__title {
@@ -67,7 +69,7 @@
 }
 
 .homepage .question,
-.tag-search-page .question {
+.question-listing .question {
     padding: 8px;
     grid-template-columns: 80px 1fr;
     border: 2px solid $color-text-main;
@@ -83,9 +85,11 @@
 }
 
 .question-discussion-page .question {
+    margin: 8px 24px;
     padding: 16px;
     grid-template-columns: 140px 1fr;
     border-bottom: 2px solid $color-accent-main;
+
 
     &__avatar {
         width: 120px;

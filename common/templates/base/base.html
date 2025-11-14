@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  {% include "snippets/head.html" %}
+
+  <body class="{% block body_class %}{% endblock %}">
+    {% include "snippets/header.html" %}
+
+    <main>
+      {% block main_content_header %}
+        <section class="main-header">
+          {% block main_title %}{% endblock %}
+          {% block main_title_extra %}{% endblock %}
+        </section>
+      {% endblock %}
+
+      {% block main_content %}
+      {% endblock %}
+    </main>
+
+    {% block aside_content %}
+      <aside>
+        {% include "snippets/popular-tags.html" %}
+        {% include "snippets/best-members.html" %}
+      </aside>
+    {% endblock %}
+
+    {% include "snippets/footer.html" %}
+  </body>
+</html>

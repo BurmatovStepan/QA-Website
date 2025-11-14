@@ -1,0 +1,62 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block main_title %}
+  <h1>{{ main_title }}</h1>
+{% endblock main_title %}
+
+{% block main_title_extra %}
+  <h1><a href="{% url "profile" current_user.id %}" class="user-name">
+    {% if current_user.profile.display_name %}
+      {{ current_user.profile.display_name }}
+    {% else %}
+      {{ current_user.login }}
+    {% endif %}
+  </a></h1>
+{% endblock  %}
+
+{% block main_content %}
+    <form class="user-settings">
+      <label for="user-settings__login">Login</label>
+      <input type="text"
+             name="login"
+             value="{{ current_user.login }}"
+             class="user-settings__login"
+             id="user-settings__login"
+             minlength="4"
+             required
+      >
+
+      <label for="user-settings__email">Email</label>
+      <input type="email"
+             name="email"
+             value="{{ current_user.email }}"
+             class="user-settings__email"
+             id="user-settings__email"
+             autocomplete="email"
+      >
+
+      <label for="user-settings__name">Displayed name</label>
+      <input type="text"
+             name="username"
+             value="{{ current_user.display_name }}"
+             class="user-settings__name"
+             id="user-settings__name"
+             minlength="2"
+      >
+
+      <label for="user-settings__avatar">Upload avatar</label>
+      <img src="{{ current_user.profile.avatar.url }}"
+           alt="avatar"
+           class="user-settings__avatar"
+           id="user-settings__avatar"
+      >
+
+      <div class="user-settings__avatar-field custom-file-input">
+        {% include "snippets/custom-file-input.html" %}
+      </div>
+
+      <button class="user-settings__save-button">Save</button>
+    </form>
+
+{% endblock main_content %}

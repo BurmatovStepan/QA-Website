@@ -7,6 +7,10 @@ body {
     background-color: $color-bg-main;
 }
 
+main {
+    scroll-padding-top: 40px;
+}
+
 :focus:not(:focus-visible) {
     outline: none;
 }
@@ -15,5 +19,5 @@ body {
     outline: 3px solid transparent;
     outline-color: $color-accent-main;
     outline-offset: 1px;
-    transition: outline-color 0.15s;
+    transition: outline-color $timing-animation-short;
 }

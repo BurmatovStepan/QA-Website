@@ -1,3 +1,10 @@
+.env
+db.sqlite3
+
 node_modules/
-dist/
-.parcel-cache/
+static/
+avatars/
+
+.vscode/
+.venv/
+__pycache__/

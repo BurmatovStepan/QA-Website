@@ -1,6 +1,34 @@
 @use "../config.scss" as *;
 
 .profile {
+    display: grid;
+    margin-top: 24px;
+    grid-template-areas:
+        "avatar name"
+        "avatar stats";
+    grid-template-columns: max-content max-content;
+    align-items: center;
+    gap: 8px 36px;
+    line-height: 1.05em;
+
+    &__avatar {
+        width: 200px;
+        grid-area: avatar;
+    }
+
+    &__name {
+        grid-area: name;
+        font: $h1;
+    }
+
+    &__stats {
+        display: flex;
+        flex-direction: column;
+        grid-area: stats;
+        gap: 12px;
+        font: $h2
+    }
+
     &__actions {
         display: flex;
         grid-area: actions;
@@ -14,7 +42,7 @@
             color: $color-accent-main;
             text-decoration: 1px underline transparent;
             outline: none;
-            transition: font-size 0.3s, text-decoration-color 0.3s;
+            transition: font-size $timing-animation-long, text-decoration-color $timing-animation-long;
         }
 
         & > a:hover,
@@ -25,16 +53,26 @@
     }
 
     &__theme-switch {
-        width: 32px;
         flex-shrink: 0;
-        outline: none;
-        transition: scale 0.3s;
-        cursor: pointer;
+    }
 
-        &:hover,
-        &:focus-visible {
-            filter: $filter-accent-main;
-            scale: 1.1;
+    &--mini {
+        margin: 0px;
+        .profile__avatar {
+            width: 60px;
+            grid-area: avatar;
+        }
+
+        .profile__name {
+            @include light-up-link;
+            font: $h3;
+            text-decoration: none;
+            transition: font-size $timing-animation-long;
+
+            &:hover,
+            &:focus-visible {
+                font-size: 1.05em;
+            }
         }
     }
 
@@ -46,10 +84,7 @@
 
         grid-template-columns: 80px 180px;
 
-        .profile__avatar {
-            width: 60px;
-            grid-area: avatar;
-        }
+        gap: 0px;
 
         .profile__name {
             grid-area: name;

@@ -1,0 +1,38 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block main_content_header %}{% endblock main_content_header %}
+
+{% block main_content %}
+<section class="profile">
+
+  {% if viewed_user.profile.avatar %}
+    <img src="{{ viewed_user.profile.avatar.url }}" alt="avatar" class="profile__avatar">
+  {% else %}
+    <img src="{% static "assets/avatar.svg" %}" alt="avatar" class="profile__avatar">
+  {% endif %}
+
+  <span class="profile__name">
+    {% if viewed_user.profile.display_name %}
+      {{ viewed_user.profile.display_name }}
+    {% else %}
+      {{ viewed_user.login }}
+    {% endif %}
+  </span>
+
+  <div class="profile__stats">
+    <span>User rating: {{ viewed_user.profile.rating }}</span>
+    <span>Questions asked: {{ viewed_user.total_questions_asked }}</span>
+    <span>Answers posted: {{ viewed_user.total_answers_posted }}</span>
+  </div>
+</section>
+
+<section class="recent-activity">
+  <h1>Recent activity</h1>
+  <ul class="recent-activity__records">
+    {% for activity in recent_activities %}
+      <li class="recent-activity__record"><a href="{{ activity.link_url }}">{{ activity.description }}</a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock main_content %}
