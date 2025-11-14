@@ -10,16 +10,17 @@ from django.utils.text import slugify
 from faker import Faker
 import inflect
 from qa.models import Answer, Question, Tag, Vote
-from users.models import Activity, CustomUser
+from users.models import Activity, CustomUser, UserProfile
 
 BATCH_SIZE = 5000
 DEFAULT_PASSWORD = "qwerty"
 
 INFLECT_ENGINE = inflect.engine()
 
-MODEL_EXECUTION_ORDER = ["user", "tag", "question", "answer", "vote", "activity"]
+MODEL_EXECUTION_ORDER = ["user", "user_profile", "tag", "question", "answer", "vote", "activity"]
 MODEL_MULTIPLIERS = {
     "user": 1,
+    "user_profile": 1,
     "tag": 1,
     "question": 10,
     "answer": 100,
@@ -84,6 +85,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         CREATION_FUNCTIONS = {
             "user": self.create_users,
+            "user_profile": self.create_user_profiles,
             "tag": self.create_tags,
             "question": self.create_questions,
             "answer": self.create_answers,
@@ -99,7 +101,7 @@ class Command(BaseCommand):
         else:
             models = [model.lower() for model in models]
 
-        self.stdout.write(f"--- Filling {self.style.SQL_TABLE(', '.join([model.capitalize() for model in models]))}  with ratio: {ratio} ---")
+        self.stdout.write(f"--- Filling {self.style.SQL_TABLE(self.make_main_heading(models))} with ratio: {ratio} ---")
 
         for name in MODEL_EXECUTION_ORDER:
             if name in models:
@@ -108,7 +110,7 @@ class Command(BaseCommand):
 
                 start_time = time()
                 creator_function(count)
-                self.stdout.write(self.style.SUCCESS(f"Created {count:,} {INFLECT_ENGINE.plural(name)} in {time() - start_time:.2f}s"))
+                self.stdout.write(self.style.SUCCESS(f"Created {count:,} {INFLECT_ENGINE.plural(name.replace("_", " "))} in {time() - start_time:.2f}s"))
 
     def _bulk_create_model(self, EntityModel, total, entity_name, entity_generator):
         entity_name_plural = INFLECT_ENGINE.plural(entity_name)
@@ -145,7 +147,6 @@ class Command(BaseCommand):
 
 
     def create_users(self, total):
-        fake = Faker()
         hashed_password = make_password(DEFAULT_PASSWORD)
 
         def user_generator(i):
@@ -156,8 +157,6 @@ class Command(BaseCommand):
                 login=login,
                 email=email,
                 password=hashed_password,
-                display_name=fake.user_name(),
-                rating=randint(0, 1000),
                 is_active=(i % 250 != 0),
                 is_staff=(i % 100 == 0),
             )
@@ -168,6 +167,31 @@ class Command(BaseCommand):
             entity_name="user",
             entity_generator=user_generator
         )
+
+    def create_user_profiles(self, total):
+        fake = Faker()
+
+        user_ids = list(CustomUser.objects.values_list("id", flat=True))
+
+        if len(user_ids) == 0:
+            raise CommandError("No users were found to link profiles.")
+
+        def profile_generator(i):
+            user_id = user_ids[i - 1]
+
+            return UserProfile(
+                user_id=user_id,
+                display_name=fake.user_name(),
+                rating=randint(0, 1000),
+            )
+
+        self._bulk_create_model(
+            EntityModel=UserProfile,
+            total=total,
+            entity_name="user profile",
+            entity_generator=profile_generator
+        )
+
 
     def create_tags(self, total):
         fake = Faker()
@@ -189,7 +213,15 @@ class Command(BaseCommand):
 
     def create_questions(self, total):
         fake = Faker()
+
         user_ids = list(CustomUser.objects.values_list("id", flat=True))
+        tag_ids = list(Tag.objects.values_list("id", flat=True))
+
+        if len(user_ids) == 0:
+            raise CommandError("No users were found to link questions.")
+
+        if len(tag_ids) == 0:
+            raise CommandError("No tags were found to link questions.")
 
         def question_generator(i):
             author_id = choice(user_ids)
@@ -200,6 +232,7 @@ class Command(BaseCommand):
                 author_id=author_id,
                 title=title,
                 slug=slugify(title),
+                rating_total=randint(-50, 50),
                 content=content,
                 view_count=randint(0, 1000),
                 is_active=(i % 100 != 0)
@@ -214,7 +247,6 @@ class Command(BaseCommand):
 
         REPORT_THRESHOLD = max(BATCH_SIZE * 2, total // 20)
 
-        tag_ids = list(Tag.objects.values_list("id", flat=True))
         question_ids = list(Question.objects.values_list("id", flat=True))
         QuestionTagModel = Question.tags.through
 
@@ -255,6 +287,12 @@ class Command(BaseCommand):
         user_ids = list(CustomUser.objects.values_list("id", flat=True))
         question_ids = list(Question.objects.values_list("id", flat=True))
 
+        if len(user_ids) == 0:
+            raise CommandError("No users were found to link answers.")
+
+        if len(question_ids) == 0:
+            raise CommandError("No questions were found to link answers.")
+
         def answer_generator(i):
             question_id = choice(question_ids)
             author_id = choice(user_ids)
@@ -263,6 +301,7 @@ class Command(BaseCommand):
             return  Answer(
                 question_id=question_id,
                 author_id=author_id,
+                rating_total=randint(-20, 20),
                 content=content,
                 is_correct=(i % 10 == 0),
                 is_active=(i % 100 != 0)
@@ -278,6 +317,7 @@ class Command(BaseCommand):
     def create_votes(self, total):
         self.stdout.write(f"\nCreating {total:,} {self.style.SQL_TABLE("votes")}...")
         REPORT_THRESHOLD = max(BATCH_SIZE * 2, total // 20)
+        TARGET_OPTIONS = []
 
         progress_tracker = ProgressTracker(REPORT_THRESHOLD, total)
 
@@ -288,13 +328,16 @@ class Command(BaseCommand):
         question_ids = Question.objects.values_list("id", flat=True)
         answer_ids = Answer.objects.values_list("id", flat=True)
 
-        question_content_type = ContentType.objects.get_for_model(Question)
-        answer_content_type = ContentType.objects.get_for_model(Answer)
+        if (len(question_ids) == 0 and len(answer_ids) == 0):
+            raise CommandError("No questions/answers were found to link votes.")
 
-        TARGET_OPTIONS = [
-            (question_content_type.id, question_ids),
-            (answer_content_type.id, answer_ids),
-        ]
+        if len(question_ids) > 0:
+            question_content_type = ContentType.objects.get_for_model(Question)
+            TARGET_OPTIONS.append((question_content_type.id, question_ids))
+
+        if len(answer_ids) > 0:
+            answer_content_type = ContentType.objects.get_for_model(Answer)
+            TARGET_OPTIONS.append((answer_content_type.id, answer_ids))
 
         try:
             with transaction.atomic():
@@ -354,17 +397,17 @@ class Command(BaseCommand):
         question_ids = list(Question.objects.values_list("id", flat=True))
         answer_ids = list(Answer.objects.values_list("id", flat=True))
 
-        if user_ids:
+        if len(user_ids) > 0:
             user_content_type = ContentType.objects.get_for_model(CustomUser)
             TARGET_OPTIONS.append((user_content_type.id, user_ids))
         else:
-            raise CommandError("No users were found to link activities. Aborting.")
+            raise CommandError("No users were found to link activities.")
 
-        if question_ids:
+        if len(question_ids) > 0:
             question_content_type = ContentType.objects.get_for_model(Question)
             TARGET_OPTIONS.append((question_content_type.id, question_ids))
 
-        if answer_ids:
+        if len(answer_ids) > 0:
             answer_content_type = ContentType.objects.get_for_model(Answer)
             TARGET_OPTIONS.append((answer_content_type.id, answer_ids))
 
@@ -377,15 +420,15 @@ class Command(BaseCommand):
                     target_content_type_id, target_ids = choice(TARGET_OPTIONS)
 
                     if target_content_type_id == user_content_type.id:
-                        activity_type = choice(list(filter(lambda activity: activity[0].startswith("U"), Activity.ACTIVITY_TYPES)))
+                        activity_type = choice(list(filter(lambda activity: activity[0].startswith("U_"), Activity.ACTIVITY_TYPES)))
                         target_id = user_id
 
                     elif target_content_type_id == question_content_type.id:
-                        activity_type = choice(list(filter(lambda activity: activity[0].startswith("Q"), Activity.ACTIVITY_TYPES)))
+                        activity_type = choice(list(filter(lambda activity: activity[0].startswith("Q_"), Activity.ACTIVITY_TYPES)))
                         target_id = choice(target_ids)
 
                     elif target_content_type_id == answer_content_type.id:
-                        activity_type = choice(list(filter(lambda activity: activity[0].startswith("A"), Activity.ACTIVITY_TYPES)))
+                        activity_type = choice(list(filter(lambda activity: activity[0].startswith("A_"), Activity.ACTIVITY_TYPES)))
                         target_id = choice(target_ids)
 
                     activity = Activity(
@@ -412,3 +455,13 @@ class Command(BaseCommand):
 
         except Exception as e:
             raise CommandError(f"Vote creation failed: {e}")
+
+    def make_main_heading(self, model_names):
+        result = []
+        for name in model_names:
+            name = [word.capitalize() for word in name.split("_")]
+            name = " ".join(name)
+
+            result.append(name)
+
+        return ", ".join(result)

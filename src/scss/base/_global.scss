@@ -15,5 +15,5 @@ body {
     outline: 3px solid transparent;
     outline-color: $color-accent-main;
     outline-offset: 1px;
-    transition: outline-color 0.15s;
+    transition: outline-color $timing-animation-short;
 }

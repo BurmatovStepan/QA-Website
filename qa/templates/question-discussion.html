@@ -19,7 +19,7 @@
 
 <section class="answers">
 
-  {% for answer in mock_answers %}
+  {% for answer in answers %}
     {% if answer.is_correct %}
       {% include "snippets/answer-card.html" with modifier_classes="answer--correct"%}
     {% else %}

@@ -18,6 +18,9 @@ ALLOWED_HOSTS = config(
     cast=lambda hosts: [host.strip() for host in hosts.split('|') if host.strip()]
 )
 
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 AUTH_USER_MODEL = 'users.CustomUser'
 
 # Application definition

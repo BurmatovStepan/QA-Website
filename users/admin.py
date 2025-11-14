@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from users.models import Activity, CustomUser
+from users.models import Activity, CustomUser, UserProfile
 
 @admin.register(CustomUser)
 class CustomUserAdmin(BaseUserAdmin):
@@ -9,17 +9,21 @@ class CustomUserAdmin(BaseUserAdmin):
         return False
 
     fieldsets = (
-        (None, {"fields": ("login", "password")}),
-        ("Personal info", {"fields": ("email", "display_name", "avatar", "rating")}),
+        ("Personal info", {"fields": ("login", "password")}),
         ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
         ("Important dates", {"fields": ("last_login", "created_at", "updated_at")}),
     )
 
-    list_display = ("login", "email", "display_name", "is_staff", "rating")
-    search_fields = ("login", "email", "display_name")
+    list_display = ("login", "email", "is_staff")
+    search_fields = ("login", "email")
     readonly_fields = ("created_at", "last_login", "updated_at")
 
     ordering = ("login",)
+
+
+@admin.register(UserProfile)
+class CustomUserProfileAdmin(admin.ModelAdmin):
+    ...
 
 
 @admin.register(Activity)

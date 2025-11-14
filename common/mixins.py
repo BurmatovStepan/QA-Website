@@ -2,29 +2,30 @@ from typing import Any
 
 from django.core.cache import cache
 
-from common.utils import (safe_int_conversion, update_best_members,
-                    update_popular_tags)
+from qa.models import Tag
+from users.models import CustomUser
+from common.constants import DEFAULT_PAGINATION_SIZE
 
+CACHE_TTL = 60 * 60 * 24
 
 class BaseContextViewMixin:
     page_title = None
     main_title = None
     main_title_extra = None
 
-    current_user = None
+    current_user: CustomUser = None
 
-    items_per_page = None
+    page_size = None
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
 
         if user.is_authenticated:
             self.current_user = user
+            self.page_size = self.current_user.profile.page_size_preference or DEFAULT_PAGINATION_SIZE
         else:
             self.current_user = None
-
-        page_size = self.request.GET.get("page-size")
-        self.items_per_page = safe_int_conversion(page_size)
+            self.page_size = DEFAULT_PAGINATION_SIZE
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -41,12 +42,19 @@ class BaseContextViewMixin:
         popular_tags = cache.get("popular_tags")
 
         if best_members is None:
-            best_members = update_best_members()
+            best_members = CustomUser.objects.get_best_members()
+            cache.set("best_members", best_members, timeout=CACHE_TTL)
 
         if popular_tags is None:
-            popular_tags = update_popular_tags()
+            popular_tags = Tag.objects.get_popular_tags()
+            cache.set("popular_tags", popular_tags, timeout=CACHE_TTL)
 
         context["best_members"] = best_members
         context["popular_tags"] = popular_tags
 
         return context
+
+
+def safe_int_conversion(value: str):
+    try: return int(value)
+    except (ValueError, TypeError): return None

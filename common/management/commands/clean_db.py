@@ -1,11 +1,10 @@
 from time import time
 
-from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from qa.models import Answer, Question, Tag, Vote
-from users.models import Activity, CustomUser
+from users.models import Activity, CustomUser, UserProfile
 
 
 class Command(BaseCommand):
@@ -28,7 +27,7 @@ class Command(BaseCommand):
         user_login = options["login"]
         skip_confirm = options["skip_confirm"]
 
-        CONTENT_MODELS = [
+        MODEL_EXECUTION_ORDER = [
             Activity,
             Vote,
             Answer,
@@ -53,15 +52,18 @@ class Command(BaseCommand):
             with transaction.atomic():
                 self.stdout.write(self.style.NOTICE("--- Wiping Content Models ---"))
 
-                for Model in CONTENT_MODELS:
+                for Model in MODEL_EXECUTION_ORDER:
                     count, _ = Model.objects.all().delete()
                     self.stdout.write(f"  -> Deleted {count:,} records from {self.style.SQL_TABLE(Model.__name__)}.")
 
-                self.stdout.write(self.style.NOTICE("\n--- Wiping Users ---"))
+                self.stdout.write(self.style.NOTICE(f"\n--- Wiping Users and Profiles ---"))
+
+                profile_count, _ = UserProfile.objects.exclude(user=user_to_keep).delete()
+                self.stdout.write(f"  -> Deleted {profile_count:,} {self.style.SQL_TABLE("User Profiles")}.")
 
                 user_count, _ =  CustomUser.objects.exclude(id=user_to_keep.id).delete()
-
                 self.stdout.write(f"  -> Deleted {user_count:,} {self.style.SQL_TABLE("Users")}.")
+
                 self.stdout.write(self.style.SUCCESS(f"Kept user: {user_to_keep.login} (ID: {user_to_keep.id})"))
 
             self.stdout.write(self.style.SUCCESS(f"\nCleanup complete in {time() - start_time:.2f}s."))

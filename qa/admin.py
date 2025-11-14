@@ -23,7 +23,7 @@ class QuestionAdmin(admin.ModelAdmin):
     inlines = [AnswerInline]
 
     fieldsets = (
-        (None, {"fields": ("author", "title", "slug", "content")}),
+        (None, {"fields": ("id", "author", "title", "slug", "content")}),
         ("Status", {"fields": ("is_answered",)}),
         ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
@@ -33,7 +33,7 @@ class QuestionAdmin(admin.ModelAdmin):
     search_fields = ("title", "content", "author__login")
 
     raw_id_fields = ("author",)
-    readonly_fields = ("slug", "created_at", "updated_at", "is_answered")
+    readonly_fields = ("id", "slug", "created_at", "updated_at", "is_answered")
 
     def answer_count(self, obj):
         return obj.answers.count()
@@ -70,6 +70,12 @@ class AnswerAdmin(admin.ModelAdmin):
 
 @admin.register(Vote)
 class VoteAdmin(admin.ModelAdmin):
+    raw_id_fields = ("user",)
     readonly_fields = ("created_at", "updated_at")
+
+    list_display = ("user", "type", "target", "created_at")
+    list_filter = ("type", "content_type", "created_at")
+
+    search_fields = ("object_id",)
 
     ordering = ("-created_at",)
