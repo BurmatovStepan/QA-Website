@@ -5,7 +5,7 @@
     text-decoration: 1px underline $color-text-main;
     border-radius: 1px;
     outline: none;
-    transition: color 0.15s, text-decoration-color 0.15s;
+    transition: color $timing-animation-short, text-decoration-color $timing-animation-short;
 
     &:hover,
     &:focus-visible {
@@ -15,7 +15,6 @@
 }
 
 @mixin default-button {
-
     display: flex;
 
     align-items: center;
@@ -30,7 +29,7 @@
     outline: 3px solid transparent;
 
     box-shadow: $shadow-main;
-    transition: outline-color 0.15s;
+    transition: outline-color $timing-animation-short;
     cursor: pointer;
 
     &[disabled],
@@ -48,7 +47,7 @@
 @mixin rating-button {
     outline: none;
     filter: $filter-text-main;
-    transition: scale 0.3s;
+    transition: scale $timing-animation-long;
     cursor: pointer;
 
     &:hover,

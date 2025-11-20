@@ -8,23 +8,38 @@
 }
 
 .answer {
+    --border-color: #{$color-text-main};
+
+    position: relative;
     display: grid;
     padding: 8px 16px;
     grid-template-areas:
         "avatar content"
         "rating correct-btn";
-    // grid-template-columns: max-content 1fr;
-    // place-items: center;
-
+    grid-template-columns: max-content 1fr;
 
     gap: 8px 16px;
-    border: 2px solid $color-text-main;
+    border: 2px solid var(--border-color);
     box-shadow: $shadow-main;
+
+    &:target {
+        &::before {
+            position: absolute;
+            top: -8px;
+            bottom: -8px;
+            left: -12px;
+            width: 2px;
+            background-color: var(--border-color);
+            box-shadow: 0px 0px 4px 1px var(--border-color);
+            content: "";
+        }
+    }
 
     &__avatar {
         width: 60px;
         height: 60px;
         grid-area: avatar;
+        place-self: start;
     }
 
     &__content {
@@ -33,6 +48,7 @@
 
     &__rating {
         grid-area: rating;
+        place-self: center start;
     }
 
     &__button-correct {
@@ -44,7 +60,7 @@
     }
 
     &--correct {
-        border-color: $color-accent-main;
+        --border-color: #{$color-accent-main};
         box-shadow: 0px 0px 4px $color-accent-main;
 
         .answer__button-correct {

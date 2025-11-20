@@ -1,19 +1,21 @@
-import copy
 from typing import Any
 
 from django.core.paginator import Paginator
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
-from django.http import Http404
 from django.http.response import HttpResponse as HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.views.generic import DetailView, ListView, TemplateView
 
-from common.mixins import (MOCK_ANSWERS, MOCK_QUESTIONS, MOCK_USERS,
-                           BaseContextViewMixin)
+from common.constants import DEFAULT_PAGINATION_SIZE
+from common.mixins import BaseContextViewMixin
+from qa.models import Question
 
-DEFAULT_PAGINATION_SIZE = 10
 DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS = 3
 TAG_DELIMITER = "~"
+
+# TODO Decide if you type-hint
 
 class HomepageView(BaseContextViewMixin, ListView):
     template_name = "index.html"
@@ -22,28 +24,19 @@ class HomepageView(BaseContextViewMixin, ListView):
     main_title_extra = "Hot Questions"
 
     paginate_by = DEFAULT_PAGINATION_SIZE
-    context_object_name = "mock_questions"
+    context_object_name = "questions"
 
     def get(self, request, *args, **kwargs):
-        self.paginate_by = self.items_per_page or self.paginate_by
+        self.paginate_by = self.page_size or self.paginate_by
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self) -> QuerySet[Any]:
         search_query = self.request.GET.get("query", "").lower()
 
-        questions = [
-            copy.deepcopy(question) for question in MOCK_QUESTIONS.values()
-            if search_query in question["title"].lower()
-        ]
+        queryset = Question.objects.get_question_list(search_query=search_query)
+        queryset = Question.objects.exclude_disliked_by_user(queryset, self.current_user)
 
-        for question in questions:
-            question["author"] = MOCK_USERS.get(question["author_id"])
-
-        if self.current_user is not None:
-            disliked_ids = self.current_user["disliked_questions"]
-            questions.sort(key=lambda question: question["id"] in disliked_ids)
-
-        return questions
+        return queryset
 
 
 class QuestionDiscussionView(BaseContextViewMixin, DetailView):
@@ -51,85 +44,80 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
     context_object_name = "question"
 
     def get_queryset(self):
-        return MOCK_QUESTIONS
+        return Question.objects.get_discussion_detail()
 
     def get_object(self, queryset: QuerySet[Any] | None=None):
         if queryset is None:
             queryset = self.get_queryset()
 
         question_id = self.kwargs.get("id")
-        question = queryset.get(question_id)
+        question = get_object_or_404(queryset, id=question_id)
 
-        if question is None:
-            raise Http404(f"Question with ID '{question_id}' does not exist.")
+        url_slug = self.kwargs.get("slug")
 
-        question["author"] = MOCK_USERS.get(question["author_id"])
+        if url_slug is None or url_slug != question.slug:
+            canonical_url = reverse(
+                "question_discussion",
+                 kwargs={"id": question.id, "slug": question.slug}
+            )
+            redirect(canonical_url, permanent=True)
+
         return question
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         question = context["question"]
 
-        context["page_title"] = f"Question | {question["title"]}"
+        context["page_title"] = f"Question | {question.title}"
 
-        found_answers = [
-            copy.deepcopy(answer) for answer in MOCK_ANSWERS.values() if answer["question_id"] == question["id"]
-        ]
+        answers_queryset = (
+            question.answers
+            .filter(is_active=True)
+            .select_related("author")
+            .order_by("-is_correct", "-rating_total")
+        )
 
-        for answer in found_answers:
-            answer["author"] = MOCK_USERS.get(answer["author_id"])
-
-        paginator = Paginator(found_answers, self.items_per_page or DEFAULT_PAGINATION_SIZE)
+        paginator = Paginator(answers_queryset, self.current_user.profile.page_size_preference or DEFAULT_PAGINATION_SIZE)
 
         page_number = self.request.GET.get("page")
         answer_page_object = paginator.get_page(page_number)
 
         context["page_obj"] = answer_page_object
         context["paginator"] = paginator
-        context["mock_answers"] = answer_page_object.object_list
+        context["answers"] = answer_page_object.object_list
+
+        # TODO Check if this work
+        question.view_count = question.view_count + 1
+        question.save(update_fields=["view_count"])
 
         return context
 
-
+# TODO Make this accessible from footer or smth
 class HotQuestionsView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
     page_title = "Hot Questions"
     main_title = "Hot: "
 
     paginate_by = DEFAULT_PAGINATION_SIZE
-    context_object_name = "mock_questions"
+    context_object_name = "questions"
 
     hot_period = DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS
 
     def get(self, request, *args, **kwargs):
-        self.paginate_by = self.items_per_page or self.paginate_by
+        self.paginate_by = self.current_user.profile.page_size_preference or self.paginate_by
         self.hot_period = kwargs.get("day_amount") or self.hot_period
 
         return super().get(request, *args, **kwargs)
 
-
-    def get_queryset(self) -> QuerySet[Any]:
+    def get_queryset(self):
         search_query = self.request.GET.get("query", "").lower()
 
-        questions = []
-        for question in MOCK_QUESTIONS.values():
-            if search_query not in question["title"].lower():
-                continue
+        queryset = Question.objects.get_question_list(search_query)
 
-            if self.hot_period and not question["is_hot"]:
-                continue
+        #* this just ORDER BY rating_total DESC
+        queryset = Question.objects.get_hot_questions(queryset, self.hot_period, self.current_user)
 
-            questions.append(copy.deepcopy(question))
-
-        for question in questions:
-            question["author"] = MOCK_USERS.get(question["author_id"])
-
-        if self.current_user is not None:
-            disliked_ids = self.current_user["disliked_questions"]
-            questions.sort(key=lambda question: question["id"] in disliked_ids)
-
-        return questions
-
+        return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -139,51 +127,40 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
         return context
 
 
-
+# TODO Make this accessible from footer or smth
 class TagsQuestionListingView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
     page_title = "Tags Question Listing"
 
     paginate_by = DEFAULT_PAGINATION_SIZE
-    context_object_name = "mock_questions"
+    context_object_name = "questions"
 
-    tags = set()
+    tag_slugs = set()
 
     def get(self, request, *args, **kwargs):
-        self.paginate_by = self.items_per_page or self.paginate_by
-        self.tags = {tag.strip() for tag in kwargs.get("tags_list").split(TAG_DELIMITER) if tag.strip()}
+        self.paginate_by = self.page_size or self.paginate_by
+        self.tag_slugs = {tag.strip() for tag in kwargs.get("tags_list").split(TAG_DELIMITER) if tag.strip()}
 
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self) -> QuerySet[Any]:
         search_query = self.request.GET.get("query", "").lower()
 
-        questions = []
-        for question in MOCK_QUESTIONS.values():
-            if search_query not in question["title"].lower():
-                continue
+        queryset = Question.objects.get_question_list(search_query)
 
-            question_tags_lowercase = {tag.lower() for tag in question["tags"]}
-            if not self.tags <= question_tags_lowercase:
-                continue
+        queryset = Question.objects.exclude_disliked_by_user(queryset, self.current_user)
 
-            questions.append(copy.deepcopy(question))
+        if self.tag_slugs:
+            for tag_slug in self.tag_slugs:
+                queryset = queryset.filter(tags__slug__iexact=tag_slug) #? Maybe use __icontains
 
-        for question in questions:
-            question["author"] = MOCK_USERS.get(question["author_id"])
-
-        if self.current_user is not None:
-            disliked_ids = self.current_user["disliked_questions"]
-            questions.sort(key=lambda question: question["id"] in disliked_ids)
-
-        return questions
-
+        return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
-        context["main_title"] = "Tag: " if len(self.tags) == 1 else "Tags: "
-        context["main_title_extra"] = ", ".join(self.tags)
+        context["main_title"] = "Tag: " if len(self.tag_slugs) == 1 else "Tags: "
+        context["main_title_extra"] = ", ".join(self.tag_slugs)
 
         return context
 

@@ -1,21 +1,16 @@
 import mimetypes
-import os
 from pathlib import Path
 
 from decouple import config
 
+# TODO Organize settings
+
 mimetypes.add_type("application/javascript", ".js", True)
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='')
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
@@ -23,6 +18,11 @@ ALLOWED_HOSTS = config(
     default=[],
     cast=lambda hosts: [host.strip() for host in hosts.split('|') if host.strip()]
 )
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Application definition
 
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
 ]
 
 INSTALLED_APPS += [
@@ -76,8 +77,12 @@ WSGI_APPLICATION = 'QA_Website.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config('ENGINE', default='django.db.backends.postgresql'),
+        'NAME': config('NAME', default='qa_database'),
+        'USER': config('USER', default='qa_user'),
+        'PASSWORD': config('PASSWORD', default=''),
+        'HOST': config('HOST', default='localhost'),
+        'PORT': config('PORT', default='5432'),
     }
 }
 
@@ -100,6 +105,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'users.backends.LoginEmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
