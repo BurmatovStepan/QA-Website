@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "description": "TechnoPark, sem_1 project",
   "scripts": {
-    "clean": "rimraf dist .parcel-cache",
-    "start": "concurrently \"parcel src/html/*.html --open\" \"npm run watch:scss\"",
-    "watch:scss": "chokidar \"src/scss/**/*.scss\" --initial=false --ignore src/scss/style.scss -c \"powershell -File ./touch.ps1\"",
-    "build": "npm run clean && parcel build src/html/*.html --public-url ./",
-    "build:dev": "npm run clean && parcel build src/html/*.html --no-optimize --public-url /QA-Website/ --dist-dir dist/QA-Website"
+    "prestart": "npm run build:dev",
+    "start": "concurrently \"npm run watch:assets\" \"npm run watch:scss\" \"npm run watch:ts\" \"python manage.py runserver\"",
+    "watch:assets": "chokidar src/assets/**/* -c \"npm run copy-assets\"",
+    "copy-assets": "node copy-assets.js",
+    "watch:scss": "sass --watch src/scss/style.scss:static/style.css",
+    "build:scss:dev": "sass src/scss/style.scss:static/style.css",
+    "build:scss:prod": "sass src/scss/style.scss:static/style.css --style=compressed",
+    "watch:ts": "tsc --watch",
+    "build:ts": "tsc",
+    "build": "npm run clean && npm run copy-assets && npm run build:scss:prod && npm run build:ts",
+    "build:dev": "npm run clean && npm run copy-assets && npm run build:scss:dev && npm run build:ts",
+    "clean": "rimraf static/"
   },
   "repository": {
     "type": "git",
@@ -16,11 +23,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.16.0",
     "@types/node": "^24.8.1",
     "chokidar-cli": "^3.0.0",
     "concurrently": "^9.2.1",
-    "parcel": "^2.16.0",
-    "rimraf": "^6.0.1"
+    "rimraf": "^6.0.1",
+    "sass": "^1.93.3",
+    "typescript": "^5.9.3"
   }
 }

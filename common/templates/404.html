@@ -1,0 +1,11 @@
+{% extends "base/base_error.html" %}
+
+{% block body_class %}error-page 404{% endblock body_class %}
+
+{% block error_code %}404{% endblock error_code %}
+  
+{% block error_description %}Page Not Found{% endblock error_description %}
+
+{% block error_detail %}
+  Sorry, page that you requested does <span class="error-info__critical-word">NOT</span> exist.
+{% endblock error_detail %}

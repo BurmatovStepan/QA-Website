@@ -1,0 +1,26 @@
+{% load static %}
+
+<div class="question {{ modifier_classes }}">
+  <img src="{% static question.author.avatar %}"
+       alt="avatar"
+       class="question__avatar">
+
+  {% include "snippets/rating-input.html" with content_item=question component_name="question__rating" %}
+
+  <div class="question__body">
+    <a href="{% url "question_discussion" question.id %}" class="question__title">{{ question.title }}</a>
+    <p class="question__content {% if is_clamped is not False %}question__content--clamped{% endif %}">{{ question.content }}</p>
+  </div>
+
+  <div class="question__footer">
+    {% if show_answer_amount is not False %}<a href="{% url "question_discussion" question.id %}#first-answer">answers ({{ question.answer_amount }})</a>{% endif %}
+    <div class="question__tags-section">
+      Tags:
+      <ul class="question__tags-list">
+        {% for tag in question.tags %}
+          <li class="question__tag"><a href="{% url "tag_question_listing" tag %}">{{ tag }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block body_class %}question-discussion-page{% endblock body_class %}
+
+{% block main_content_header %}{% endblock main_content_header %}
+
+{% block main_content %}
+
+{% include "snippets/question-card.html" with is_clamped=False show_answer_amount=False %}
+<form class="user-answer">
+    <textarea name="user_answer_content"
+              class="user-answer__content"
+              placeholder="Enter your answer here"
+              required>
+    </textarea>
+    <button class="user-answer__submit-button">Answer</button>
+</form>
+
+<section class="answers">
+
+  {% for answer in mock_answers %}
+    {% if answer.is_correct %}
+      {% include "snippets/answer-card.html" with modifier_classes="answer--correct"%}
+    {% else %}
+      {% include "snippets/answer-card.html"%}
+    {% endif %}
+  {% endfor %}
+
+</section>
+
+{% include "snippets/paginator.html" %}
+
+{% endblock main_content %}

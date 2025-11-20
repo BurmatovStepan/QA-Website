@@ -2,11 +2,10 @@
   "compilerOptions": {
     "target": "ES5",
     "lib": ["ES5", "ES2015", "DOM"],
+    "outDir": "./static",
   },
 
-  "noEmit": true,
-
   "include": [
-    "./src/*.ts"
+    "./src/ts/*.ts"
   ]
 }
