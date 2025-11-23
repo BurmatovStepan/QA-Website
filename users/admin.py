@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from users.models import Activity, CustomUser, UserProfile
+from users.models import Activity, CustomUser
 
 # TODO Fix this admin panel too
 
@@ -11,8 +11,8 @@ class CustomUserAdmin(BaseUserAdmin):
         return False
 
     fieldsets = (
-        ("Personal info", {"fields": ("login", "password")}),
-        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
+        ("Personal info", {"fields": ("login", "password", "rating")}),
+        ("Permissions", {"fields": ("page_size_preference", "avatar", "is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
         ("Important dates", {"fields": ("last_login", "created_at", "updated_at")}),
     )
 
@@ -21,11 +21,6 @@ class CustomUserAdmin(BaseUserAdmin):
     readonly_fields = ("created_at", "last_login", "updated_at")
 
     ordering = ("login",)
-
-
-@admin.register(UserProfile)
-class CustomUserProfileAdmin(admin.ModelAdmin):
-    ...
 
 
 @admin.register(Activity)

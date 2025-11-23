@@ -77,7 +77,7 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
             .order_by("-is_correct", "-rating_total")
         )
 
-        paginator = Paginator(answers_queryset, self.current_user.profile.page_size_preference or DEFAULT_PAGINATION_SIZE)
+        paginator = Paginator(answers_queryset, self.page_size or DEFAULT_PAGINATION_SIZE)
 
         page_number = self.request.GET.get("page")
         answer_page_object = paginator.get_page(page_number)
@@ -104,7 +104,7 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
     hot_period = DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS
 
     def get(self, request, *args, **kwargs):
-        self.paginate_by = self.current_user.profile.page_size_preference or self.paginate_by
+        self.paginate_by = self.page_size or self.paginate_by
         self.hot_period = kwargs.get("day_amount") or self.hot_period
 
         return super().get(request, *args, **kwargs)

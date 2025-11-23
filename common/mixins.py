@@ -22,7 +22,7 @@ class BaseContextViewMixin:
 
         if user.is_authenticated:
             self.current_user = user
-            self.page_size = self.current_user.profile.page_size_preference or DEFAULT_PAGINATION_SIZE
+            self.page_size = self.current_user.page_size_preference or DEFAULT_PAGINATION_SIZE
         else:
             self.current_user = None
             self.page_size = DEFAULT_PAGINATION_SIZE

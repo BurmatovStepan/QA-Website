@@ -20,16 +20,10 @@
   {% if current_user %}
 
     <div class="profile profile--mini profile--signed-in">
-      <img src="{{ current_user.profile.avatar.url }}"
-          alt="avatar"
-          class="profile__avatar"
-      >
+      {% include "snippets/user-avatar.html" with user=current_user component_name="profile__avatar" %}
+
       <a href="{% url "profile" current_user.id %}" class="profile__name">
-        {% if current_user.profile.display_name %}
-          {{ current_user.profile.display_name }}
-        {% else %}
-          {{ current_user.login }}
-        {% endif %}
+        {% include "snippets/user-display-name.html" with user=current_user %}
       </a>
 
       <div class="profile__actions">

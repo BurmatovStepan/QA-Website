@@ -50,7 +50,7 @@ class ProfileView(BaseContextViewMixin, DetailView):
         # TODO Add some styling to recent activities
         context["recent_activities"] = display_records
 
-        display_name = user.profile.display_name if user.profile.display_name else user.login
+        display_name = user.display_name if user.display_name else user.login
         context["page_title"] = f"User | {display_name}"
 
         return context

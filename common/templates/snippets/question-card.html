@@ -1,19 +1,7 @@
 {% load static %}
 
 <div class="question {{ modifier_classes }}">
-  {% comment %}
-    TODO Make all avatar/username ifelse a snippet
-    TODO Make default avatar switch color depending on theme
-  {% endcomment %}
-  {% if question.author.profile.avatar %}
-    <img src="{{ question.author.profile.avatar.url }}"
-        alt="avatar"
-        class="question__avatar">
-  {% else %}
-    <img src="{% static "assets/avatar.svg" %}"
-          alt="avatar"
-          class="question__avatar">
-  {% endif %}
+  {% include "snippets/user-avatar.html" with user=question.author component_name="question__avatar" %}
 
   {% include "snippets/rating-input.html" with content_item=question component_name="question__rating" %}
 

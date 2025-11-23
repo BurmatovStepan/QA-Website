@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from qa.models import Answer, Question, Tag, Vote
-from users.models import Activity, CustomUser, UserProfile
+from users.models import Activity, CustomUser
 
 # TODO Add partial deletion
 
@@ -60,9 +60,6 @@ class Command(BaseCommand):
                     self.stdout.write(f"  -> Deleted {count:,} records from {self.style.SQL_TABLE(Model.__name__)}.")
 
                 self.stdout.write(self.style.NOTICE(f"\n--- Wiping Users and Profiles ---"))
-
-                profile_count, _ = UserProfile.objects.exclude(user=user_to_keep).delete()
-                self.stdout.write(f"  -> Deleted {profile_count:,} {self.style.SQL_TABLE("User Profiles")}.")
 
                 user_count, _ =  CustomUser.objects.exclude(id=user_to_keep.id).delete()
                 self.stdout.write(f"  -> Deleted {user_count:,} {self.style.SQL_TABLE("Users")}.")

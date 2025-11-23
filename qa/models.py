@@ -4,8 +4,7 @@ from django.contrib.contenttypes.fields import (GenericForeignKey,
                                                 GenericRelation)
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import (IntegerField, OuterRef, Q, Subquery, Sum,
-                              UniqueConstraint)
+from django.db.models import Q, Sum, UniqueConstraint
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.text import slugify
@@ -47,22 +46,10 @@ class Tag(models.Model):
 
 class QuestionManager(models.Manager):
     def get_question_list(self, search_query=""):
-        best_answer_id_subquery = Subquery(
-            Answer.objects.filter(
-                question=OuterRef("id")
-            )
-            .order_by("-is_correct", "-rating_total")
-            .values("id")[:1],
-            output_field=IntegerField()
-        )
-
         queryset = (
             self.all()
             .filter(is_active=True)
             .select_related("author")
-            .annotate(
-                best_answer_id=best_answer_id_subquery
-            )
             .order_by("-created_at")
         )
         if search_query:

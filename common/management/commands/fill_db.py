@@ -11,7 +11,7 @@ from django.utils.text import slugify
 from faker import Faker
 
 from qa.models import Answer, Question, Tag, Vote
-from users.models import Activity, CustomUser, UserProfile
+from users.models import Activity, CustomUser
 
 # TODO Add support for appending data
 # TODO Create script that recalculates rating based on DB
@@ -22,10 +22,9 @@ DEFAULT_PASSWORD = "qwerty"
 
 INFLECT_ENGINE = inflect.engine()
 
-MODEL_EXECUTION_ORDER = ["user", "user_profile", "tag", "question", "answer", "vote", "activity"]
+MODEL_EXECUTION_ORDER = ["user", "tag", "question", "answer", "vote", "activity"]
 MODEL_MULTIPLIERS = {
     "user": 1,
-    "user_profile": 1,
     "tag": 1,
     "question": 10,
     "answer": 100,
@@ -82,7 +81,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         CREATION_FUNCTIONS = {
             "user": self.create_users,
-            "user_profile": self.create_user_profiles,
             "tag": self.create_tags,
             "question": self.create_questions,
             "answer": self.create_answers,
@@ -159,6 +157,7 @@ class Command(BaseCommand):
 
 
     def create_users(self, total):
+        fake = Faker()
         hashed_password = make_password(DEFAULT_PASSWORD)
 
         def user_generator(i):
@@ -169,6 +168,8 @@ class Command(BaseCommand):
                 login=login,
                 email=email,
                 password=hashed_password,
+                display_name=fake.user_name(),
+                rating=randint(0, 1000),
                 is_active=(i % 250 != 0),
                 is_staff=(i % 100 == 0),
             )
@@ -179,31 +180,6 @@ class Command(BaseCommand):
             entity_name="user",
             entity_generator=user_generator
         )
-
-    def create_user_profiles(self, total):
-        fake = Faker()
-
-        user_ids = list(CustomUser.objects.filter(profile__isnull=True).values_list("id", flat=True))
-
-        if len(user_ids) == 0:
-            raise CommandError("No users were found to link profiles.")
-
-        def profile_generator(i):
-            user_id = user_ids[i - 1]
-
-            return UserProfile(
-                user_id=user_id,
-                display_name=fake.user_name(),
-                rating=randint(0, 1000),
-            )
-
-        self._bulk_create_model(
-            EntityModel=UserProfile,
-            total=total,
-            entity_name="user profile",
-            entity_generator=profile_generator
-        )
-
 
     def create_tags(self, total):
         fake = Faker()

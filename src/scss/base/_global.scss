@@ -11,6 +11,10 @@ main {
     scroll-padding-top: 40px;
 }
 
+.default-avatar {
+    filter: $filter-text-main;
+}
+
 :focus:not(:focus-visible) {
     outline: none;
 }

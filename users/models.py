@@ -36,7 +36,7 @@ class CustomUserManager(BaseUserManager):
 
     # TODO Remove magic numbers
     def get_best_members(self, count=5):
-        return self.select_related("profile").order_by("-profile__rating")[:count]
+        return self.order_by("-rating")[:count]
 
     def get_user_detail(self):
         return (
@@ -50,12 +50,17 @@ class CustomUserManager(BaseUserManager):
         )
 
 
-
 class CustomUser(TimeStampedModel, AbstractBaseUser, PermissionsMixin):
     objects: CustomUserManager = CustomUserManager()
 
     login = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
+
+    display_name = models.CharField(max_length=150, blank=True, null=True)
+    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    rating = models.IntegerField(default=0)
+
+    page_size_preference = models.IntegerField(default=None, blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -73,23 +78,7 @@ class CustomUser(TimeStampedModel, AbstractBaseUser, PermissionsMixin):
         ]
 
     def __str__(self):
-        return self.login
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="profile")
-
-    display_name = models.CharField(max_length=150, blank=True, null=True)
-    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
-    rating = models.IntegerField(default=0)
-
-    page_size_preference = models.IntegerField(default=None, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Профиль"
-        verbose_name_plural = "Профили"
-
-    def __str__(self):
-        return self.display_name if self.display_name else self.user.login
+        return self.display_name if self.display_name else self.login
 
 
 class ActivityManager(models.Manager):

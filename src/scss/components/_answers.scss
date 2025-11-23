@@ -7,8 +7,9 @@
     gap: 20px;
 }
 
+// TODO Add separation in card elements
 .answer {
-    --border-color: #{$color-text-main};
+    --border-color: #{$color-border-card};
 
     position: relative;
     display: grid;
