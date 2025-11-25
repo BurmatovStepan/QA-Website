@@ -15,7 +15,6 @@ from users.models import Activity, CustomUser
 
 # TODO Add support for appending data
 # TODO Create script that recalculates rating based on DB
-# TODO Disable some users
 
 BATCH_SIZE = 10_000
 DEFAULT_PASSWORD = "qwerty"

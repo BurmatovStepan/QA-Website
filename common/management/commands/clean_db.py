@@ -59,7 +59,7 @@ class Command(BaseCommand):
                     count, _ = Model.objects.all().delete()
                     self.stdout.write(f"  -> Deleted {count:,} records from {self.style.SQL_TABLE(Model.__name__)}.")
 
-                self.stdout.write(self.style.NOTICE(f"\n--- Wiping Users and Profiles ---"))
+                self.stdout.write(self.style.NOTICE(f"\n--- Wiping Users ---"))
 
                 user_count, _ =  CustomUser.objects.exclude(id=user_to_keep.id).delete()
                 self.stdout.write(f"  -> Deleted {user_count:,} {self.style.SQL_TABLE("Users")}.")

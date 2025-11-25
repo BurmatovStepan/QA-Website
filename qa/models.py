@@ -1,30 +1,40 @@
+from __future__ import annotations
+
 from datetime import timedelta
 
 from django.contrib.contenttypes.fields import (GenericForeignKey,
                                                 GenericRelation)
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Q, Sum, UniqueConstraint
+from django.db.models import Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.text import slugify
 
 from common.base_models import TimeStampedModel
+from common.constants import POPULAR_TAGS_FETCH_LIMIT
 from users.models import CustomUser
+
+MAX_TAG_NAME_LENGTH = 50
+
+MAX_QUESTION_TITLE_LENGTH = 100
+MAX_QUESTION_CONTENT_LENGTH = 4000
+
+MAX_ANSWER_PREVIEW_LENGTH = 20
 
 
 class TagManager(models.Manager):
-    def get_popular_tags(self, count=10):
+    def get_popular_tags(self, count: int = POPULAR_TAGS_FETCH_LIMIT) -> QuerySet[Tag]:
         return self.annotate(
             rating_total=Sum("questions__rating_total", default=0)
-        ).order_by("-rating_total")[:count]
+            ).order_by("-rating_total")[:count]
 
 
 class Tag(models.Model):
     objects: TagManager = TagManager()
 
-    name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=50, unique=True)
+    name = models.CharField(max_length=MAX_TAG_NAME_LENGTH, unique=True)
+    slug = models.SlugField(max_length=MAX_TAG_NAME_LENGTH, unique=True)
 
     constraints = [
         UniqueConstraint(Lower("name"), name="tag_name_case_insensitive_unique"),
@@ -40,12 +50,12 @@ class Tag(models.Model):
         verbose_name_plural = "Теги"
         ordering = ("name",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
 class QuestionManager(models.Manager):
-    def get_question_list(self, search_query=""):
+    def get_question_list(self, search_query="") -> QuerySet[Question]:
         queryset = (
             self.all()
             .filter(is_active=True)
@@ -57,7 +67,7 @@ class QuestionManager(models.Manager):
 
         return queryset
 
-    def exclude_disliked_by_user(self, queryset, user):
+    def exclude_disliked_by_user(self, queryset: QuerySet[Question], user: CustomUser | None) -> QuerySet[Question]:
         if user is None:
             return queryset
 
@@ -83,14 +93,14 @@ class QuestionManager(models.Manager):
             .order_by("sort_last", "-created_at")
         )
 
-    def get_discussion_detail(self):
+    def get_discussion_detail(self) -> QuerySet[Question]:
         return (
             self.filter(is_active=True)
             .select_related("author")
             .prefetch_related("tags")
         )
 
-    def get_hot_questions(self, queryset, lookback_period, user):
+    def get_hot_questions(self, queryset: QuerySet[Question], lookback_period: int, user: CustomUser | None):
         # TODO Probably remove because too hard
         lookback_period_ago = timezone.now() - timedelta(days=lookback_period)
 
@@ -99,7 +109,6 @@ class QuestionManager(models.Manager):
             return queryset.order_by("sort_last", "-rating_total", "-created_at")
 
         return queryset.order_by("-rating_total", "-created_at")
-
 
 # TODO Add views and timestamp to question-card
 class Question(TimeStampedModel):
@@ -115,8 +124,8 @@ class Question(TimeStampedModel):
 
     tags = models.ManyToManyField(to=Tag, related_name="questions")
 
-    title = models.CharField(max_length=100)
-    content = models.TextField(max_length=4000)
+    title = models.CharField(max_length=MAX_QUESTION_TITLE_LENGTH)
+    content = models.TextField(max_length=MAX_QUESTION_CONTENT_LENGTH)
 
     is_active = models.BooleanField(default=True)
 
@@ -125,12 +134,11 @@ class Question(TimeStampedModel):
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
-
     class Meta:
         verbose_name = "Вопрос"
         verbose_name_plural = "Вопросы"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title
 
 
@@ -152,9 +160,9 @@ class Answer(TimeStampedModel):
 
     def __str__(self):
         if self.author is None:
-            return f"{self.content if len(self.content) <= 20 else self.content[:20] + "..."}"
+            return f"{self.content if len(self.content) <= MAX_ANSWER_PREVIEW_LENGTH else self.content[:MAX_ANSWER_PREVIEW_LENGTH] + "..."}"
 
-        return f"{self.content if len(self.content) <= 20 else self.content[:20] + "..."}"
+        return f"{self.content if len(self.content) <= MAX_ANSWER_PREVIEW_LENGTH else self.content[:MAX_ANSWER_PREVIEW_LENGTH] + "..."}"
 
 
 class Vote(TimeStampedModel):
@@ -183,5 +191,5 @@ class Vote(TimeStampedModel):
             )
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.user} {"liked" if self.type == 1 else "disliked"} {self.content_type} - {self.target}"

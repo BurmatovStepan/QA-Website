@@ -1,10 +1,12 @@
+from typing import Any
+
 from django import template
+from django.core.paginator import Page
 
 register = template.Library()
 
-# TODO Remove this
 @register.simple_tag(takes_context=True)
-def url_replace(context, **kwargs):
+def url_replace(context: dict[str, Any], **kwargs) -> str:
     query = context["request"].GET.copy()
 
     for key, value in kwargs.items():
@@ -15,7 +17,7 @@ def url_replace(context, **kwargs):
 
 
 @register.filter
-def get_elided_page_range(page_obj, on_each_side):
+def get_elided_page_range(page_obj: Page, on_each_side: int):
     paginator = page_obj.paginator
     current_page_number = page_obj.number
 

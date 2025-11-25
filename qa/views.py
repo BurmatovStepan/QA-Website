@@ -15,7 +15,6 @@ from qa.models import Question
 DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS = 3
 TAG_DELIMITER = "~"
 
-# TODO Decide if you type-hint
 
 class HomepageView(BaseContextViewMixin, ListView):
     template_name = "index.html"
@@ -30,7 +29,7 @@ class HomepageView(BaseContextViewMixin, ListView):
         self.paginate_by = self.page_size or self.paginate_by
         return super().get(request, *args, **kwargs)
 
-    def get_queryset(self) -> QuerySet[Any]:
+    def get_queryset(self) -> QuerySet[Question]:
         search_query = self.request.GET.get("query", "").lower()
 
         queryset = Question.objects.get_question_list(search_query=search_query)
@@ -43,10 +42,10 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
     template_name = "question-discussion.html"
     context_object_name = "question"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Question]:
         return Question.objects.get_discussion_detail()
 
-    def get_object(self, queryset: QuerySet[Any] | None=None):
+    def get_object(self, queryset: QuerySet[Question] | None = None) -> Question:
         if queryset is None:
             queryset = self.get_queryset()
 
@@ -64,7 +63,7 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
 
         return question
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         question = context["question"]
 
@@ -86,13 +85,8 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         context["paginator"] = paginator
         context["answers"] = answer_page_object.object_list
 
-        # TODO Check if this work
-        question.view_count = question.view_count + 1
-        question.save(update_fields=["view_count"])
-
         return context
 
-# TODO Make this accessible from footer or smth
 class HotQuestionsView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
     page_title = "Hot Questions"
@@ -109,17 +103,17 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
 
         return super().get(request, *args, **kwargs)
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Question]:
         search_query = self.request.GET.get("query", "").lower()
 
         queryset = Question.objects.get_question_list(search_query)
 
-        #* this just ORDER BY rating_total DESC
+        #* this is just ORDER BY rating_total DESC
         queryset = Question.objects.get_hot_questions(queryset, self.hot_period, self.current_user)
 
         return queryset
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
         context["main_title_extra"] = f"last {self.hot_period} {"day" if self.hot_period == 1 else "days"}"
@@ -139,11 +133,15 @@ class TagsQuestionListingView(BaseContextViewMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         self.paginate_by = self.page_size or self.paginate_by
-        self.tag_slugs = {tag.strip() for tag in kwargs.get("tags_list").split(TAG_DELIMITER) if tag.strip()}
+        self.tag_slugs = {
+            tag.strip()
+            for tag in kwargs.get("tags_list").split(TAG_DELIMITER)
+            if tag.strip()
+        }
 
         return super().get(request, *args, **kwargs)
 
-    def get_queryset(self) -> QuerySet[Any]:
+    def get_queryset(self) -> QuerySet[Question]:
         search_query = self.request.GET.get("query", "").lower()
 
         queryset = Question.objects.get_question_list(search_query)
@@ -156,7 +154,7 @@ class TagsQuestionListingView(BaseContextViewMixin, ListView):
 
         return queryset
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
         context["main_title"] = "Tag: " if len(self.tag_slugs) == 1 else "Tags: "

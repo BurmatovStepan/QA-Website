@@ -9,13 +9,13 @@ from users.models import CustomUser
 CACHE_TTL = 60 * 60 * 24
 
 class BaseContextViewMixin:
-    page_title = None
-    main_title = None
-    main_title_extra = None
+    page_title: str | None = None
+    main_title: str | None = None
+    main_title_extra: str | None = None
 
-    current_user = None
+    current_user: CustomUser | None = None
 
-    page_size = None
+    page_size: int | None = None
 
     def dispatch(self, request, *args, **kwargs):
         user = self.request.user
@@ -29,7 +29,7 @@ class BaseContextViewMixin:
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
         context["page_title"] = self.page_title or "Default Page Name"
@@ -53,8 +53,3 @@ class BaseContextViewMixin:
         context["popular_tags"] = popular_tags
 
         return context
-
-
-def safe_int_conversion(value: str):
-    try: return int(value)
-    except (ValueError, TypeError): return None
