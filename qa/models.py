@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-from django.contrib.contenttypes.fields import (GenericForeignKey,
-                                                GenericRelation)
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Lower
@@ -21,6 +18,13 @@ MAX_QUESTION_TITLE_LENGTH = 100
 MAX_QUESTION_CONTENT_LENGTH = 4000
 
 MAX_ANSWER_PREVIEW_LENGTH = 20
+
+LIKE = 1
+DISLIKE = -1
+VOTE_CHOICES = [
+    (LIKE, "Like"),
+    (DISLIKE, "Dislike"),
+]
 
 
 class TagManager(models.Manager):
@@ -72,15 +76,10 @@ class QuestionManager(models.Manager):
         if user is None:
             return queryset
 
-        question_content_type = ContentType.objects.get_for_model(self.model)
-
         disliked_question_ids = (
-            user.votes
-            .filter(
-                type=Vote.DISLIKE,
-                content_type=question_content_type
-            )
-            .values_list("object_id", flat=True)
+            user.question_votes
+            .filter(type=DISLIKE)
+            .values_list("question_id", flat=True)
         )
 
         sort_last = models.Case(
@@ -119,7 +118,6 @@ class Question(TimeStampedModel):
     author = models.ForeignKey(to=CustomUser, on_delete=models.SET_NULL, related_name="questions", null=True)
 
     view_count = models.IntegerField(default=0)
-    rating = GenericRelation("Vote", related_query_name="question_votes")
     rating_total = models.IntegerField(default=0)
     answer_count = models.IntegerField(default=0)
 
@@ -147,7 +145,6 @@ class Question(TimeStampedModel):
 class Answer(TimeStampedModel):
     question = models.ForeignKey(to=Question, on_delete=models.CASCADE, related_name="answers")
     author = models.ForeignKey(to=CustomUser, on_delete=models.SET_NULL, related_name="answers", null=True)
-    rating = GenericRelation("Vote", related_query_name="answer_votes")
     rating_total = models.IntegerField(default=0)
 
     content = models.TextField(max_length=4000)
@@ -161,36 +158,48 @@ class Answer(TimeStampedModel):
 
     def __str__(self):
         if self.author is None:
-            return f"{self.content if len(self.content) <= MAX_ANSWER_PREVIEW_LENGTH else self.content[:MAX_ANSWER_PREVIEW_LENGTH] + "..."}"
+            return f"{self.content if len(self.content) <= MAX_ANSWER_PREVIEW_LENGTH else self.content[:MAX_ANSWER_PREVIEW_LENGTH] + '...'}"
 
-        return f"{self.content if len(self.content) <= MAX_ANSWER_PREVIEW_LENGTH else self.content[:MAX_ANSWER_PREVIEW_LENGTH] + "..."}"
+        return f"{self.content if len(self.content) <= MAX_ANSWER_PREVIEW_LENGTH else self.content[:MAX_ANSWER_PREVIEW_LENGTH] + '...'}"
 
 
-class Vote(TimeStampedModel):
-    LIKE = 1
-    DISLIKE = -1
-    VOTE_CHOICES = [
-        (LIKE, "Like"),
-        (DISLIKE, "Dislike"),
-    ]
-
-    user = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, related_name="votes")
+class QuestionVote(TimeStampedModel):
     type = models.SmallIntegerField(choices=VOTE_CHOICES)
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    target = GenericForeignKey("content_type", "object_id")
+    user = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, related_name="question_votes")
+    question = models.ForeignKey(to=Question, on_delete=models.CASCADE, related_name="votes")
 
     class Meta:
-        verbose_name = "Оценка"
-        verbose_name_plural = "Оценки"
+        verbose_name = "Оценка к вопросу"
+        verbose_name_plural = "Оценки к вопросу"
 
         constraints = [
             UniqueConstraint(
-                fields=["user", "content_type", "object_id"],
-                name="unique_user_vote"
+                fields=["user", "question"],
+                name="unique_user_question_vote"
             )
         ]
 
     def __str__(self) -> str:
-        return f"{self.user} {'liked' if self.type == 1 else 'disliked'} {self.content_type} - {self.target}"
+        return f"{self.user} {'liked' if self.type == 1 else 'disliked'} {self.question}"
+
+
+class AnswerVote(TimeStampedModel):
+    type = models.SmallIntegerField(choices=VOTE_CHOICES)
+
+    user = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE, related_name="answer_votes")
+    answer = models.ForeignKey(to=Answer, on_delete=models.CASCADE, related_name="votes")
+
+    class Meta:
+        verbose_name = "Оценка к ответу"
+        verbose_name_plural = "Оценки к ответу"
+
+        constraints = [
+            UniqueConstraint(
+                fields=["user", "answer"],
+                name="unique_user_answer_vote"
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.user} {'liked' if self.type == 1 else 'disliked'} {self.answer}"

@@ -116,7 +116,7 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
-        context["main_title_extra"] = f"last {self.hot_period} {"day" if self.hot_period == 1 else "days"}"
+        context["main_title_extra"] = f"last {self.hot_period} {'day' if self.hot_period == 1 else 'days'}"
 
         return context
 

@@ -3,7 +3,7 @@ from time import time
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from qa.models import Answer, Question, Tag, Vote
+from qa.models import Answer, AnswerVote, Question, QuestionVote, Tag
 from users.models import Activity, CustomUser
 
 # TODO Add partial deletion
@@ -31,7 +31,8 @@ class Command(BaseCommand):
 
         MODEL_EXECUTION_ORDER = [
             Activity,
-            Vote,
+            QuestionVote,
+            AnswerVote,
             Answer,
             Question.tags.through,
             Question,
@@ -62,7 +63,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.NOTICE(f"\n--- Wiping Users ---"))
 
                 user_count, _ =  CustomUser.objects.exclude(id=user_to_keep.id).delete()
-                self.stdout.write(f"  -> Deleted {user_count:,} {self.style.SQL_TABLE("Users")}.")
+                self.stdout.write(f"  -> Deleted {user_count:,} {self.style.SQL_TABLE('Users')}.")
 
                 self.stdout.write(self.style.SUCCESS(f"Kept user: {user_to_keep.login} (ID: {user_to_keep.id})"))
 

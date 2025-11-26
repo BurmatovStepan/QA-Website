@@ -10,24 +10,27 @@ from django.db import connections, transaction
 from django.utils.text import slugify
 from faker import Faker
 
-from qa.models import Answer, Question, Tag, Vote
+from qa.models import (DISLIKE, LIKE, Answer, AnswerVote, Question,
+                       QuestionVote, Tag)
 from users.models import Activity, CustomUser
 
 # TODO Add support for appending data
 # TODO Create script that recalculates rating based on DB
+# TODO Create votes are too similar, make something about it, idk
 
 BATCH_SIZE = 10_000
 DEFAULT_PASSWORD = "qwerty"
 
 INFLECT_ENGINE = inflect.engine()
 
-MODEL_EXECUTION_ORDER = ["user", "tag", "question", "answer", "vote", "activity"]
+MODEL_EXECUTION_ORDER = ["user", "tag", "question", "answer", "question_vote", "answer_vote", "activity"]
 MODEL_MULTIPLIERS = {
     "user": 1,
     "tag": 1,
     "question": 10,
     "answer": 100,
-    "vote": 200,
+    "question_vote": 200,
+    "answer_vote": 20,
     "activity": 200,
 }
 
@@ -83,7 +86,8 @@ class Command(BaseCommand):
             "tag": self.create_tags,
             "question": self.create_questions,
             "answer": self.create_answers,
-            "vote": self.create_votes,
+            "question_vote": self.create_question_votes,
+            "answer_vote": self.create_answer_votes,
             "activity": self.create_activities,
         }
 
@@ -104,7 +108,7 @@ class Command(BaseCommand):
 
                 start_time = time()
                 creator_function(count)
-                self.stdout.write(self.style.SUCCESS(f"Created {count:,} {INFLECT_ENGINE.plural(name.replace("_", " "))} in {time() - start_time:.2f}s"))
+                self.stdout.write(self.style.SUCCESS(f"Created {count:,} {INFLECT_ENGINE.plural(name.replace('_', ' '))} in {time() - start_time:.2f}s"))
 
     def _bulk_create_model(self, EntityModel, total, entity_name, entity_generator):
         entity_name_plural = INFLECT_ENGINE.plural(entity_name)
@@ -301,10 +305,9 @@ class Command(BaseCommand):
             entity_generator=answer_generator
         )
 
-    def create_votes(self, total):
-        self.stdout.write(f"\nCreating {total:,} {self.style.SQL_TABLE("votes")}...")
+    def create_question_votes(self, total):
+        self.stdout.write(f"\nCreating {total:,} {self.style.SQL_TABLE('question_votes')}...")
         REPORT_THRESHOLD = max(BATCH_SIZE * 2, total // 20)
-        TARGET_OPTIONS = []
 
         progress_tracker = ProgressTracker(REPORT_THRESHOLD, total)
 
@@ -313,20 +316,14 @@ class Command(BaseCommand):
 
         user_ids = CustomUser.objects.values_list("id", flat=True)
         question_ids = Question.objects.values_list("id", flat=True)
-        answer_ids = Answer.objects.values_list("id", flat=True)
 
-        if (len(question_ids) == 0 and len(answer_ids) == 0):
-            raise CommandError("No questions/answers were found to link votes.")
+        if (len(user_ids) == 0):
+            raise CommandError("No users were found to link votes.")
 
-        if len(question_ids) > 0:
-            question_content_type = ContentType.objects.get_for_model(Question)
-            TARGET_OPTIONS.append((question_content_type.id, question_ids))
+        if (len(question_ids) == 0):
+            raise CommandError("No questions were found to link votes.")
 
-        if len(answer_ids) > 0:
-            answer_content_type = ContentType.objects.get_for_model(Answer)
-            TARGET_OPTIONS.append((answer_content_type.id, answer_ids))
-
-        db_conn = connections[Vote.objects.db]
+        db_conn = connections[QuestionVote.objects.db]
 
         try:
             with transaction.atomic():
@@ -338,42 +335,37 @@ class Command(BaseCommand):
                 while len(created_vote_tuples) < total:
                     attempts += 1
 
+                    vote_type = choice([LIKE, DISLIKE])
                     user_id = choice(user_ids)
-                    vote_type = choice(Vote.VOTE_CHOICES)
-                    target_content_type_id, target_ids = choice(TARGET_OPTIONS)
+                    question_id = choice(question_ids)
 
-                    if not target_ids:
-                        continue
-
-                    target_id = choice(target_ids)
-                    vote_tuple = (user_id, target_content_type_id, target_id)
+                    vote_tuple = (user_id, question_id)
 
                     if vote_tuple not in created_vote_tuples:
                         created_vote_tuples.add(vote_tuple)
-                        vote = Vote(
+                        vote = QuestionVote(
+                            type=vote_type,
                             user_id=user_id,
-                            type=vote_type[0],
-                            content_type_id=target_content_type_id,
-                            object_id=target_id,
+                            question_id=question_id,
                         )
                         new_votes.append(vote)
 
                     if len(new_votes) >= BATCH_SIZE:
-                        Vote.objects.bulk_create(new_votes, BATCH_SIZE)
+                        QuestionVote.objects.bulk_create(new_votes, BATCH_SIZE)
                         progress, to_print = progress_tracker.create_entities(len(new_votes))
                         new_votes = []
 
                         if to_print:
-                            self.stdout.write(f"  -> Bulk created {progress:,} votes so far...")
+                            self.stdout.write(f"  -> Bulk created {progress:,} question votes so far...")
 
                     if attempts % (REPORT_THRESHOLD * 5) == 0:
                         self.stdout.write(self.style.NOTICE(f"  -> Generated {len(created_vote_tuples):,} unique votes in {attempts:,} attempts..."))
 
                 if new_votes:
-                    Vote.objects.bulk_create(new_votes, BATCH_SIZE)
+                    QuestionVote.objects.bulk_create(new_votes, BATCH_SIZE)
                     progress, to_print = progress_tracker.create_entities(len(new_votes))
 
-                self.stdout.write(f"  >> Bulk created final {progress:,} votes.")
+                self.stdout.write(f"  >> Bulk created final {progress:,} question votes.")
 
                 with db_conn.cursor() as cursor:
                     self.stdout.write(self.style.NOTICE("  -> Re-enabling Foreign Key checks..."))
@@ -382,9 +374,77 @@ class Command(BaseCommand):
         except Exception as e:
             raise CommandError(f"Vote creation failed: {e}")
 
+    def create_answer_votes(self, total):
+        self.stdout.write(f"\nCreating {total:,} {self.style.SQL_TABLE('answer_votes')}...")
+        REPORT_THRESHOLD = max(BATCH_SIZE * 2, total // 20)
+
+        progress_tracker = ProgressTracker(REPORT_THRESHOLD, total)
+
+        new_votes = []
+        created_vote_tuples = set()
+
+        user_ids = CustomUser.objects.values_list("id", flat=True)
+        answer_ids = Answer.objects.values_list("id", flat=True)
+
+        if (len(user_ids) == 0):
+            raise CommandError("No users were found to link votes.")
+
+        if (len(answer_ids) == 0):
+            raise CommandError("No answers were found to link votes.")
+
+        db_conn = connections[AnswerVote.objects.db]
+
+        try:
+            with transaction.atomic():
+                with db_conn.cursor() as cursor:
+                    self.stdout.write(self.style.NOTICE("  -> Disabling Foreign Key checks..."))
+                    cursor.execute("SET session_replication_role = 'replica';")
+
+                attempts = 0
+                while len(created_vote_tuples) < total:
+                    attempts += 1
+
+                    vote_type = choice([LIKE, DISLIKE])
+                    user_id = choice(user_ids)
+                    answer_id = choice(answer_ids)
+
+                    vote_tuple = (user_id, answer_id)
+
+                    if vote_tuple not in created_vote_tuples:
+                        created_vote_tuples.add(vote_tuple)
+                        vote = AnswerVote(
+                            type=vote_type,
+                            user_id=user_id,
+                            answer_id=answer_id,
+                        )
+                        new_votes.append(vote)
+
+                    if len(new_votes) >= BATCH_SIZE:
+                        AnswerVote.objects.bulk_create(new_votes, BATCH_SIZE)
+                        progress, to_print = progress_tracker.create_entities(len(new_votes))
+                        new_votes = []
+
+                        if to_print:
+                            self.stdout.write(f"  -> Bulk created {progress:,} answer votes so far...")
+
+                    if attempts % (REPORT_THRESHOLD * 5) == 0:
+                        self.stdout.write(self.style.NOTICE(f"  -> Generated {len(created_vote_tuples):,} unique votes in {attempts:,} attempts..."))
+
+                if new_votes:
+                    AnswerVote.objects.bulk_create(new_votes, BATCH_SIZE)
+                    progress, to_print = progress_tracker.create_entities(len(new_votes))
+
+                self.stdout.write(f"  >> Bulk created final {progress:,} answer votes.")
+
+                with db_conn.cursor() as cursor:
+                    self.stdout.write(self.style.NOTICE("  -> Re-enabling Foreign Key checks..."))
+                    cursor.execute("SET session_replication_role = 'origin';")
+
+        except Exception as e:
+            raise CommandError(f"Vote creation failed: {e}")
 
     def create_activities(self, total):
-        self.stdout.write(f"\nCreating {total:,} {self.style.SQL_TABLE("activities")}...")
+        self.stdout.write(f"\nCreating {total:,} {self.style.SQL_TABLE('activities')}...")
         REPORT_THRESHOLD = max(BATCH_SIZE * 2, total // 20)
         TARGET_OPTIONS = []
 
@@ -462,6 +522,7 @@ class Command(BaseCommand):
 
         except Exception as e:
             raise CommandError(f"Vote creation failed: {e}")
+
 
     def make_main_heading(self, model_names):
         result = []

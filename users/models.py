@@ -112,10 +112,10 @@ class Activity(models.Model):
     ]
 
     _DISPLAY_MAP = {
-        "Q_RECEIVED_LIKE": ("received a like on question: {title}", "question_discussion"),
-        "Q_RECEIVED_ANSWER": ("received an answer on question: {title}", "question_discussion"),
-        "A_RECEIVED_LIKE": ("received a like on answer to {title}", "question_discussion"),
-        "A_MARKED_CORRECT": ("had an answer marked correct on {title}", "question_discussion"),
+        "Q_RECEIVED_LIKE": ("received a like on question: \"{title}\"", "question_discussion"),
+        "Q_RECEIVED_ANSWER": ("received an answer to question: \"{title}\"", "question_discussion"),
+        "A_RECEIVED_LIKE": ("received a like on answer to \"{title}\"", "question_discussion"),
+        "A_MARKED_CORRECT": ("had an answer marked correct to \"{title}\"", "question_discussion"),
         "U_CHANGED_AVATAR": ("changed their avatar", "profile"),
         "U_CHANGED_NAME": ("changed their display name", "profile"),
     }

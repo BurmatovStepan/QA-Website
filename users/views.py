@@ -1,15 +1,16 @@
 from typing import Any
-from common.constants import DEFAULT_PAGINATION_SIZE
+
+from django.contrib.auth import authenticate, login
 from django.db.models.query import QuerySet
 from django.http.response import HttpResponse as HttpResponse
-from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import DetailView, TemplateView, FormView
-from users.forms import LoginForm
-from common.mixins import BaseContextViewMixin
-from users.models import Activity, CustomUser
-from django.contrib.auth import authenticate, login
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.shortcuts import render
+from django.views.generic import DetailView, FormView, TemplateView
+
+from common.constants import DEFAULT_PAGINATION_SIZE
+from common.mixins import BaseContextViewMixin
+from users.forms import LoginForm
+from users.models import Activity, CustomUser
 
 
 class LoginView(BaseContextViewMixin, FormView):

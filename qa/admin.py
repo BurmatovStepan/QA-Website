@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from qa.models import Answer, Question, Tag, Vote
+from qa.models import Answer, AnswerVote, Question, QuestionVote, Tag
 
 # TODO Fix, like, the whole admin panel
 
@@ -69,14 +69,23 @@ class AnswerAdmin(admin.ModelAdmin):
     question_title.short_description = "Question"
 
 
-@admin.register(Vote)
-class VoteAdmin(admin.ModelAdmin):
+@admin.register(QuestionVote)
+class QuestionVoteAdmin(admin.ModelAdmin):
     raw_id_fields = ("user",)
     readonly_fields = ("created_at", "updated_at")
 
-    list_display = ("user", "type", "target", "created_at")
-    list_filter = ("type", "content_type", "created_at")
+    search_fields = ("user__login",)
 
-    search_fields = ("object_id",)
+    list_filter = ("type",)
+
+    ordering = ("-created_at",)
+
+
+@admin.register(AnswerVote)
+class AnswerVoteAdmin(admin.ModelAdmin):
+    raw_id_fields = ("user",)
+    readonly_fields = ("created_at", "updated_at")
+
+    search_fields = ("question_id",)
 
     ordering = ("-created_at",)
