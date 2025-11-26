@@ -15,14 +15,14 @@
            required
     >
   </form>
-  <a class="new-question-button" href="{% url "new_question" %}">New question</a>
+  <a class="new-question-button" href="{% url "new_question" %}">Create new question</a>
 
   {% if current_user %}
 
     <div class="profile profile--mini profile--signed-in">
       {% include "snippets/user-avatar.html" with user=current_user component_name="profile__avatar" %}
 
-      <a href="{% url "profile" current_user.id %}" class="profile__name">
+      <a href="{% url "current_user_profile" %}" class="profile__name">
         {% include "snippets/user-display-name.html" with user=current_user %}
       </a>
 

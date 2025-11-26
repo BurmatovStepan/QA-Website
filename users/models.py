@@ -50,8 +50,6 @@ class CustomUserManager(BaseUserManager):
     def get_user_detail(self) -> QuerySet[CustomUser]:
         return (
             self.all()
-            .prefetch_related("questions")
-            .prefetch_related("answers")
             .annotate(
                 total_questions_asked=Count("questions", distinct=True),
                 total_answers_posted=Count("answers", distinct=True)

@@ -19,6 +19,11 @@ ALLOWED_HOSTS = config(
     cast=lambda hosts: [host.strip() for host in hosts.split('|') if host.strip()]
 )
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+    'localhost',
+]
+
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -33,17 +38,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
 ]
 
 INSTALLED_APPS += [
     'qa',
     'users',
     'common',
+    'django_extensions',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

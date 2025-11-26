@@ -1,7 +1,9 @@
-from django.contrib import admin
-from django.urls import include, path
+import debug_toolbar
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+
 from qa.views import HomepageView
 
 urlpatterns = [
@@ -10,9 +12,9 @@ urlpatterns = [
     path("questions/", include("qa.urls")),
     path("users/", include("users.urls")),
 
-    path("error/", include("errors.urls")),
     path("admin/", admin.site.urls),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]

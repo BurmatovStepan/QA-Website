@@ -3,6 +3,7 @@ click==8.3.0
 colorama==0.4.6
 cssbeautifier==1.15.4
 Django==5.2.7
+django-debug-toolbar==6.1.0
 django-extensions==4.1
 EditorConfig==0.17.1
 Faker==37.12.0

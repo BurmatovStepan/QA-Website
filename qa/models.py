@@ -60,6 +60,7 @@ class QuestionManager(models.Manager):
             self.all()
             .filter(is_active=True)
             .select_related("author")
+            .prefetch_related("tags")
             .order_by("-created_at")
         )
         if search_query:
@@ -192,4 +193,4 @@ class Vote(TimeStampedModel):
         ]
 
     def __str__(self) -> str:
-        return f"{self.user} {"liked" if self.type == 1 else "disliked"} {self.content_type} - {self.target}"
+        return f"{self.user} {'liked' if self.type == 1 else 'disliked'} {self.content_type} - {self.target}"

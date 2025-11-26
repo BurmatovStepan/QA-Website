@@ -1,10 +1,13 @@
 from typing import Any
 
+from django.urls import reverse
 from django.core.cache import cache
 
+from django.shortcuts import render
 from common.constants import DEFAULT_PAGINATION_SIZE
 from qa.models import Tag
 from users.models import CustomUser
+from django.shortcuts import redirect
 
 CACHE_TTL = 60 * 60 * 24
 
@@ -18,7 +21,7 @@ class BaseContextViewMixin:
     page_size: int | None = None
 
     def dispatch(self, request, *args, **kwargs):
-        user = self.request.user
+        user = request.user
 
         if user.is_authenticated:
             self.current_user = user
@@ -53,3 +56,19 @@ class BaseContextViewMixin:
         context["popular_tags"] = popular_tags
 
         return context
+
+
+class LoginRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+
+        return render(request, "401.html", status=401)
+
+
+class AnonymousRequiredMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(reverse("profile", kwargs={"id": request.user.id}), code=303)
+
+        return super().dispatch(request, *args, **kwargs)
