@@ -18,10 +18,10 @@ header {
 main {
     grid-area: main;
     overflow-y: auto;
-    
+
     & > section,
     & > form {
-        margin: 8px 24px;
+        margin: 8px 0px 8px 24px;
     }
 }
 

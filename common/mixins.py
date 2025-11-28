@@ -63,12 +63,14 @@ class LoginRequiredMixin:
         if request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
 
-        return render(request, "401.html", status=401)
+        login_url = f"{reverse("login")}?next={request.path}"
+
+        return redirect(login_url)
 
 
 class AnonymousRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect(reverse("profile", kwargs={"id": request.user.id}), code=303)
+            return redirect(reverse("current_user_profile"), code=303)
 
         return super().dispatch(request, *args, **kwargs)

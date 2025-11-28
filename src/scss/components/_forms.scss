@@ -1,0 +1,70 @@
+@use '../config' as *;
+
+.form {
+    display: grid;
+    margin-top: 16px;
+    grid-template-columns: max-content 30vw 1fr;
+    gap: 20px 8px;
+
+    &__error-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 12px;
+    }
+
+    &__error-wrapper--non-field {
+        grid-column: 1 / -1;
+        font: $h3;
+    }
+
+    &__error-message {
+        color: $color-text-error;
+    }
+
+    &__field-label {
+        margin-right: 60px;
+    }
+
+    &__field-label--required {
+        &::after {
+            margin-left: 0.25em;
+            color: $color-accent-main;
+            font-weight: bold;
+            content: "*";
+        }
+    }
+}
+
+.form--login {
+    & .form__login-button {
+        @include default-button;
+        width: 100px;
+        height: 36px;
+        margin-block: 12px;
+        grid-column: 2 / 3;
+    }
+
+    & .form__register-redirect {
+        grid-column: 2 / 3;
+
+        & > a {
+            @include light-up-link;
+        }
+    }
+}
+
+.form--register {
+    & .form__avatar-field {
+        grid-column: 2 / 3;
+    }
+
+    & .form__register-button {
+        @include default-button;
+        width: 100px;
+        height: 36px;
+        margin-block: 12px;
+        grid-column: 2 / 3;
+    }
+
+}
