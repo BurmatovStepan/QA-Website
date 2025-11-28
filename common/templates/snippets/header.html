@@ -27,9 +27,13 @@
       </a>
 
       <div class="profile__actions">
-        <a href="{% url "settings" %}">Settings</a>
-        <span class="profile__actions-separator">/</span>
-        <a href="{{ request.path }}">Logout</a>
+        <a href="{% url "settings" %}" class="profile__action">Settings</a>
+        <span class="profile__actions-separator">│</span>
+        <form class="profile__logout" method="post" action="{% url "logout" %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button class="profile__action">Logout</button>
+        </form>
 
         {% include "snippets/theme-switch.html" with component_name="profile__theme-switch" %}
       </div>
@@ -39,9 +43,9 @@
 
     <div class="profile profile--mini profile--signed-out">
       <div class="profile__actions">
-        <a href="{% url "login" %}">Log in</a>
-        <span class="profile__actions-separator">/</span>
-        <a href="{% url "register" %}">Register</a>
+        <a href="{% url "login" %}" class="profile__action">Log in</a>
+        <span class="profile__actions-separator">│</span>
+        <a href="{% url "register" %}" class="profile__action">Register</a>
 
         {% include "snippets/theme-switch.html" with component_name="profile__theme-switch" %}
         </div>

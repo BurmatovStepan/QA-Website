@@ -1,11 +1,12 @@
 from typing import Any
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
 from django.db.models.query import QuerySet
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, FormView, TemplateView
 
 from common.constants import DEFAULT_PAGINATION_SIZE
@@ -127,3 +128,15 @@ class SettingsView(LoginRequiredMixin, BaseContextViewMixin, TemplateView):
     template_name = "settings.html"
     page_title = "User Settings"
     main_title = "Settings: "
+
+
+@require_POST
+def logout_view(request):
+    logout(request)
+
+    next_url = request.POST.get('next')
+
+    if next_url:
+        return redirect(next_url)
+
+    return redirect("homepage")
