@@ -5,7 +5,8 @@ from qa.views import (HotQuestionsView, NewQuestionView,
 
 urlpatterns = [
     path("new-question/", NewQuestionView.as_view(), name="new_question"),
-    path("question/<int:id>/", QuestionDiscussionView.as_view(), name="question_discussion"),
+    path("question/<int:id>/", QuestionDiscussionView.as_view(), name="question_discussion_no_slug"),
+    path("question/<int:id>/<str:slug>/", QuestionDiscussionView.as_view(), name="question_discussion"),
 
     path("hot-questions/", HotQuestionsView.as_view(), name="hot_questions"),
     path("hot-questions/<int:day_amount>/", HotQuestionsView.as_view(), name="hot_questions_period"),

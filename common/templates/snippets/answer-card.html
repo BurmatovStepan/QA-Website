@@ -1,18 +1,20 @@
 {% load static %}
 
-<div class="answer {{ modifier_classes }}" {% if forloop.first %}id="first-answer"{% endif %}>
-  <img src="{% static answer.author.avatar %}"
-      alt="avatar"
-      class="answer__avatar"
-  >
+<div class="answer {{ modifier_classes }}" id="{{ answer.id }}">
+
+  {% include "snippets/user-avatar.html" with user=answer.author component_name="answer__avatar" %}
 
   {% include "snippets/rating-input.html" with content_item=answer component_name="answer__rating"%}
 
   <p class="answer__content">
+    {% if forloop.first %}
+      <a name="first-answer"></a>
+    {% endif %}
+    
     {{ answer.content }}
   </p>
 
-  {% if question.author_id == current_user.id %}
+  {% if question.author.id == current_user.id %}
     <button class="answer__button-correct">Mark as correct!</button>
   {% endif %}
 </div>

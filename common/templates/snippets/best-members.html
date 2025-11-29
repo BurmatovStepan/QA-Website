@@ -2,7 +2,9 @@
   <h1>Best Members</h1>
   <ul class="best-members__links-list">
     {% for member in best_members %}
-      <li class="best-members__member"><a href="{% url "user" member.id %}">{{ member.displayed_name }}</a></li>
+      <li class="best-members__member"><a href="{% url "profile" member.id %}">
+        {% include "snippets/user-display-name.html" with user=member %}
+      </a></li>
     {% endfor %}
   </ul>
 </section>

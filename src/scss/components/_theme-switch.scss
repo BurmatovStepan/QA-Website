@@ -3,7 +3,7 @@
 .theme-switch {
     width: 32px;
     outline: none;
-    transition: scale 0.3s;
+    transition: scale $timing-animation-long;
     cursor: pointer;
 
     &:hover,

@@ -5,19 +5,24 @@
 
 {% block main_content %}
 <section class="profile">
-  <img src="{% static user.avatar %}" alt="avatar" class="profile__avatar">
-  <span class="profile__name">{{ user.displayed_name }}</span>
+
+  {% include "snippets/user-avatar.html" with user=viewed_user component_name="profile__avatar" %}
+
+  <span class="profile__name">
+    {% include "snippets/user-display-name.html" with user=viewed_user %}
+  </span>
+
   <div class="profile__stats">
-    <span>User rating: {{ user.rating }}</span>
-    <span>Questions asked: {{ user.total_questions_asked }}</span>
-    <span>Answers posted: {{ user.total_answers_posted }}</span>
+    <span>User rating: {{ viewed_user.rating }}</span>
+    <span>Questions asked: {{ viewed_user.total_questions_asked }}</span>
+    <span>Answers posted: {{ viewed_user.total_answers_posted }}</span>
   </div>
 </section>
 
 <section class="recent-activity">
   <h1>Recent activity</h1>
   <ul class="recent-activity__records">
-    {% for activity in user.recent_activities %}
+    {% for activity in recent_activities %}
       <li class="recent-activity__record"><a href="{{ activity.link_url }}">{{ activity.description }}</a></li>
     {% endfor %}
   </ul>

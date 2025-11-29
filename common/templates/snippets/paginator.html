@@ -10,7 +10,8 @@
         </div>
       {% else %}
         <div class="paginator__button {% if page_obj.number == i %}paginator__button--current-page{% endif %}">
-          <a href="?{% url_replace page=i %}">{{ i }}</a>
+          <a href="?{% url_replace page=i %}"></a>
+          <span class="paginator__page-number">{{ i }}</span>
         </div>
       {% endif %}
 

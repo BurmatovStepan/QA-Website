@@ -14,7 +14,7 @@
 {% block main_content %}
   <section class="questions">
 
-    {% for question in mock_questions %}
+    {% for question in questions %}
       {% include "snippets/question-card.html" with modifier_classes="question--bordered" %}
     {% endfor %}
 

@@ -24,14 +24,14 @@
             height: 2px;
 
             background-color: transparent;
-            transition: background-color 0.3s;
+            transition: background-color $timing-animation-long;
             content: "";
         }
 
         & > a {
             color: $color-text-main;
             outline: none;
-            transition: font-size 0.3s;
+            transition: font-size $timing-animation-long;
         }
 
         & > a:hover,

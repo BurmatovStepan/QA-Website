@@ -22,7 +22,7 @@
 
         & > a {
             color: $color-accent-main;
-            transition: font-size 0.3s;
+            transition: font-size $timing-animation-long;
         }
 
         & > a:hover,
@@ -31,7 +31,7 @@
         }
     }
 
-    &__critical-word {
+    &__red-highlight {
         color: $color-text-error;
     }
 

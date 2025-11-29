@@ -6,22 +6,30 @@
 
 Откройте проект и выполните команды.
 1. Создайте проект
-```
+```bash
 git clone https://github.com/BurmatovStepan/QA-Website.git
 cd qa-website
 ```
 
 2. Установите зависимости
-```
+```bash
 npm install
 pip install -r requirements.txt
 ```
 
 3. Создатей файл `.env` в корневой директории. Данные переменные используются в `settings.py` django-приложения
-```
+```ini
 SECRET_KEY=<YOUR_SECRET_KEY>
+
 DEBUG=True
 ALLOWED_HOSTS=127.0.0.1|localhost
+
+ENGINE=<BACKEND_OF_YOUR_DATABASE>     (default="django.db.backends.postgresql")
+NAME=<NAME_OF_YOUR_DATABASE>          (default="qa_database")
+USER=<NAME_OF_USER>                   (default="qa_user")
+PASSWORD=<PASSWORD_OF_THE_USER>       (default="")
+HOST=<HOST_TO_ACCESS_DATABASE>        (default="localhost")
+PORT=<PORT_TO_ACCESS_DATABASE>        (default="5432")
 ```
 
 # Сборка статических файлов
@@ -34,8 +42,3 @@ ALLOWED_HOSTS=127.0.0.1|localhost
 
 > [!WARNING]
 > Команды `npm start`, `npm run build:dev` и `npm run build` удаляют директорию `static/` перед выполнением.
-
-> [!TIP]
-> Для тестирования mock-данных доступны следующие теги (?tag=value в строке поиска)
-> 1. `user=<user_id>` - авторизация под пользователем с `id=user_id`
-> 2. `page-size=<int>` - задание размера пагинации

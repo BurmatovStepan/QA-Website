@@ -9,6 +9,7 @@
     grid-template-columns: max-content max-content;
     align-items: center;
     gap: 8px 36px;
+    line-height: 1.05em;
 
     &__avatar {
         width: 200px;
@@ -41,7 +42,7 @@
             color: $color-accent-main;
             text-decoration: 1px underline transparent;
             outline: none;
-            transition: font-size 0.3s, text-decoration-color 0.3s;
+            transition: font-size $timing-animation-long, text-decoration-color $timing-animation-long;
         }
 
         & > a:hover,
@@ -64,7 +65,14 @@
 
         .profile__name {
             @include light-up-link;
-            font: $font-text-default;
+            font: $h3;
+            text-decoration: none;
+            transition: font-size $timing-animation-long;
+
+            &:hover,
+            &:focus-visible {
+                font-size: 1.05em;
+            }
         }
     }
 

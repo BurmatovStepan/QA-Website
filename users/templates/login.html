@@ -6,7 +6,7 @@
 {% endblock main_title %}
 
 {% block main_content %}
-  <form class="login-form">
+  <form class="login-form" method="post" action="">
     <span class="login-form__info-message">Sorry, wrong password!</span>
 
     <label for="login-form__login">Login</label>
@@ -33,5 +33,6 @@
     <button class="login-form__login-button">Log in!</button>
 
     <div class="login-form__register-redirect"><a href="{% url "register" %}">create new account</a></div>
+    {% csrf_token %}
   </form>
 {% endblock main_content %}

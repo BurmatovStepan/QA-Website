@@ -31,10 +31,10 @@
 
     <label for="register-form__name">Displayed name</label>
     <input type="text"
-           name="displayed_name"
+           name="display_name"
            id="register-form__name"
            class="register-form__name"
-           placeholder="Enter displayed name"
+           placeholder="Enter display name"
     >
 
     <label for="register-form__password">Password</label>
@@ -48,7 +48,7 @@
            required
     >
 
-    <label for="">Repeat password</label>
+    <label for="register-form__repeat-password">Repeat password</label>
     <input type="password"
            name="repeat_password"
            id="register-form__repeat-password"
@@ -58,7 +58,8 @@
            required
     >
 
-    {% include "snippets/custom-file-input.html" with component_name="register-form__avatar-field"%}
+    <label for="file-upload">Upload avatar</label>
+    {% include "snippets/custom-file-input.html" with component_name="register-form__avatar-field" input_id="file-upload" %}
 
     <button class="register-form__register-button">Register!</button>
   </form>
