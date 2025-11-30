@@ -12,7 +12,6 @@
 @use 'components/header';
 @use 'components/main-header';
 @use 'components/navigation';
-@use 'components/new-question';
 @use 'components/new-question-button';
 @use 'components/paginator';
 @use 'components/popular-tags';
@@ -22,7 +21,6 @@
 @use 'components/theme-switch';
 @use 'components/user-profile';
 @use 'components/user-recent-activity';
-@use 'components/user-settings';
 
 @use 'themes/dark';
 @use 'themes/light';

@@ -21,11 +21,22 @@
       {% if field.name != "avatar" %}
         {% include "snippets/form-field.html" %}
       {% else %}
-        <label for="file-upload">{{ field.label }}</label>
-        {% include "snippets/custom-file-input.html" with component_name="form__avatar-field" input_name=field.name input_id=field.id_for_label %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {% include "snippets/avatar-source.html" with avatar=current_user.avatar component_name="form__avatar"%}
+
+        <div class="form__row form__row--avatar">
+          {% include "snippets/custom-file-input.html" with input_name=field.name input_id=field.id_for_label %}
+
+          <div class="form__error-wrapper">
+            {% for error in field.errors %}
+              <span class="form__error-message">{{ error }}</span>
+            {% endfor %}
+          </div>
+
+        </div>
       {% endif %}
     {% endfor %}
 
-    <button class="form__register-button">Register!</button>
+    <button class="form__submit-button">Register!</button>
   </form>
 {% endblock main_content %}

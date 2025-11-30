@@ -7,36 +7,21 @@
 
 {% block body_class %}new-question-page{% endblock body_class %}
 {% block main_content %}
-  <form class="new-question">
-    <div class="new-question__body">
-      <label for="new-question__title">Title</label>
-      <input type="text"
-            name="title"
-            id="new-question__title"
-            placeholder="Title of your post"
-            minlength="7"
-            maxlength="100"
-            required
-      >
+  <form class="form form--new-question" method="post">
+    {% csrf_token %}
 
-      <label for="new-question__content">Text</label>
-      <textarea name="body"
-                id="new-question__content"
-                class="new-question__content"
-                placeholder="Your full question here"
-                minlength="25"
-                maxlength="4000"
-                required
-      ></textarea>
+    {% if form.non_field_errors %}
+      <div class="form__error-wrapper form__error-wrapper--non-field">
+        {% for error in form.non_field_errors %}
+          <span class="form__error-message">{{ error }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
 
-      <label for="new-question__tags">Tags</label>
-      <input type="text"
-            name="tags"
-            id="new-question__tags"
-            placeholder="some tag, another, third"
-      >
+    {% for field in form %}
+      {% include "snippets/form-field.html" %}
+    {% endfor %}
 
-      <button class="new-question__submit-button">Ask!</button>
-    </div>
+    <button class="form__submit-button">Ask!</button>
   </form>
 {% endblock main_content %}

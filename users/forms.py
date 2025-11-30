@@ -129,3 +129,83 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError(errors)
 
         return cleaned_data
+
+
+# TODO These forms are too similar
+class SettingsFrom(forms.Form):
+    login = forms.CharField(
+        label="Login",
+        min_length=MIN_USER_LOGIN_LENGTH,
+        max_length=MAX_USER_LOGIN_LENGTH,
+        required=True,
+        widget=forms.TextInput(attrs={
+            "placeholder": "Enter login",
+            "autocomplete": "username"
+        })
+    )
+
+    email = forms.EmailField(
+        label="Email",
+        required=True,
+        widget=forms.EmailInput(attrs={
+            "placeholder": "example@google.com",
+            "autocomplete": "email"
+        })
+    )
+
+    display_name = forms.CharField(
+        label="Displayed name",
+        max_length=MAX_USER_DISPLAY_NAME_LENGTH,
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder": "Enter display name"
+        })
+    )
+
+    avatar = forms.ImageField(
+        label="Upload avatar",
+        required=False,
+        widget=forms.FileInput(attrs={
+            "accept": "image/*"
+        })
+    )
+
+    clear_avatar = forms.BooleanField(
+        required=False,
+        initial=False,
+        widget=forms.HiddenInput
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
+    def clean_login(self):
+        login = self.cleaned_data.get("login")
+
+        if login != self.user.login:
+            if CustomUser.objects.exclude(login__iexact=self.user.login).filter(login__iexact=login).exists():
+                raise forms.ValidationError("This login is already taken. Please choose another.")
+
+        return login
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+
+        if email != self.user.email:
+            if CustomUser.objects.exclude(login__iexact=self.user.email).filter(email__iexact=email).exists():
+                raise forms.ValidationError("A user with this email already exists.")
+
+        return email
+
+    def clean_avatar(self):
+        uploaded_file = self.cleaned_data.get("avatar")
+
+        if uploaded_file:
+            if uploaded_file.size > MAX_AVATAR_SIZE:
+                max_mb_size = MAX_AVATAR_SIZE / 1024 / 1024
+                raise forms.ValidationError(
+                    f"The file size ({uploaded_file.size / 1024 / 1024:.2f}MB) exceeds the maximum limit of {max_mb_size:.0f}MB."
+                )
+
+        return uploaded_file

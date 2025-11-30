@@ -1,10 +1,21 @@
 @use '../config' as *;
 
+
 .form {
     display: grid;
     margin-top: 16px;
-    grid-template-columns: max-content 30vw 1fr;
+    grid-template-columns: max-content 35vw;
     gap: 20px 8px;
+
+    &__row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__row--avatar {
+        grid-column: 2 / 3;
+    }
 
     &__error-wrapper {
         display: flex;
@@ -23,7 +34,7 @@
     }
 
     &__field-label {
-        margin-right: 60px;
+        margin-right: 40px;
     }
 
     &__field-label--required {
@@ -34,17 +45,36 @@
             content: "*";
         }
     }
-}
 
-.form--login {
-    & .form__login-button {
+    &__avatar-preview-wrapper {
+        display: flex;
+        gap: 16px;
+    }
+
+    &__avatar {
+        width: 140px;
+        margin-block: 12px;
+    }
+
+    &__clear-avatar {
+        @include default-button;
+        width: 32px;
+        height: 32px;
+        margin-top: 12px;
+        font-size: 20px;
+        box-shadow: $shadow-small;
+    }
+
+    &__submit-button {
         @include default-button;
         width: 100px;
         height: 36px;
         margin-block: 12px;
         grid-column: 2 / 3;
     }
+}
 
+.form--login {
     & .form__register-redirect {
         grid-column: 2 / 3;
 
@@ -54,17 +84,10 @@
     }
 }
 
-.form--register {
-    & .form__avatar-field {
-        grid-column: 2 / 3;
+.form--new-question {
+    grid-template-columns: auto 1fr;
+    & .form__content {
+        min-height: 30vh;
+        resize: vertical;
     }
-
-    & .form__register-button {
-        @include default-button;
-        width: 100px;
-        height: 36px;
-        margin-block: 12px;
-        grid-column: 2 / 3;
-    }
-
 }

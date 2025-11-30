@@ -3,7 +3,8 @@ const THEME_STORAGE_KEY = "user-theme";
 
 const LIGHT_ICON_PATH: string = "/static/assets/light-theme.svg";
 const DARK_ICON_PATH: string = "/static/assets/dark-theme.svg";
-
+const DEFAULT_AVATAR_PATH: string = "/static/assets/avatar.svg";
+const INVALID_FILE_ICON_PATH: string = "/static/assets/invalid-file.svg";
 
 function checkActiveTab(): void {
     let currentPath = window.location.pathname;
@@ -71,23 +72,139 @@ function themeSwitchKeyboardHandler(event: KeyboardEvent): void {
     }
 }
 
+class CustomFileInput {
+    private initialFileName: string;
 
-function initCustomFileInput(): void {
-    const fileInput = document.querySelector(".js-file-input");
-    if (fileInput) {
-        fileInput.addEventListener("change", updateFile);
+    private constructor(
+        private fileNameDisplay: HTMLSpanElement,
+        private filePreview: HTMLImageElement,
+        private fileResetButton: HTMLDivElement,
+        private fileClearButton: HTMLButtonElement,
+        private fileInput: HTMLInputElement,
+        private fileClearInput: HTMLInputElement
+    ) {
+        try {
+            const urlObject = new URL(filePreview.src);
+            this.initialFileName = urlObject.pathname;
+        } catch (e) {
+            this.initialFileName = filePreview.src;
+        }
+
+        fileInput.addEventListener("change", this.fileChangeHandler);
+
+        fileResetButton.addEventListener("click", this.resetFile);
+        fileResetButton.addEventListener("keydown", this.resetFileKeyboardHandler);
+
+        fileClearButton.addEventListener("click", this.clearFile);
+        fileClearButton.addEventListener("keydown", this.clearFileKeyboardHandler);
     }
-}
 
-function updateFile(event: Event): void {
-    const fileNameDisplay = document.querySelector(".js-file-input-filename");
+    private fileChangeHandler = (event: Event): void => {
+        const file = this.fileInput.files ? this.fileInput.files[0] : null;
 
-    const input = event.target as HTMLInputElement;
-    const file = input.files ? input.files[0] : null;
+        if (file) {
+            this.fileClearInput.value = "False";
+            this.filePreview.classList.remove("themed-contrast")
+        }
 
-    fileNameDisplay.textContent = file ? file.name : "No file selected";
+        this.updateFileNameDisplay(file.name);
+        this.updateFilePreview(file);
+    }
+
+    private updateFileNameDisplay = (fileName: string | null): void => {
+        if (fileName) {
+            this.fileNameDisplay.textContent = fileName
+        } else {
+            this.fileNameDisplay.textContent = "No file selected"
+        }
+    }
+
+    private updateFilePreview = (file: File | string | null): void => {
+        if (file === null) {
+            this.filePreview.src = DEFAULT_AVATAR_PATH;
+            this.filePreview.classList.add("themed-contrast")
+        }
+
+        if (file instanceof File && !file.type.startsWith("image/")) {
+            this.filePreview.src = INVALID_FILE_ICON_PATH;
+            this.filePreview.classList.add("themed-contrast")
+        }
+
+        if (file instanceof File && file.type.startsWith("image/")) {
+            const reader = new FileReader()
+
+            const updateFilePreview = (event: ProgressEvent<FileReader>): void =>  {
+                if (event.target && event.target.result && this.filePreview) {
+                    this.filePreview.src = event.target.result as string;
+                }
+            }
+            reader.onload = updateFilePreview;
+
+            reader.readAsDataURL(file);
+        }
+        if (typeof(file) === "string") {
+            this.filePreview.src = file;
+            console.log({file, DEFAULT_AVATAR_PATH})
+            if (file === DEFAULT_AVATAR_PATH) {
+                this.filePreview.classList.add("themed-contrast");
+            } else {
+                this.filePreview.classList.remove("themed-contrast");
+            }
+        }
+    }
+
+    private resetFile = (): void => {
+        this.fileClearInput.value = "False";
+        this.fileInput.value = "";
+        this.updateFileNameDisplay("No file selected");
+        this.updateFilePreview(this.initialFileName);
+    }
+
+    private resetFileKeyboardHandler = (event: KeyboardEvent): void => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            this.resetFile();
+        }
+    }
+
+    private clearFile = (): void => {
+        this.fileClearInput.value = "True";
+        this.fileInput.value = "";
+        this.updateFileNameDisplay("Default avatar");
+        this.updateFilePreview(null);
+    }
+
+    private clearFileKeyboardHandler = (event: KeyboardEvent): void => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            this.clearFile();
+        }
+    }
+
+    static create = (): CustomFileInput | null => {
+        const fileNameDisplay = document.querySelector(".js-file-input-filename");
+        const filePreview = document.querySelector(".js-file-input-preview");
+        const fileResetButton = document.querySelector(".js-file-input-reset-button")
+        const fileClearButton = document.querySelector(".js-file-input-clear-button")
+        const fileInput = document.querySelector(".js-file-input-input");
+        const fileClearInput = document.querySelector(".js-file-input-clear-input");
+
+        if (fileNameDisplay instanceof HTMLSpanElement &&
+            filePreview instanceof HTMLImageElement &&
+            fileResetButton instanceof HTMLDivElement &&
+            fileClearButton instanceof HTMLButtonElement &&
+            fileInput instanceof HTMLInputElement &&
+            fileClearInput instanceof HTMLInputElement
+
+        ) {
+            return new CustomFileInput(fileNameDisplay, filePreview, fileResetButton, fileClearButton, fileInput, fileClearInput);
+        }
+        console.error("Fields required for CustomFileInput are missing")
+        return null;
+    }
+
 }
 
 document.addEventListener("DOMContentLoaded", checkActiveTab);
 document.addEventListener("DOMContentLoaded", initTheme);
-document.addEventListener("DOMContentLoaded", initCustomFileInput);
+CustomFileInput.create()

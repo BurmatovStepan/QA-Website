@@ -1,13 +1,13 @@
 {% load static %}
 
-{% if user.avatar %}
-  <img src="{{ user.avatar.url }}"
+{% if avatar %}
+  <img src="{{ avatar.url }}"
       alt="avatar"
       class="{{ component_name }}"
   >
 {% else %}
   <img src="{% static "assets/avatar.svg" %}"
         alt="avatar"
-        class="{{ component_name }} default-avatar"
+        class="{{ component_name }} themed-contrast"
   >
 {% endif %}

@@ -6,11 +6,14 @@ from django.db.models.query import QuerySet
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
-from django.views.generic import DetailView, ListView, TemplateView
+from django.db import transaction
+from django.views.generic import DetailView, ListView, TemplateView, FormView
+from django.http import HttpResponseRedirect
 
 from common.constants import DEFAULT_PAGINATION_SIZE
 from common.mixins import BaseContextViewMixin
-from qa.models import Question
+from qa.models import Question, Tag
+from qa.forms import NewQuestionForm
 
 DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS = 3
 TAG_DELIMITER = "~"
@@ -163,7 +166,40 @@ class TagsQuestionListingView(BaseContextViewMixin, ListView):
         return context
 
 
-class NewQuestionView(BaseContextViewMixin, TemplateView):
+class NewQuestionView(BaseContextViewMixin, FormView):
     template_name = "new-question.html"
+    form_class = NewQuestionForm
+
     page_title = "New Question"
     main_title = "New Question"
+
+    def form_valid(self, form):
+        try:
+            with transaction.atomic():
+                question = Question(
+                    title = form.cleaned_data.get("title"),
+                    content = form.cleaned_data.get("content"),
+                    author = self.current_user
+                )
+                question.save()
+
+                tag_names = form.cleaned_data.get("tags")
+
+                tags_to_add = []
+                for tag_name in tag_names:
+                    tag, created = Tag.objects.get_or_create(
+                        name__iexact=tag_name,
+                        defaults={
+                            "name": tag_name
+                        }
+                    )
+                    tags_to_add.append(tag)
+
+                question.tags.add(*tags_to_add)
+
+        except Exception as e:
+            form.add_error(None, "Произошла ошибка при создании вопроса. Повторите попытку ещё раз.")
+            return self.form_invalid(form)
+
+        question_url = reverse("question_discussion", kwargs={"id": question.id, "slug": question.slug})
+        return HttpResponseRedirect(question_url, status=303)

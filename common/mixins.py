@@ -6,6 +6,7 @@ from django.core.cache import cache
 from django.shortcuts import render
 from common.constants import DEFAULT_PAGINATION_SIZE
 from qa.models import Tag
+from django.http import HttpResponseRedirect
 from users.models import CustomUser
 from django.shortcuts import redirect
 
@@ -65,12 +66,12 @@ class LoginRequiredMixin:
 
         login_url = f"{reverse("login")}?next={request.path}"
 
-        return redirect(login_url)
+        return HttpResponseRedirect(login_url, status=303)
 
 
 class AnonymousRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect(reverse("current_user_profile"), code=303)
+            return HttpResponseRedirect(reverse("current_user_profile"), status=303)
 
         return super().dispatch(request, *args, **kwargs)

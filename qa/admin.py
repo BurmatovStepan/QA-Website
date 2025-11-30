@@ -25,7 +25,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {"fields": ("id", "author", "title", "slug", "content")}),
-        ("Status", {"fields": ("is_answered",)}),
+        ("Status", {"fields": ("is_answered", "rating_total")}),
         ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
 
