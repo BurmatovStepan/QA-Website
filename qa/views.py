@@ -1,19 +1,22 @@
 from typing import Any
 
 from django.core.paginator import Paginator
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.db import transaction
-from django.views.generic import DetailView, ListView, TemplateView, FormView
+from django.views.generic import DetailView, ListView, TemplateView, FormView, View
 from django.http import HttpResponseRedirect
+from common.mixins import LoginRequiredMixin
 
 from common.constants import DEFAULT_PAGINATION_SIZE
 from common.mixins import BaseContextViewMixin
-from qa.models import Question, Tag
-from qa.forms import NewQuestionForm
+from qa.models import Question, Tag, Answer
+from qa.forms import NewQuestionForm, AnswerForm
 
 DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS = 3
 TAG_DELIMITER = "~"
@@ -71,6 +74,7 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         question = context["question"]
 
         context["page_title"] = f"Question | {question.title}"
+        context["form"] = AnswerForm()
 
         answers_queryset = (
             question.answers
@@ -84,11 +88,52 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         page_number = self.request.GET.get("page")
         answer_page_object = paginator.get_page(page_number)
 
+
         context["page_obj"] = answer_page_object
         context["paginator"] = paginator
         context["answers"] = answer_page_object.object_list
 
         return context
+
+
+class QuestionAnswerView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        question_id = kwargs.get("id")
+        question = get_object_or_404(Question, id=question_id)
+
+        form = AnswerForm(request.POST)
+        if (form.is_valid()):
+            with transaction.atomic():
+                try:
+                    answer_content = form.cleaned_data["content"]
+                    new_answer = Answer(
+                        question=question,
+                        author=request.user,
+                        content=answer_content
+                    )
+                    new_answer.save()
+
+                    answer_card_html = render_to_string(
+                        "snippets/answer-card.html",
+                        {"answer": new_answer, "request": request}
+                    )
+
+                    return JsonResponse({
+                        "success": True,
+                        "answer_id": new_answer.id,
+                        "answer_html": answer_card_html,
+                    }, status=201)
+
+                except Exception as e:
+                    print(e)
+                    form.add_error(None, "Произошла ошибка при создании ответа. Повторите попытку ещё раз.")
+
+        return JsonResponse({
+            "success": False,
+            "errors": form.errors,
+            "error_type": "validation_error",
+        }, status=400)
+
 
 class HotQuestionsView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
@@ -177,9 +222,9 @@ class NewQuestionView(BaseContextViewMixin, FormView):
         try:
             with transaction.atomic():
                 question = Question(
-                    title = form.cleaned_data.get("title"),
-                    content = form.cleaned_data.get("content"),
-                    author = self.current_user
+                    title=form.cleaned_data.get("title"),
+                    content=form.cleaned_data.get("content"),
+                    author=self.current_user
                 )
                 question.save()
 

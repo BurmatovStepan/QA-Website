@@ -6,6 +6,7 @@ const DARK_ICON_PATH: string = "/static/assets/dark-theme.svg";
 const DEFAULT_AVATAR_PATH: string = "/static/assets/avatar.svg";
 const INVALID_FILE_ICON_PATH: string = "/static/assets/invalid-file.svg";
 
+
 function checkActiveTab(): void {
     let currentPath = window.location.pathname;
 
@@ -72,43 +73,59 @@ function themeSwitchKeyboardHandler(event: KeyboardEvent): void {
     }
 }
 
+
 class CustomFileInput {
-    private initialFileName: string;
+    private initialFileName: string | null;
 
     private constructor(
-        private fileNameDisplay: HTMLSpanElement,
-        private filePreview: HTMLImageElement,
-        private fileResetButton: HTMLDivElement,
-        private fileClearButton: HTMLButtonElement,
         private fileInput: HTMLInputElement,
-        private fileClearInput: HTMLInputElement
+        private fileNameDisplay: HTMLSpanElement,
+        private filePreview: HTMLImageElement | null,
+        private fileResetButton: HTMLDivElement | null,
+        private fileClearButton: HTMLButtonElement | null,
+        private fileClearInput: HTMLInputElement | null
     ) {
-        try {
-            const urlObject = new URL(filePreview.src);
-            this.initialFileName = urlObject.pathname;
-        } catch (e) {
-            this.initialFileName = filePreview.src;
-        }
-
         fileInput.addEventListener("change", this.fileChangeHandler);
 
-        fileResetButton.addEventListener("click", this.resetFile);
-        fileResetButton.addEventListener("keydown", this.resetFileKeyboardHandler);
+        if (filePreview) {
+            try {
+                const urlObject = new URL(filePreview.src);
+                this.initialFileName = urlObject.pathname;
+            } catch (e) {
+                this.initialFileName = filePreview.src;
+            }
+        } else {
+            this.initialFileName = null;
+        }
 
-        fileClearButton.addEventListener("click", this.clearFile);
-        fileClearButton.addEventListener("keydown", this.clearFileKeyboardHandler);
+        if (fileResetButton) {
+            fileResetButton.addEventListener("click", this.resetFile);
+            fileResetButton.addEventListener("keydown", this.resetFileKeyboardHandler);
+        }
+
+        if (fileClearButton) {
+            fileClearButton.addEventListener("click", this.clearFile);
+            fileClearButton.addEventListener("keydown", this.clearFileKeyboardHandler);
+        }
     }
 
     private fileChangeHandler = (event: Event): void => {
         const file = this.fileInput.files ? this.fileInput.files[0] : null;
 
         if (file) {
-            this.fileClearInput.value = "False";
-            this.filePreview.classList.remove("themed-contrast")
-        }
+            if (this.fileClearInput) {
+                this.fileClearInput.value = "False";
+            }
+            if (this.filePreview) {
+                this.filePreview.classList.remove("themed-contrast")
+            }
 
-        this.updateFileNameDisplay(file.name);
-        this.updateFilePreview(file);
+            this.updateFileNameDisplay(file.name);
+            this.updateFilePreview(file);
+        } else {
+            this.updateFileNameDisplay(null);
+            this.updateFilePreview(null);
+        }
     }
 
     private updateFileNameDisplay = (fileName: string | null): void => {
@@ -120,6 +137,10 @@ class CustomFileInput {
     }
 
     private updateFilePreview = (file: File | string | null): void => {
+        if (!this.filePreview) {
+            return;
+        }
+
         if (file === null) {
             this.filePreview.src = DEFAULT_AVATAR_PATH;
             this.filePreview.classList.add("themed-contrast")
@@ -142,9 +163,10 @@ class CustomFileInput {
 
             reader.readAsDataURL(file);
         }
+
         if (typeof(file) === "string") {
             this.filePreview.src = file;
-            console.log({file, DEFAULT_AVATAR_PATH})
+
             if (file === DEFAULT_AVATAR_PATH) {
                 this.filePreview.classList.add("themed-contrast");
             } else {
@@ -154,9 +176,12 @@ class CustomFileInput {
     }
 
     private resetFile = (): void => {
-        this.fileClearInput.value = "False";
+        if (this.fileClearInput) {
+            this.fileClearInput.value = "False";
+        }
+
         this.fileInput.value = "";
-        this.updateFileNameDisplay("No file selected");
+        this.updateFileNameDisplay(null);
         this.updateFilePreview(this.initialFileName);
     }
 
@@ -182,29 +207,151 @@ class CustomFileInput {
     }
 
     static create = (): CustomFileInput | null => {
+        const fileInput = document.querySelector(".js-file-input-input");
         const fileNameDisplay = document.querySelector(".js-file-input-filename");
+
         const filePreview = document.querySelector(".js-file-input-preview");
         const fileResetButton = document.querySelector(".js-file-input-reset-button")
         const fileClearButton = document.querySelector(".js-file-input-clear-button")
-        const fileInput = document.querySelector(".js-file-input-input");
         const fileClearInput = document.querySelector(".js-file-input-clear-input");
 
-        if (fileNameDisplay instanceof HTMLSpanElement &&
-            filePreview instanceof HTMLImageElement &&
-            fileResetButton instanceof HTMLDivElement &&
-            fileClearButton instanceof HTMLButtonElement &&
-            fileInput instanceof HTMLInputElement &&
-            fileClearInput instanceof HTMLInputElement
-
-        ) {
-            return new CustomFileInput(fileNameDisplay, filePreview, fileResetButton, fileClearButton, fileInput, fileClearInput);
+        if (!(fileInput instanceof HTMLInputElement) || !(fileNameDisplay instanceof HTMLSpanElement)) {
+            console.error("Crucial elements required for CustomFileInput are missing or wrong type");
+            return null;
         }
-        console.error("Fields required for CustomFileInput are missing")
-        return null;
+
+        const validFilePreview = (filePreview instanceof HTMLImageElement) ? filePreview : null;
+        const validFileResetButton = (fileResetButton instanceof HTMLDivElement) ? fileResetButton : null;
+        const validFileClearButton = (fileClearButton instanceof HTMLButtonElement) ? fileClearButton : null;
+        const validFileClearInput = (fileClearInput instanceof HTMLInputElement) ? fileClearInput : null;
+
+        return new CustomFileInput(
+            fileInput,
+            fileNameDisplay,
+            validFilePreview,
+            validFileResetButton,
+            validFileClearButton,
+            validFileClearInput
+        );
+    }
+}
+
+
+class NewAnswerHandler {
+    private constructor(
+        private form: HTMLFormElement,
+        private answersSection: HTMLElement,
+        private answerContent: HTMLTextAreaElement,
+        private submitButton: HTMLButtonElement
+    ) {
+        form.addEventListener("submit", this.formSubmitHandler)
     }
 
+    private formSubmitHandler = async (event: Event): Promise<void> => {
+        event.preventDefault();
+        this.clearErrors();
+
+        const content = this.answerContent.value.trim()
+        if (!content) {
+            return;
+        }
+
+        this.submitButton.disabled = true;
+        this.submitButton.textContent = 'Submitting...';
+
+        const formData = new FormData(this.form)
+        try {
+            const response = await fetch(this.form.action, {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json()
+
+            if (response.ok) {
+                this.answerContent.value = "";
+                this.answersSection.insertAdjacentHTML("afterbegin", result.answer_html);
+
+            } else {
+                if (result.error_type === "validation_error" && result.errors) {
+                    console.log({result: result})
+                    this.displayErrors(result.errors);
+                } else {
+                    alert("Server Error: Could not process request.");
+                }
+            }
+
+        } catch (error) {
+            console.error("Network or unexpected error:", error);
+            alert("A network error occurred.");
+
+        } finally {
+            this.submitButton.disabled = false;
+            this.submitButton.textContent = "Answer";
+        }
+    }
+
+    private clearErrors(): void {
+        this.form.querySelectorAll(".form__error-wrapper").forEach(wrapper => {
+            wrapper.innerHTML = "";
+        });
+    }
+
+    private displayErrors(errors: Record<string, string[]>): void {
+        for (const fieldName in errors) {
+            if (errors.hasOwnProperty(fieldName)) {
+
+                const fieldElement = this.form.querySelector(`[name="${fieldName}"]`);
+
+                if (fieldElement) {
+                    const fieldRow = fieldElement.closest(".form__row");
+                    const errorWrapper = fieldRow?.querySelector(".form__error-wrapper");
+
+                    if (fieldRow && errorWrapper) {
+                        errors[fieldName].forEach(message => {
+                            const errorHtml = `<span class="form__error-message">${message}</span>`;
+                            errorWrapper.insertAdjacentHTML("beforeend", errorHtml);
+                        });
+                    }
+                }
+
+                if (fieldName === '__all__') {
+                    const errorWrapper = this.form.querySelector(".form__error-wrapper--non-field");
+                    if (errorWrapper) {
+                        errors[fieldName].forEach(message => {
+                            const errorHtml = `<span class="form__error-message">${message}</span>`;
+                            errorWrapper.insertAdjacentHTML("beforeend", errorHtml);
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    static create = (): NewAnswerHandler | null => {
+        const form = document.querySelector(".form--user-answer");
+        const answersSection = document.querySelector('.answers');
+        const answerContent = document.querySelector(".form__content")
+        const submitButton = document.querySelector(".form__submit-button")
+
+        if (!(form instanceof HTMLFormElement) ||
+            !(answersSection instanceof HTMLElement) ||
+            !(answerContent instanceof HTMLTextAreaElement) ||
+            !(submitButton instanceof HTMLButtonElement)) {
+            console.error("Crucial elements required for NewAnswerHandler are missing or wrong type");
+            return null;
+        }
+
+        return new NewAnswerHandler(
+            form,
+            answersSection,
+            answerContent,
+            submitButton
+        )
+    }
 }
 
 document.addEventListener("DOMContentLoaded", checkActiveTab);
 document.addEventListener("DOMContentLoaded", initTheme);
 CustomFileInput.create()
+NewAnswerHandler.create()

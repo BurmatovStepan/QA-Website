@@ -1,10 +1,12 @@
 from django.urls import path
 
 from qa.views import (HotQuestionsView, NewQuestionView,
-                      QuestionDiscussionView, TagsQuestionListingView)
+                      QuestionDiscussionView, TagsQuestionListingView, QuestionAnswerView)
 
 urlpatterns = [
     path("new-question/", NewQuestionView.as_view(), name="new_question"),
+
+    path("question/<int:id>/answer/submit/", QuestionAnswerView.as_view(), name="question_answer_submit"),
     path("question/<int:id>/", QuestionDiscussionView.as_view(), name="question_discussion_no_slug"),
     path("question/<int:id>/<str:slug>/", QuestionDiscussionView.as_view(), name="question_discussion"),
 

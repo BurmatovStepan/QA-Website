@@ -1,8 +1,10 @@
 {% load custom_tags %}
-<label for="{{ field.id_for_label }}"
-       class="form__field-label
-       {% if field|is_required %} form__field-label--required{% endif %}"
->{{ field.label }}</label>
+{% if field.label %}
+  <label for="{{ field.id_for_label }}"
+         class="form__field-label
+         {% if field|is_required %} form__field-label--required{% endif %}"
+  >{{ field.label }}</label>
+{% endif %}
 
 <div class="form__row">
   {% if field.field.widget.input_type %}

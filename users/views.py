@@ -155,7 +155,7 @@ class SettingsView(LoginRequiredMixin, BaseContextViewMixin, FormView):
 
                 new_avatar = form.cleaned_data.get("avatar")
                 clear_avatar = form.cleaned_data.get('clear_avatar')
-                print(new_avatar, clear_avatar)
+                
                 if clear_avatar:
                     self.current_user.avatar.delete(save=False)
                     self.current_user.avatar = None

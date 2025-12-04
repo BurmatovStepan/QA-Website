@@ -18,11 +18,11 @@
     {% endif %}
 
     {% for field in form %}
-      {% if field.name != "avatar" %}
-        {% include "snippets/form-field.html" %}
-      {% else %}
+      {% if field.name == "avatar" %}
         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {% include "snippets/avatar-source.html" with avatar=current_user.avatar component_name="form__avatar"%}
+        <div class="form__avatar-preview-wrapper">
+          {% include "snippets/avatar-source.html" with avatar=form.initial.avatar component_name="form__avatar js-file-input-preview" %}
+        </div>
 
         <div class="form__row form__row--avatar">
           {% include "snippets/custom-file-input.html" with input_name=field.name input_id=field.id_for_label %}
@@ -32,8 +32,10 @@
               <span class="form__error-message">{{ error }}</span>
             {% endfor %}
           </div>
-
         </div>
+
+      {% else %}
+        {% include "snippets/form-field.html" %}
       {% endif %}
     {% endfor %}
 

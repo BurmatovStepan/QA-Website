@@ -1,9 +1,11 @@
 from django import forms
 
-from qa.constants import (MAX_QUESTION_CONTENT_LENGTH,
+from qa.constants import (MAX_ANSWER_CONTENT_LENGTH,
+                          MAX_QUESTION_CONTENT_LENGTH, MAX_QUESTION_TAG_COUNT,
                           MAX_QUESTION_TITLE_LENGTH, MAX_TAG_NAME_LENGTH,
+                          MIN_ANSWER_CONTENT_LENGTH,
                           MIN_QUESTION_CONTENT_LENGTH,
-                          MIN_QUESTION_TITLE_LENGTH, MAX_QUESTION_TAG_COUNT)
+                          MIN_QUESTION_TITLE_LENGTH)
 
 
 class NewQuestionForm(forms.Form):
@@ -54,3 +56,15 @@ class NewQuestionForm(forms.Form):
             raise forms.ValidationError(errors)
 
         return tags
+
+
+class AnswerForm(forms.Form):
+    content = forms.CharField(
+        label="",
+        min_length=MIN_ANSWER_CONTENT_LENGTH,
+        max_length=MAX_ANSWER_CONTENT_LENGTH,
+        required=True,
+        widget=forms.Textarea(attrs={
+            "placeholder": "Enter your answer here"
+        })
+    )

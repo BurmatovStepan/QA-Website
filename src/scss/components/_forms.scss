@@ -91,3 +91,23 @@
         resize: vertical;
     }
 }
+
+.form--user-answer {
+    display: flex;
+    margin-top: 20px;
+    flex-direction: column;
+
+    & .form__content {
+        height: 15vh;
+        min-height: 15vh;
+        resize: vertical;
+    }
+
+    // &__submit-button {
+    //     @include default-button;
+
+    //     width: 100px;
+    //     height: 40px;
+    //     margin-block: 28px;
+    // }
+}
