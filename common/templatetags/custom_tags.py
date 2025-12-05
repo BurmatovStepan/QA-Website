@@ -2,7 +2,7 @@ from typing import Any
 
 from django import template
 from django.core.paginator import Page
-from django.templatetags.static import static
+
 # TODO Rename or split these
 
 register = template.Library()
@@ -41,7 +41,3 @@ def is_disabled(field):
 @register.filter
 def is_required(field):
     return field.field.required
-
-@register.filter
-def get_avatar_url(avatar):
-    return avatar.url if avatar else static("assets/avatar.svg")

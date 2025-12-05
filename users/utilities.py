@@ -1,7 +1,6 @@
-from django.urls import resolve, Resolver404
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import HttpRequest
-from django.urls import reverse
+from django.urls import Resolver404, resolve, reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 
 
 def get_safe_redirect_url(request: HttpRequest, next_url: str | None, fallback_page: str = "homepage") -> str:

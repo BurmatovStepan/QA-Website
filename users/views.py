@@ -3,13 +3,12 @@ from typing import Any
 from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
 from django.db.models.query import QuerySet
-from django.http import HttpRequest
+from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse as HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, FormView
-from django.http import HttpResponseRedirect
 
 from common.constants import DEFAULT_PAGINATION_SIZE
 from common.mixins import (AnonymousRequiredMixin, BaseContextViewMixin,
@@ -125,7 +124,7 @@ class ProfileView(BaseContextViewMixin, DetailView):
 
         return context
 
-
+# TODO Make successful settings update popup
 class SettingsView(LoginRequiredMixin, BaseContextViewMixin, FormView):
     template_name = "settings.html"
     form_class = SettingsFrom
@@ -155,7 +154,7 @@ class SettingsView(LoginRequiredMixin, BaseContextViewMixin, FormView):
 
                 new_avatar = form.cleaned_data.get("avatar")
                 clear_avatar = form.cleaned_data.get('clear_avatar')
-                
+
                 if clear_avatar:
                     self.current_user.avatar.delete(save=False)
                     self.current_user.avatar = None

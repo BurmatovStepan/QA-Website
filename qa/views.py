@@ -1,25 +1,21 @@
 from typing import Any
 
 from django.core.paginator import Paginator
-from django.template.loader import render_to_string
-from django.http import JsonResponse
+from django.db import transaction
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
+from django.http import HttpResponseRedirect, JsonResponse
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
-from django.db import transaction
-from django.views.generic import DetailView, ListView, TemplateView, FormView, View
-from django.http import HttpResponseRedirect
-from common.mixins import LoginRequiredMixin
+from django.views.generic import DetailView, FormView, ListView, View
 
 from common.constants import DEFAULT_PAGINATION_SIZE
-from common.mixins import BaseContextViewMixin
-from qa.models import Question, Tag, Answer
-from qa.forms import NewQuestionForm, AnswerForm
-
-DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS = 3
-TAG_DELIMITER = "~"
+from common.mixins import BaseContextViewMixin, LoginRequiredMixin
+from qa.constants import DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS, TAG_DELIMITER
+from qa.forms import AnswerForm, NewQuestionForm
+from qa.models import Answer, Question, Tag
 
 
 class HomepageView(BaseContextViewMixin, ListView):
@@ -106,7 +102,7 @@ class QuestionAnswerView(LoginRequiredMixin, View):
                 "success": False,
                 "error_type": "question_not_found",
                 "message": f"Question with ID {question_id} does not exist."
-            }, status=403)
+            }, status=404)
 
         form = AnswerForm(request.POST)
         if (form.is_valid()):

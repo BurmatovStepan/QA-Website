@@ -11,15 +11,13 @@ from django.utils.text import slugify
 
 from common.base_models import TimeStampedModel
 from common.constants import POPULAR_TAGS_FETCH_LIMIT
-from qa.constants import (MAX_ANSWER_CONTENT_LENGTH,
+from qa.constants import (MAX_ANSWER_CONTENT_LENGTH, MAX_ANSWER_PREVIEW_LENGTH,
                           MAX_QUESTION_CONTENT_LENGTH,
                           MAX_QUESTION_TITLE_LENGTH, MAX_TAG_NAME_LENGTH,
                           MIN_ANSWER_CONTENT_LENGTH,
                           MIN_QUESTION_CONTENT_LENGTH,
                           MIN_QUESTION_TITLE_LENGTH)
 from users.models import CustomUser
-
-MAX_ANSWER_PREVIEW_LENGTH = 20
 
 LIKE = 1
 DISLIKE = -1

@@ -273,7 +273,10 @@ class NewAnswerHandler {
                 body: formData
             });
 
-            if (response.status === 404) {
+            const contentType = response.headers.get("content-type");
+            const isJsonResponse = contentType && contentType.includes("application/json");
+
+            if (response.status === 404 && !isJsonResponse) {
                 const synthetic_error = {
                     "__all__": ["The submission endpoint was not found. Please reload the page."]
                 }

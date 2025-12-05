@@ -1,16 +1,13 @@
 from typing import Any
 
-from django.urls import reverse
 from django.core.cache import cache
-
-from django.shortcuts import render
-from common.constants import DEFAULT_PAGINATION_SIZE
-from qa.models import Tag
 from django.http import HttpResponseRedirect, JsonResponse
-from users.models import CustomUser
-from django.shortcuts import redirect
+from django.urls import reverse
 
-CACHE_TTL = 60 * 60 * 24
+from common.constants import CACHE_TTL, DEFAULT_PAGINATION_SIZE
+from qa.models import Tag
+from users.models import CustomUser
+
 
 class BaseContextViewMixin:
     page_title: str | None = None
