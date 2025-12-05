@@ -6,7 +6,7 @@ from django.core.cache import cache
 from django.shortcuts import render
 from common.constants import DEFAULT_PAGINATION_SIZE
 from qa.models import Tag
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from users.models import CustomUser
 from django.shortcuts import redirect
 
@@ -63,6 +63,15 @@ class LoginRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
+
+        print(request.headers)
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({
+                "success": False,
+                "error_type": "authentication_required",
+                "message": "You must be logged in to perform this action."
+            }, status=403)
 
         login_url = f"{reverse("login")}?next={request.path}"
 

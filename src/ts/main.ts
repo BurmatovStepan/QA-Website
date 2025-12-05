@@ -238,6 +238,8 @@ class CustomFileInput {
 
 
 class NewAnswerHandler {
+    private pageSize: number;
+
     private constructor(
         private form: HTMLFormElement,
         private answersSection: HTMLElement,
@@ -245,8 +247,10 @@ class NewAnswerHandler {
         private submitButton: HTMLButtonElement
     ) {
         form.addEventListener("submit", this.formSubmitHandler)
+        this.pageSize = +this.answersSection.dataset.pageSize;
     }
 
+    // TODO remove correct button on new cards, add pagination button
     private formSubmitHandler = async (event: Event): Promise<void> => {
         event.preventDefault();
         this.clearErrors();
@@ -257,14 +261,25 @@ class NewAnswerHandler {
         }
 
         this.submitButton.disabled = true;
-        this.submitButton.textContent = 'Submitting...';
+        this.submitButton.textContent = "Submitting...";
 
         const formData = new FormData(this.form)
         try {
             const response = await fetch(this.form.action, {
                 method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
                 body: formData
             });
+
+            if (response.status === 404) {
+                const synthetic_error = {
+                    "__all__": ["The submission endpoint was not found. Please reload the page."]
+                }
+                this.displayErrors(synthetic_error)
+                return;
+            }
 
             const result = await response.json()
 
@@ -272,12 +287,22 @@ class NewAnswerHandler {
                 this.answerContent.value = "";
                 this.answersSection.insertAdjacentHTML("afterbegin", result.answer_html);
 
+                const answerElements = this.answersSection.querySelectorAll(".js-answer-card");
+                if (this.pageSize && answerElements.length > this.pageSize) {
+                    const lastAnswer = answerElements[answerElements.length - 1];
+                    lastAnswer.remove();
+                }
+
             } else {
-                if (result.error_type === "validation_error" && result.errors) {
-                    console.log({result: result})
+                if (result.error_type === "validation_error") {
                     this.displayErrors(result.errors);
-                } else {
-                    alert("Server Error: Could not process request.");
+
+                } else if (["authentication_required", "question_not_found"].includes(result.error_type)) {
+                    const errorWrapper = this.form.querySelector(".form__error-wrapper--non-field");
+                    if (errorWrapper) {
+                        const errorHtml = `<span class="form__error-message">${result.message}</span>`;
+                        errorWrapper.insertAdjacentHTML("beforeend", errorHtml);
+                    }
                 }
             }
 
@@ -298,41 +323,38 @@ class NewAnswerHandler {
     }
 
     private displayErrors(errors: Record<string, string[]>): void {
-        for (const fieldName in errors) {
-            if (errors.hasOwnProperty(fieldName)) {
+        Object.keys(errors).forEach(fieldName => {
+            const fieldElement = this.form.querySelector(`[name="${fieldName}"]`);
 
-                const fieldElement = this.form.querySelector(`[name="${fieldName}"]`);
+            if (fieldElement) {
+                const fieldRow = fieldElement.closest(".form__row");
+                const errorWrapper = fieldRow?.querySelector(".form__error-wrapper");
 
-                if (fieldElement) {
-                    const fieldRow = fieldElement.closest(".form__row");
-                    const errorWrapper = fieldRow?.querySelector(".form__error-wrapper");
-
-                    if (fieldRow && errorWrapper) {
-                        errors[fieldName].forEach(message => {
-                            const errorHtml = `<span class="form__error-message">${message}</span>`;
-                            errorWrapper.insertAdjacentHTML("beforeend", errorHtml);
-                        });
-                    }
-                }
-
-                if (fieldName === '__all__') {
-                    const errorWrapper = this.form.querySelector(".form__error-wrapper--non-field");
-                    if (errorWrapper) {
-                        errors[fieldName].forEach(message => {
-                            const errorHtml = `<span class="form__error-message">${message}</span>`;
-                            errorWrapper.insertAdjacentHTML("beforeend", errorHtml);
-                        });
-                    }
+                if (fieldRow && errorWrapper) {
+                    errors[fieldName].forEach(message => {
+                        const errorHtml = `<span class="form__error-message">${message}</span>`;
+                        errorWrapper.insertAdjacentHTML("beforeend", errorHtml);
+                    });
                 }
             }
-        }
+
+            if (fieldName === "__all__") {
+                const errorWrapper = this.form.querySelector(".form__error-wrapper--non-field");
+                if (errorWrapper) {
+                    errors[fieldName].forEach(message => {
+                        const errorHtml = `<span class="form__error-message">${message}</span>`;
+                        errorWrapper.insertAdjacentHTML("beforeend", errorHtml);
+                    });
+                }
+            }
+        })
     }
 
     static create = (): NewAnswerHandler | null => {
-        const form = document.querySelector(".form--user-answer");
-        const answersSection = document.querySelector('.answers');
-        const answerContent = document.querySelector(".form__content")
-        const submitButton = document.querySelector(".form__submit-button")
+        const form = document.querySelector(".js-user-answer-form");
+        const answersSection = document.querySelector(".js-answers-list");
+        const answerContent = document.querySelector("[name=content]")
+        const submitButton = document.querySelector(".js-submit-button")
 
         if (!(form instanceof HTMLFormElement) ||
             !(answersSection instanceof HTMLElement) ||

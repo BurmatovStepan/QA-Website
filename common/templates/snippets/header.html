@@ -43,7 +43,7 @@
 
     <div class="profile profile--mini profile--signed-out">
       <div class="profile__actions">
-        <a href="{% url "login" %}" class="profile__action">Log in</a>
+        <a href="{% url "login" %}?next={{ request.path }}" class="profile__action">Log in</a>
         <span class="profile__actions-separator">│</span>
         <a href="{% url "register" %}" class="profile__action">Register</a>
 

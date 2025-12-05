@@ -99,7 +99,14 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
 class QuestionAnswerView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         question_id = kwargs.get("id")
-        question = get_object_or_404(Question, id=question_id)
+        question = Question.objects.filter(id=question_id).first()
+
+        if question is None:
+            return JsonResponse({
+                "success": False,
+                "error_type": "question_not_found",
+                "message": f"Question with ID {question_id} does not exist."
+            }, status=403)
 
         form = AnswerForm(request.POST)
         if (form.is_valid()):

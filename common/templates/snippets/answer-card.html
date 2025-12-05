@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="answer {{ modifier_classes }}" id="{{ answer.id }}">
+<div class="answer {{ modifier_classes }} js-answer-card" id="{{ answer.id }}">
 
   {% include "snippets/avatar-source.html" with avatar=answer.author.avatar component_name="answer__avatar" %}
 

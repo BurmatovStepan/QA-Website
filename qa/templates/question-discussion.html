@@ -8,7 +8,7 @@
 {% block main_content %}
 
 {% include "snippets/question-card.html" with is_clamped=False show_answer_amount=False %}
-<form class="form form--user-answer" method="post" action="{% url "question_answer_submit" id=question.id %}">
+<form class="form form--user-answer js-user-answer-form" method="post" action="{% url "question_answer_submit" id=question.id %}">
   {% csrf_token %}
 
     <div class="form__error-wrapper form__error-wrapper--non-field">
@@ -20,10 +20,10 @@
   {% for field in form %}
       {% include "snippets/form-field.html" %}
   {% endfor %}
-  <button class="form__submit-button">Answer</button>
+  <button class="form__submit-button js-submit-button">Answer</button>
 </form>
 
-<section class="answers">
+<section class="answers js-answers-list" data-page-size="{{ paginator.per_page }}">
 
   {% for answer in answers %}
     {% if answer.is_correct %}
