@@ -1,8 +1,8 @@
 from typing import Any
 
 from django.contrib.auth import authenticate, login, logout
-from django.db import transaction
 from django.db.models.query import QuerySet
+from django.forms import ValidationError
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_object_or_404
@@ -50,28 +50,16 @@ class RegisterView(AnonymousRequiredMixin, BaseContextViewMixin, FormView):
 
     def form_valid(self, form):
         try:
-            with transaction.atomic():
-                user_login = form.cleaned_data.get("login")
-                user_email = form.cleaned_data.get("email")
-                user_password = form.cleaned_data.get("password")
-                user_display_name = form.cleaned_data.get("display_name")
-                user_avatar = form.cleaned_data.get("avatar")
+            new_user = form.save()
+            login(self.request, new_user)
 
-                new_user = CustomUser.objects.create_user(
-                    login=user_login,
-                    email=user_email,
-                    password=user_password,
-                    display_name=user_display_name,
-                )
-
-                if user_avatar:
-                    new_user.avatar = user_avatar
-                    new_user.save()
-
-                login(self.request, new_user)
+        except ValidationError as e:
+            form.add_error(None, e)
+            return self.form_invalid(form)
 
         except Exception as e:
-            form.add_error(None, "Произошла ошибка при создании записи пользователя. Повторите попытку ещё раз.")
+            print(e)
+            form.add_error(None, "Произошла непредвиденная ошибка. Попробуйте еще раз.")
             return self.form_invalid(form)
 
         redirect_to = get_safe_redirect_url(self.request, self.request.GET.get("next"), "current_user_profile")
@@ -147,25 +135,11 @@ class SettingsView(LoginRequiredMixin, BaseContextViewMixin, FormView):
 
     def form_valid(self, form):
         try:
-            with transaction.atomic():
-                self.current_user.login = form.cleaned_data.get("login")
-                self.current_user.email = form.cleaned_data.get("email")
-                self.current_user.display_name = form.cleaned_data.get("display_name")
-
-                new_avatar = form.cleaned_data.get("avatar")
-                clear_avatar = form.cleaned_data.get('clear_avatar')
-
-                if clear_avatar:
-                    self.current_user.avatar.delete(save=False)
-                    self.current_user.avatar = None
-                elif new_avatar:
-                    self.current_user.avatar = new_avatar
-
-                self.current_user.save()
-                return HttpResponseRedirect(reverse("settings"), status=303)
+            form.save()
+            return HttpResponseRedirect(reverse("settings"), status=303)
 
         except Exception as e:
-            form.add_error(None, "Произошла ошибка при изменении записи пользователя. Повторите попытку ещё раз.")
+            form.add_error(None, e)
             return self.form_invalid(form)
 
 

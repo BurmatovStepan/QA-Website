@@ -1,7 +1,9 @@
 <footer class="navigation">
   <ul class="navigation__pages-list js-pages-list">
 
-    <li class="navigation__page-link"><a href="{% url "new_question" %}">Create Question</a></li>
+    {% if current_user %}
+      <li class="navigation__page-link"><a href="{% url "new_question" %}">Create Question</a></li>
+    {% endif %}
 
     {% if not current_user %}
       <li class="navigation__page-link"><a href="{% url "login" %}">Log In</a></li>

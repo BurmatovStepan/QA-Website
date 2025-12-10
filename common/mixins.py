@@ -60,9 +60,7 @@ class LoginRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
-
-        print(request.headers)
-
+        
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse({
                 "success": False,

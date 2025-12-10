@@ -1,9 +1,9 @@
 from typing import Any
 
 from django.core.paginator import Paginator
-from django.db import transaction
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
+from django.forms import ValidationError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -15,7 +15,7 @@ from common.constants import DEFAULT_PAGINATION_SIZE
 from common.mixins import BaseContextViewMixin, LoginRequiredMixin
 from qa.constants import DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS, TAG_DELIMITER
 from qa.forms import AnswerForm, NewQuestionForm
-from qa.models import Answer, Question, Tag
+from qa.models import Question
 
 
 class HomepageView(BaseContextViewMixin, ListView):
@@ -91,7 +91,7 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
 
         return context
 
-
+# TODO Make enum for error types
 class QuestionAnswerView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         question_id = kwargs.get("id")
@@ -104,32 +104,32 @@ class QuestionAnswerView(LoginRequiredMixin, View):
                 "message": f"Question with ID {question_id} does not exist."
             }, status=404)
 
-        form = AnswerForm(request.POST)
-        if (form.is_valid()):
-            with transaction.atomic():
-                try:
-                    answer_content = form.cleaned_data["content"]
-                    new_answer = Answer(
-                        question=question,
-                        author=request.user,
-                        content=answer_content
-                    )
-                    new_answer.save()
+        form = AnswerForm(
+            request.POST,
+            author=request.user,
+            question=question
+        )
 
-                    answer_card_html = render_to_string(
-                        "snippets/answer-card.html",
-                        {"answer": new_answer, "request": request}
-                    )
+        if form.is_valid():
+            try:
+                new_answer = form.save()
+                answer_card_html = render_to_string(
+                    "snippets/answer-card.html",
+                    {"answer": new_answer, "request": request}
+                )
 
-                    return JsonResponse({
-                        "success": True,
-                        "answer_id": new_answer.id,
-                        "answer_html": answer_card_html,
-                    }, status=201)
+                return JsonResponse({
+                    "success": True,
+                    "answer_id": new_answer.id,
+                    "answer_html": answer_card_html,
+                }, status=201)
 
-                except Exception as e:
-                    print(e)
-                    form.add_error(None, "Произошла ошибка при создании ответа. Повторите попытку ещё раз.")
+            except ValidationError as e:
+                form.add_error(None, e)
+
+            except Exception as e:
+                print(e)
+                form.add_error(None, "Произошла непредвиденная ошибка. Попробуйте еще раз.")
 
         return JsonResponse({
             "success": False,
@@ -214,40 +214,31 @@ class TagsQuestionListingView(BaseContextViewMixin, ListView):
         return context
 
 
-class NewQuestionView(BaseContextViewMixin, FormView):
+class NewQuestionView(LoginRequiredMixin, BaseContextViewMixin, FormView):
     template_name = "new-question.html"
     form_class = NewQuestionForm
 
     page_title = "New Question"
     main_title = "New Question"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["author"] = self.current_user
+        return kwargs
+
     def form_valid(self, form):
         try:
-            with transaction.atomic():
-                question = Question(
-                    title=form.cleaned_data.get("title"),
-                    content=form.cleaned_data.get("content"),
-                    author=self.current_user
-                )
-                question.save()
+            question = form.save()
 
-                tag_names = form.cleaned_data.get("tags")
-
-                tags_to_add = []
-                for tag_name in tag_names:
-                    tag, created = Tag.objects.get_or_create(
-                        name__iexact=tag_name,
-                        defaults={
-                            "name": tag_name
-                        }
-                    )
-                    tags_to_add.append(tag)
-
-                question.tags.add(*tags_to_add)
+        except ValidationError as e:
+            form.add_error(None, e)
+            return self.form_invalid(form)
 
         except Exception as e:
-            form.add_error(None, "Произошла ошибка при создании вопроса. Повторите попытку ещё раз.")
+            print(e)
+            form.add_error(None, "Произошла непредвиденная ошибка. Попробуйте еще раз.")
             return self.form_invalid(form)
+
 
         question_url = reverse("question_discussion", kwargs={"id": question.id, "slug": question.slug})
         return HttpResponseRedirect(question_url, status=303)
