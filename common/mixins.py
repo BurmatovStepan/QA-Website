@@ -1,15 +1,13 @@
 from typing import Any
 
-from django.urls import reverse
 from django.core.cache import cache
+from django.http import HttpResponseRedirect, JsonResponse
+from django.urls import reverse
 
-from django.shortcuts import render
-from common.constants import DEFAULT_PAGINATION_SIZE
+from common.constants import CACHE_TTL, DEFAULT_PAGINATION_SIZE
 from qa.models import Tag
 from users.models import CustomUser
-from django.shortcuts import redirect
 
-CACHE_TTL = 60 * 60 * 24
 
 class BaseContextViewMixin:
     page_title: str | None = None
@@ -62,13 +60,22 @@ class LoginRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
+        
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({
+                "success": False,
+                "error_type": "authentication_required",
+                "message": "You must be logged in to perform this action."
+            }, status=403)
 
-        return render(request, "401.html", status=401)
+        login_url = f"{reverse("login")}?next={request.path}"
+
+        return HttpResponseRedirect(login_url, status=303)
 
 
 class AnonymousRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect(reverse("profile", kwargs={"id": request.user.id}), code=303)
+            return HttpResponseRedirect(reverse("current_user_profile"), status=303)
 
         return super().dispatch(request, *args, **kwargs)

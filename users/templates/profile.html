@@ -6,7 +6,7 @@
 {% block main_content %}
 <section class="profile">
 
-  {% include "snippets/user-avatar.html" with user=viewed_user component_name="profile__avatar" %}
+  {% include "snippets/avatar-source.html" with avatar=viewed_user.avatar component_name="profile__avatar" %}
 
   <span class="profile__name">
     {% include "snippets/user-display-name.html" with user=viewed_user %}

@@ -8,10 +8,11 @@ body {
 }
 
 main {
+    scroll-behavior: smooth;
     scroll-padding-top: 40px;
 }
 
-.default-avatar {
+.themed-contrast {
     filter: $filter-text-main;
 }
 

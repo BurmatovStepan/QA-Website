@@ -8,16 +8,22 @@
 {% block main_content %}
 
 {% include "snippets/question-card.html" with is_clamped=False show_answer_amount=False %}
-<form class="user-answer">
-    <textarea name="user_answer_content"
-              class="user-answer__content"
-              placeholder="Enter your answer here"
-              required>
-    </textarea>
-    <button class="user-answer__submit-button">Answer</button>
+<form class="form form--user-answer js-user-answer-form" method="post" action="{% url "question_answer_submit" id=question.id %}">
+  {% csrf_token %}
+
+    <div class="form__error-wrapper form__error-wrapper--non-field">
+      {% for error in form.non_field_errors %}
+        <span class="form__error-message">{{ error }}</span>
+      {% endfor %}
+    </div>
+
+  {% for field in form %}
+      {% include "snippets/form-field.html" %}
+  {% endfor %}
+  <button class="form__submit-button js-submit-button">Answer</button>
 </form>
 
-<section class="answers">
+<section class="answers js-answers-list" data-page-size="{{ paginator.per_page }}">
 
   {% for answer in answers %}
     {% if answer.is_correct %}

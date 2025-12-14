@@ -1,8 +1,8 @@
 {% load static %}
 
-<div class="answer {{ modifier_classes }}" id="{{ answer.id }}">
+<div class="answer {{ modifier_classes }} js-answer-card" id="{{ answer.id }}">
 
-  {% include "snippets/user-avatar.html" with user=answer.author component_name="answer__avatar" %}
+  {% include "snippets/avatar-source.html" with avatar=answer.author.avatar component_name="answer__avatar" %}
 
   {% include "snippets/rating-input.html" with content_item=answer component_name="answer__rating"%}
 
@@ -10,7 +10,7 @@
     {% if forloop.first %}
       <a name="first-answer"></a>
     {% endif %}
-    
+
     {{ answer.content }}
   </p>
 

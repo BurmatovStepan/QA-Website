@@ -6,6 +6,7 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Count, Q, QuerySet, UniqueConstraint
 from django.db.models.functions import Lower
@@ -15,11 +16,12 @@ from django.utils import timezone
 from common.base_models import TimeStampedModel
 from common.constants import (BEST_MEMBERS_FETCH_LIMIT,
                               RECENT_ACTIVITES_FETCH_LIMIT)
+from users.constants import (MAX_USER_DISPLAY_NAME_LENGTH,
+                             MAX_USER_LOGIN_LENGTH, MIN_USER_LOGIN_LENGTH)
 
 if TYPE_CHECKING:
     from qa.models import Answer, Question
 
-MAX_CUSTOM_USER_DISPLAY_NAME_LENGTH = 150
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, login: str, email: str, password: str | None = None, **extra_fields) -> CustomUser:
@@ -60,10 +62,10 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(TimeStampedModel, AbstractBaseUser, PermissionsMixin):
     objects: CustomUserManager = CustomUserManager()
 
-    login = models.CharField(max_length=150, unique=True)
+    login = models.CharField(max_length=MAX_USER_LOGIN_LENGTH, unique=True, validators=[MinLengthValidator(MIN_USER_LOGIN_LENGTH)])
     email = models.EmailField(unique=True)
 
-    display_name = models.CharField(max_length=MAX_CUSTOM_USER_DISPLAY_NAME_LENGTH, blank=True, null=True)
+    display_name = models.CharField(max_length=MAX_USER_DISPLAY_NAME_LENGTH, blank=True, null=True)
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     rating = models.IntegerField(default=0)
 

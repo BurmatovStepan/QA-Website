@@ -32,24 +32,18 @@
     &__actions {
         display: flex;
         grid-area: actions;
-
         align-items: center;
         gap: 8px;
+    }
 
-        line-height: 1.1em;
+    &__action {
+        @include default-button;
+        padding: 1px;
+        box-shadow: $shadow-small;
+    }
 
-        & > a {
-            color: $color-accent-main;
-            text-decoration: 1px underline transparent;
-            outline: none;
-            transition: font-size $timing-animation-long, text-decoration-color $timing-animation-long;
-        }
-
-        & > a:hover,
-        & > a:focus-visible {
-            font-size: 1.1em;
-            text-decoration-color: $color-accent-main;
-        }
+    &__actions-separator {
+        font-size: 18px;
     }
 
     &__theme-switch {
@@ -82,7 +76,7 @@
             "avatar name"
             "avatar actions";
 
-        grid-template-columns: 80px 180px;
+        grid-template-columns: 80px 200px;
 
         gap: 0px;
 

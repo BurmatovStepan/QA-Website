@@ -8,22 +8,19 @@
 @use 'components/best-members';
 @use 'components/custom-file-input';
 @use 'components/error-info';
+@use 'components/forms';
 @use 'components/header';
-@use 'components/login';
 @use 'components/main-header';
 @use 'components/navigation';
-@use 'components/new-question';
 @use 'components/new-question-button';
 @use 'components/paginator';
 @use 'components/popular-tags';
 @use 'components/questions';
 @use 'components/rating-input';
-@use 'components/register';
 @use 'components/search-bar';
 @use 'components/theme-switch';
 @use 'components/user-profile';
 @use 'components/user-recent-activity';
-@use 'components/user-settings';
 
 @use 'themes/dark';
 @use 'themes/light';

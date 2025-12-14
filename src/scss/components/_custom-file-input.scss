@@ -8,9 +8,12 @@
     &__filename {
         padding: 4px;
         color: $color-text-filename;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         background-color: $color-bg-filename;
         border: 1px solid $color-border-filename;
         border-radius: 2px;
+        overflow: hidden;
     }
 
     &__shadow-wrapper {
@@ -20,8 +23,6 @@
     &__button {
         position: relative;
         display: flex;
-        width: 92px;
-        height: 32px;
 
         align-items: center;
         justify-content: center;
@@ -31,6 +32,7 @@
     }
 
     &__button:hover  &__button-outline,
+    &__button:focus-visible &__button-outline,
     &__button:has(&__input:focus-visible) &__button-outline {
         background-color: $color-accent-main;
     }
@@ -42,8 +44,6 @@
 
         background-color: $color-interactive-idle;
         border-radius: 2px;
-
-        clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
     }
 
     &__button-outline {
@@ -54,14 +54,48 @@
         background-color: transparent;
         border-radius: 2px;
 
-        clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
         transition: background-color $timing-animation-short;
         content: "";
     }
 
     &__button-text {
         z-index: 20;
-        translate:-7%;
+    }
+
+    &__button--choose {
+        width: 92px;
+        height: 32px;
+
+        & .custom-file-input__button-background {
+            clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
+        }
+
+        & .custom-file-input__button-outline {
+            clip-path: polygon(0 0, 85% 0, 101% 50%, 85% 100%, 0 100%);
+        }
+
+        & .custom-file-input__button-text {
+            translate:-7%;
+        }
+    }
+
+    &__button--reset {
+        width: 84px;
+        height: 32px;
+        outline: none;
+        translate: -4px;
+
+        & .custom-file-input__button-background {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 15% 50%);
+        }
+
+        & .custom-file-input__button-outline {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 90%, 13% 50%, 0 10%);
+        }
+
+        & .custom-file-input__button-text {
+            translate: 7%;
+        }
     }
 
     &__input {

@@ -1,15 +1,28 @@
-<div class="{{ component_name }} custom-file-input">
+<div class="custom-file-input">
   <span class="custom-file-input__filename js-file-input-filename">No file selected</span>
 
   <div class="custom-file-input__shadow-wrapper">
-    <label class="custom-file-input__button" for="{{ input_id}}">
+    <label class="custom-file-input__button custom-file-input__button--choose" for="{{ input_id }}">
       <div class="custom-file-input__button-background"></div>
 
-      <input type="file" name="avatar" accept="image/*" id="{{ input_id }}"
-        class="custom-file-input__input js-file-input">
+      <input type="file" name="{{ input_name }}" accept="image/*" id="{{ input_id }}"
+        class="custom-file-input__input js-file-input-input">
 
       <span class="custom-file-input__button-text">Choose</span>
       <div class="custom-file-input__button-outline"></div>
     </label>
+  </div>
+
+  <div class="custom-file-input__shadow-wrapper">
+    <div role="button"
+         class="custom-file-input__button custom-file-input__button--reset js-file-input-reset-button"
+         tabindex="0"
+         aria-label="Reset file"
+    >
+      <div class="custom-file-input__button-background"></div>
+      <span class="custom-file-input__button-text">Reset</span>
+      <div class="custom-file-input__button-outline"></div>
+
+    </div>
   </div>
 </div>

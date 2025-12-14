@@ -3,17 +3,19 @@ from typing import Any
 from django.core.paginator import Paginator
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
+from django.forms import ValidationError
+from django.http import HttpResponseRedirect, JsonResponse
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, FormView, ListView, View
 
 from common.constants import DEFAULT_PAGINATION_SIZE
-from common.mixins import BaseContextViewMixin
+from common.mixins import BaseContextViewMixin, LoginRequiredMixin
+from qa.constants import DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS, TAG_DELIMITER
+from qa.forms import AnswerForm, NewQuestionForm
 from qa.models import Question
-
-DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS = 3
-TAG_DELIMITER = "~"
 
 
 class HomepageView(BaseContextViewMixin, ListView):
@@ -68,6 +70,7 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         question = context["question"]
 
         context["page_title"] = f"Question | {question.title}"
+        context["form"] = AnswerForm()
 
         answers_queryset = (
             question.answers
@@ -81,11 +84,59 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         page_number = self.request.GET.get("page")
         answer_page_object = paginator.get_page(page_number)
 
+
         context["page_obj"] = answer_page_object
         context["paginator"] = paginator
         context["answers"] = answer_page_object.object_list
 
         return context
+
+# TODO Make enum for error types
+class QuestionAnswerView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        question_id = kwargs.get("id")
+        question = Question.objects.filter(id=question_id).first()
+
+        if question is None:
+            return JsonResponse({
+                "success": False,
+                "error_type": "question_not_found",
+                "message": f"Question with ID {question_id} does not exist."
+            }, status=404)
+
+        form = AnswerForm(
+            request.POST,
+            author=request.user,
+            question=question
+        )
+
+        if form.is_valid():
+            try:
+                new_answer = form.save()
+                answer_card_html = render_to_string(
+                    "snippets/answer-card.html",
+                    {"answer": new_answer, "request": request}
+                )
+
+                return JsonResponse({
+                    "success": True,
+                    "answer_id": new_answer.id,
+                    "answer_html": answer_card_html,
+                }, status=201)
+
+            except ValidationError as e:
+                form.add_error(None, e)
+
+            except Exception as e:
+                print(e)
+                form.add_error(None, "Произошла непредвиденная ошибка. Попробуйте еще раз.")
+
+        return JsonResponse({
+            "success": False,
+            "errors": form.errors,
+            "error_type": "validation_error",
+        }, status=400)
+
 
 class HotQuestionsView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
@@ -163,7 +214,31 @@ class TagsQuestionListingView(BaseContextViewMixin, ListView):
         return context
 
 
-class NewQuestionView(BaseContextViewMixin, TemplateView):
+class NewQuestionView(LoginRequiredMixin, BaseContextViewMixin, FormView):
     template_name = "new-question.html"
+    form_class = NewQuestionForm
+
     page_title = "New Question"
     main_title = "New Question"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["author"] = self.current_user
+        return kwargs
+
+    def form_valid(self, form):
+        try:
+            question = form.save()
+
+        except ValidationError as e:
+            form.add_error(None, e)
+            return self.form_invalid(form)
+
+        except Exception as e:
+            print(e)
+            form.add_error(None, "Произошла непредвиденная ошибка. Попробуйте еще раз.")
+            return self.form_invalid(form)
+
+
+        question_url = reverse("question_discussion", kwargs={"id": question.id, "slug": question.slug})
+        return HttpResponseRedirect(question_url, status=303)

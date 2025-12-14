@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Lower
@@ -10,14 +11,13 @@ from django.utils.text import slugify
 
 from common.base_models import TimeStampedModel
 from common.constants import POPULAR_TAGS_FETCH_LIMIT
+from qa.constants import (MAX_ANSWER_CONTENT_LENGTH, MAX_ANSWER_PREVIEW_LENGTH,
+                          MAX_QUESTION_CONTENT_LENGTH,
+                          MAX_QUESTION_TITLE_LENGTH, MAX_TAG_NAME_LENGTH,
+                          MIN_ANSWER_CONTENT_LENGTH,
+                          MIN_QUESTION_CONTENT_LENGTH,
+                          MIN_QUESTION_TITLE_LENGTH)
 from users.models import CustomUser
-
-MAX_TAG_NAME_LENGTH = 50
-
-MAX_QUESTION_TITLE_LENGTH = 100
-MAX_QUESTION_CONTENT_LENGTH = 4000
-
-MAX_ANSWER_PREVIEW_LENGTH = 20
 
 LIKE = 1
 DISLIKE = -1
@@ -123,8 +123,8 @@ class Question(TimeStampedModel):
 
     tags = models.ManyToManyField(to=Tag, related_name="questions")
 
-    title = models.CharField(max_length=MAX_QUESTION_TITLE_LENGTH)
-    content = models.TextField(max_length=MAX_QUESTION_CONTENT_LENGTH)
+    title = models.CharField(max_length=MAX_QUESTION_TITLE_LENGTH, validators=[MinLengthValidator(MIN_QUESTION_TITLE_LENGTH)])
+    content = models.TextField(max_length=MAX_QUESTION_CONTENT_LENGTH, validators=[MinLengthValidator(MIN_QUESTION_CONTENT_LENGTH)])
 
     is_active = models.BooleanField(default=True)
 
@@ -147,7 +147,7 @@ class Answer(TimeStampedModel):
     author = models.ForeignKey(to=CustomUser, on_delete=models.SET_NULL, related_name="answers", null=True)
     rating_total = models.IntegerField(default=0)
 
-    content = models.TextField(max_length=4000)
+    content = models.TextField(max_length=MAX_ANSWER_CONTENT_LENGTH, validators=[MinLengthValidator(MIN_ANSWER_CONTENT_LENGTH)])
     is_correct = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)

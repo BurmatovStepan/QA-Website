@@ -1,7 +1,7 @@
 {% load static %}
 
 <div class="question {{ modifier_classes }}">
-  {% include "snippets/user-avatar.html" with user=question.author component_name="question__avatar" %}
+  {% include "snippets/avatar-source.html" with avatar=question.author.avatar component_name="question__avatar" %}
 
   {% include "snippets/rating-input.html" with content_item=question component_name="question__rating" %}
 
