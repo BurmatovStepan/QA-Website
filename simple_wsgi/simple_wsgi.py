@@ -1,6 +1,15 @@
 from multipart import parse_form
 from urllib.parse import parse_qs
 
+# Команды для проверки
+
+# Запуск: gunicorn -c simple_wsgi/gunicorn.py simple_wsgi.simple_wsgi:application
+
+# GET параметры: curl -X GET "http://127.0.0.1:8081?some=1&食べ物=123"
+
+# POST: curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "field=食べ物_test&another=qwerty123" http://127.0.0.1:8081/
+
+# POST с файлом: curl -X POST -H "Content-Type: multipart/form-data" -F "text_field=multipart" -F "upload=@simple_wsgi/test_file.txt" http://127.0.0.1:8081/
 
 class SimpleWSGIApp:
     def __init__(self):
@@ -9,7 +18,10 @@ class SimpleWSGIApp:
     def __call__(self, env, start_response):
         start_response("200 OK", [("Content-Type", "text/plain")])
 
-        get_parameters = parse_qs(env.get("QUERY_STRING", ""))
+        raw_query = env.get("QUERY_STRING", "")
+        fixed_query = raw_query.encode("latin-1").decode("utf-8")
+
+        get_parameters = parse_qs(fixed_query)
         post_parameters = {}
 
         content_type = env.get("CONTENT_TYPE", "")
@@ -43,7 +55,7 @@ class SimpleWSGIApp:
             "POST Parameters": post_parameters,
         }
 
-        response_string = f"Parsed Request Data:\n{response_data}"
+        response_string = f"Parsed Request Data:\n{response_data}\n"
 
         response_bytes = response_string.encode("utf-8")
 
