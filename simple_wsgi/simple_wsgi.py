@@ -2,8 +2,6 @@ from multipart import parse_form
 from urllib.parse import parse_qs
 
 
-STATUS_OK = 200
-
 class SimpleWSGIApp:
     def __init__(self):
         ...
@@ -18,25 +16,27 @@ class SimpleWSGIApp:
         content_length = int(env.get("CONTENT_LENGTH", 0))
 
         if content_length > 0:
-            headers = {"Content-Type": content_type}
+            headers = {"Content-Type": content_type, "Content-Length": content_length}
 
-            def on_field(name, value, headers):
-                name_string = name.decode()
-                post_parameters[name_string] = value.decode("utf-8")
+            def on_field(field):
+                field_name = field.field_name.decode("utf-8")
+                value = field.value.decode("utf-8")
 
-            def on_file(name, value, headers):
-                name_string = name.decode()
-                post_parameters[name_string] = {
-                    "filename": headers["filename"],
-                    "content": value
+                post_parameters[field_name] = value
+
+            def on_file(field):
+                field_name = field.field_name.decode("utf-8")
+                file_name = field.file_name.decode("utf-8")
+
+                field.file_object.seek(0)
+                file_content = field.file_object.read().decode("utf-8")
+
+                post_parameters[field_name] = {
+                    "filename": file_name,
+                    "content": file_content
                 }
 
-
-            data_iterator = parse_form(headers,
-                env["wsgi.input"],
-                on_field,
-                on_file
-            )
+            parse_form(headers, env["wsgi.input"], on_field, on_file)
 
         response_data = {
             "GET Parameters": get_parameters,

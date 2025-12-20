@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const srcDir = "src/assets/";
-const destDir = "static/assets/";
+const destDir = "dist/static/assets/";
 
 if (!fs.existsSync(destDir)){
     fs.mkdirSync(destDir, { recursive: true });
