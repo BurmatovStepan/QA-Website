@@ -2,6 +2,7 @@ from typing import Any
 
 from django import forms
 from django.db import transaction
+from django.db.models import F
 from django.utils.text import slugify
 
 from qa.constants import (MAX_ANSWER_CONTENT_LENGTH,
@@ -103,7 +104,7 @@ class AnswerForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.question: Question | None = kwargs.pop("question", None)
-        self.author: CustomUser | None = kwargs.pop("auhor", None)
+        self.author: CustomUser | None = kwargs.pop("author", None)
         super().__init__(*args, **kwargs)
 
     def clean(self) -> dict[str, Any]:
@@ -127,6 +128,9 @@ class AnswerForm(forms.Form):
                 content=answer_content
             )
             new_answer.save()
+
+            self.question.answer_count = F("answer_count") + 1
+            self.question.save(update_fields=["answer_count"])
 
             return new_answer
 

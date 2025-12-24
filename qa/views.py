@@ -4,12 +4,11 @@ from django.core.paginator import Paginator
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.forms import ValidationError
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.template.loader import render_to_string
 from django.urls import reverse
-from django.views.generic import DetailView, FormView, ListView, View
+from django.views.generic import DetailView, FormView, ListView
 
 from common.constants import DEFAULT_PAGINATION_SIZE
 from common.mixins import BaseContextViewMixin, LoginRequiredMixin
@@ -90,52 +89,6 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         context["answers"] = answer_page_object.object_list
 
         return context
-
-# TODO Make enum for error types
-class QuestionAnswerView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        question_id = kwargs.get("id")
-        question = Question.objects.filter(id=question_id).first()
-
-        if question is None:
-            return JsonResponse({
-                "success": False,
-                "error_type": "question_not_found",
-                "message": f"Question with ID {question_id} does not exist."
-            }, status=404)
-
-        form = AnswerForm(
-            request.POST,
-            author=request.user,
-            question=question
-        )
-
-        if form.is_valid():
-            try:
-                new_answer = form.save()
-                answer_card_html = render_to_string(
-                    "snippets/answer-card.html",
-                    {"answer": new_answer, "request": request}
-                )
-
-                return JsonResponse({
-                    "success": True,
-                    "answer_id": new_answer.id,
-                    "answer_html": answer_card_html,
-                }, status=201)
-
-            except ValidationError as e:
-                form.add_error(None, e)
-
-            except Exception as e:
-                print(e)
-                form.add_error(None, "Произошла непредвиденная ошибка. Попробуйте еще раз.")
-
-        return JsonResponse({
-            "success": False,
-            "errors": form.errors,
-            "error_type": "validation_error",
-        }, status=400)
 
 
 class HotQuestionsView(BaseContextViewMixin, ListView):
