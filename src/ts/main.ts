@@ -73,6 +73,26 @@ function themeSwitchKeyboardHandler(event: KeyboardEvent): void {
     }
 }
 
+function checkDjangoMessages(): void {
+    const messageElements = document.querySelectorAll("#js-django-messages .js-django-message");
+
+    const result = Array.from(messageElements).reduce(
+        (acc, value: HTMLSpanElement) => {
+            acc.messages.push(value.textContent);
+
+            if (value.dataset.type === "error") {
+                acc.type = "error";
+            }
+
+            return acc;
+        },
+        { messages: [] as string[], type: "success"}
+    );
+
+    if (result.messages.length) {
+        Toaster.makeToast(result.messages, result.type);
+    }
+}
 
 class CustomFileInput {
     private initialFileName: string | null;
@@ -250,7 +270,7 @@ class NewAnswerHandler {
         this.pageSize = +this.answersSection.dataset.pageSize;
     }
 
-    // TODO remove correct button on new cards, add pagination button
+    // TODO add pagination button
     private formSubmitHandler = async (event: Event): Promise<void> => {
         event.preventDefault();
         this.clearErrors();
@@ -471,7 +491,7 @@ class MarkAnswerCorrectHandler {
     private readCSRFToken = (): void => {
         if (document.cookie && document.cookie != "") {
             const cookies = Object.fromEntries(
-                document.cookie.split("; ").map(value => value.split("="))
+                document.cookie.split("; ").map(value => value.split("=", 1))
             );
 
             if ("csrftoken" in cookies) {
@@ -527,18 +547,8 @@ class Toaster {
 
     static makeToast = (messages: string[], toastType: string = ""): void => {
         const toast = Object.assign(document.createElement("div"), {
-            className: "toast",
+            className: `toast ${toastType ? "toast--" + toastType : ""}`,
         });
-
-        switch (toastType) {
-            case "success":
-                toast.classList.add("toast--success")
-                break;
-
-            case "error":
-                toast.classList.add("toast--error")
-                break;
-        }
 
         for (const message of messages) {
             toast.appendChild(Object.assign(document.createElement("div"), {
@@ -559,6 +569,7 @@ class Toaster {
 
 document.addEventListener("DOMContentLoaded", checkActiveTab);
 document.addEventListener("DOMContentLoaded", initTheme);
+document.addEventListener("DOMContentLoaded", checkDjangoMessages)
 CustomFileInput.create()
 NewAnswerHandler.create()
 new ToggleVoteHandler;

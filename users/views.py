@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models.query import QuerySet
 from django.forms import ValidationError
@@ -18,7 +19,6 @@ from users.models import Activity, CustomUser
 from users.utilities import get_safe_redirect_url
 
 
-# TODO make settings updated popup
 class LoginView(AnonymousRequiredMixin, BaseContextViewMixin, FormView):
     template_name = "login.html"
     form_class = LoginForm
@@ -112,7 +112,6 @@ class ProfileView(BaseContextViewMixin, DetailView):
 
         return context
 
-# TODO Make successful settings update popup
 class SettingsView(LoginRequiredMixin, BaseContextViewMixin, FormView):
     template_name = "settings.html"
     form_class = SettingsFrom
@@ -136,6 +135,8 @@ class SettingsView(LoginRequiredMixin, BaseContextViewMixin, FormView):
     def form_valid(self, form):
         try:
             form.save()
+
+            messages.success(self.request, "Настройки успешно обновлены!")
             return HttpResponseRedirect(reverse("settings"), status=303)
 
         except Exception as e:
