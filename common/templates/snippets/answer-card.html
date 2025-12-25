@@ -4,7 +4,9 @@
 
   {% include "snippets/avatar-source.html" with avatar=answer.author.avatar component_name="answer__avatar" %}
 
-  {% include "snippets/rating-input.html" with content_item=answer component_name="answer__rating"%}
+  {% if current_user %}
+    {% include "snippets/rating-input.html" with content_item=answer component_name="answer__rating" model_name="answer" %}
+  {% endif %}
 
   <p class="answer__content">
     {% if forloop.first %}
@@ -15,6 +17,8 @@
   </p>
 
   {% if question.author.id == current_user.id %}
-    <button class="answer__button-correct">Mark as correct!</button>
+    <button class="answer__button-correct js-mark-correct-button"
+            data-question-id="{{ question.id }}"
+            data-answer-id="{{ answer.id }}">Mark as correct!</button>
   {% endif %}
 </div>

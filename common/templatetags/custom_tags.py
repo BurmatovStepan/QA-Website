@@ -1,11 +1,13 @@
 from typing import Any
 
 from django import template
+from users.models import CustomUser
 from django.core.paginator import Page
 
 # TODO Rename or split these
 
 register = template.Library()
+
 
 @register.simple_tag(takes_context=True)
 def url_replace(context: dict[str, Any], **kwargs) -> str:
@@ -27,6 +29,12 @@ def get_elided_page_range(page_obj: Page, on_each_side: int):
         number=current_page_number,
         on_each_side=on_each_side
     )
+
+
+@register.filter
+def get_display_name(user: CustomUser):
+    return user.display_name if user.display_name else user.login
+
 
 @register.filter
 def field_type(field):

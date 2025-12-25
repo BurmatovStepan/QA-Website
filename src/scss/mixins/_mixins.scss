@@ -45,6 +45,7 @@
 }
 
 @mixin rating-button {
+    --filter-active: $filter-accent-main
     outline: none;
     filter: $filter-text-main;
     transition: scale $timing-animation-long;
@@ -52,7 +53,12 @@
 
     &:hover,
     &:focus-visible {
-        filter: $filter-accent-main;
+        filter: var(--filter-active);
+        scale: 1.1;
+    }
+
+    &--active {
+        filter: var(--filter-active);
         scale: 1.1;
     }
 }

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from qa.ajax_views import CreateAnswerView, ToggleVoteView
+from qa.ajax_views import CreateAnswerView, MarkAnswerCorrectView
 from qa.views import (HotQuestionsView, NewQuestionView,
                       QuestionDiscussionView, TagsQuestionListingView)
 
@@ -16,5 +16,5 @@ urlpatterns = [
     path("tags/<str:tags_list>/", TagsQuestionListingView.as_view(), name="tag_question_listing"),
 
     path("question/<int:id>/answer/submit/", CreateAnswerView.as_view(), name="question_answer_submit"),
-    path("<str:model_type>/<int:id>/vote/", ToggleVoteView.as_view(), name="toggle_vote"),
+    path("<int:question_id>/<int:answer_id>/mark-correct/", MarkAnswerCorrectView.as_view(), name="answer_mark_correct")
 ]

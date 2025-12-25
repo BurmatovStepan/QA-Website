@@ -1,10 +1,13 @@
 {% load static %}
 
-<div class="{{ component_name }} rating-input">
-  <span class="rating-input__total-rating">{{ content_item.rating_total }}</span>
+<div class="{{ component_name }} rating-input js-rating-input"
+     data-object-id="{{ content_item.id }}"
+     data-object-type="{{ model_name }}">
+  <span class="rating-input__total-rating js-rating-display">{{ content_item.rating_total }}</span>
 
-  <div class="rating-input__like-button"
+  <div class="rating-input__button rating-input__button--like {% if question.user_vote == 1 %}rating-input__button--active{% endif %} js-vote-button"
       role="button"
+      data-vote-type="1"
       aria-label="Like this"
       tabindex="0">
     <img src="{% static "assets/up-arrow.svg" %}"
@@ -13,8 +16,9 @@
     >
   </div>
 
-  <div class="rating-input__dislike-button"
+  <div class="rating-input__button rating-input__button--dislike {% if question.user_vote == -1 %}rating-input__button--active{% endif %} js-vote-button"
       role="button"
+      data-vote-type="-1"
       aria-label="Dislike this"
       tabindex="0">
     <img src="{% static "assets/down-arrow.svg" %}"

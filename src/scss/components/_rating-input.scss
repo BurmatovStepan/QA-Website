@@ -11,15 +11,20 @@
         font: $h3;
     }
 
-    &__like-button {
+    &__button {
         @include rating-button;
+
+        --filter-active: #{$filter-accent-main};
+
         width: 24px;
         place-self: end center;
     }
 
-    &__dislike-button {
-        @include rating-button;
-        width: 24px;
-        place-self: start center;
+    &__button--like {
+        --filter-active: #{$filter-accent-main};
+    }
+
+    &__button--dislike {
+        --filter-active: #{$filter-color-red};
     }
 }

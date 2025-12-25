@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.core.validators import MinLengthValidator
 from django.db import models
-from django.db.models import Q, QuerySet, Sum, UniqueConstraint
+from django.db.models import OuterRef, Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.text import slugify
@@ -110,6 +110,15 @@ class QuestionManager(models.Manager):
 
         return queryset.order_by("-rating_total", "-created_at")
 
+    def add_user_votes(self, queryset: QuerySet[Question], user: CustomUser | None) -> QuerySet[Question]:
+        if user is None:
+            return queryset
+
+        user_vote = QuestionVote.objects.filter(question=OuterRef("id"), user=user).values("type")
+
+        return queryset.annotate(user_vote=user_vote)
+
+
 # TODO Add views and timestamp to question-card
 class Question(TimeStampedModel):
     objects: QuestionManager = QuestionManager()
@@ -141,8 +150,20 @@ class Question(TimeStampedModel):
         return self.title
 
 
+class AnswerManager(models.Manager):
+    def add_user_votes(self, queryset: QuerySet[Answer], user: CustomUser | None) -> QuerySet[Answer]:
+        if user is None:
+            return queryset
+
+        user_vote = AnswerVote.objects.filter(answer=OuterRef("id"), user=user).values("type")
+
+        return queryset.annotate(user_vote=user_vote)
+
+
 # TODO Add timestamp to answer-card
 class Answer(TimeStampedModel):
+    objects: AnswerManager = AnswerManager()
+
     question = models.ForeignKey(to=Question, on_delete=models.CASCADE, related_name="answers")
     author = models.ForeignKey(to=CustomUser, on_delete=models.SET_NULL, related_name="answers", null=True)
     rating_total = models.IntegerField(default=0)

@@ -24,6 +24,7 @@ class BaseContextViewMixin:
         if user.is_authenticated:
             self.current_user = user
             self.page_size = self.current_user.page_size_preference or DEFAULT_PAGINATION_SIZE
+
         else:
             self.current_user = None
             self.page_size = DEFAULT_PAGINATION_SIZE
@@ -60,7 +61,7 @@ class LoginRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
-        
+
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse({
                 "success": False,

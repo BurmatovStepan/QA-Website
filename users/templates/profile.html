@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block main_content_header %}{% endblock main_content_header %}
 
@@ -9,7 +10,7 @@
   {% include "snippets/avatar-source.html" with avatar=viewed_user.avatar component_name="profile__avatar" %}
 
   <span class="profile__name">
-    {% include "snippets/user-display-name.html" with user=viewed_user %}
+    {{ viewed_user|get_display_name }}
   </span>
 
   <div class="profile__stats">

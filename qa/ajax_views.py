@@ -1,15 +1,13 @@
-from django.forms import ValidationError
 from django.db import transaction
 from django.db.models import F
-
+from django.forms import ValidationError
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views.generic import View
 
-from qa.models import LIKE, DISLIKE
-from common.mixins import LoginRequiredMixin, BaseContextViewMixin
+from common.mixins import BaseContextViewMixin, LoginRequiredMixin
 from qa.forms import AnswerForm
-from qa.models import Question, QuestionVote, Answer, AnswerVote
+from qa.models import DISLIKE, LIKE, Answer, AnswerVote, Question, QuestionVote
 
 
 # TODO Make enum for error types
@@ -71,7 +69,7 @@ class ToggleVoteView(LoginRequiredMixin, BaseContextViewMixin, View):
         object_id = kwargs.get("id")
 
         try:
-            vote_type = int(request.POST.get("vote_type"))
+            vote_type = int(kwargs.get("vote_type"))
         except (TypeError, ValueError):
             return JsonResponse({
                 "success": False,
@@ -108,6 +106,8 @@ class ToggleVoteView(LoginRequiredMixin, BaseContextViewMixin, View):
                 existing_vote = VoteModel.objects.filter(user=self.current_user, **{relation_field: obj}).first()
                 rating_delta = 0
 
+                vote_status = "none"
+
                 if existing_vote:
                     if existing_vote.type == vote_type:
                         rating_delta = -vote_type
@@ -117,13 +117,18 @@ class ToggleVoteView(LoginRequiredMixin, BaseContextViewMixin, View):
                         rating_delta = 2 * vote_type
                         existing_vote.type = vote_type
                         existing_vote.save()
+
+                        vote_status = "liked" if existing_vote.type == 1 else "disliked"
+
                 else:
                     rating_delta = vote_type
-                    VoteModel.objects.create(
+                    new_vote = VoteModel.objects.create(
                         user=self.current_user,
                         type=vote_type,
                         **{relation_field: obj},
                     )
+
+                    vote_status = "liked" if new_vote.type == 1 else "disliked"
 
                 if rating_delta != 0:
                     obj.rating_total = F("rating_total") + rating_delta
@@ -134,10 +139,59 @@ class ToggleVoteView(LoginRequiredMixin, BaseContextViewMixin, View):
                 return JsonResponse({
                     "success": True,
                     "new_rating": obj.rating_total,
+                    "vote_status": vote_status,
                 }, status=200)
 
             except Exception as e:
                 print(e)
+
+        return JsonResponse({
+            "success": False,
+            "errors": "Произошла непредвиденная ошибка. Попробуйте еще раз.",
+        }, status=500)
+
+
+# TODO Make errors popup, define error structure
+# TODO Allow unmark answer correct
+class MarkAnswerCorrectView(LoginRequiredMixin, BaseContextViewMixin, View):
+    def post(self, request, *args, **kwargs):
+        question_id = kwargs.get("question_id")
+        answer_id = kwargs.get("answer_id")
+
+        question = Question.objects.filter(id=question_id).prefetch_related().first()
+        answer = Answer.objects.filter(id=answer_id).first()
+
+        if question is None:
+            return JsonResponse({
+                "success": False,
+                "error_type": f"question_not_found",
+                "message": f"Question with ID {question_id} does not exist."
+            }, status=404)
+
+        if answer is None:
+            return JsonResponse({
+                "success": False,
+                "error_type": f"answer_not_found",
+                "message": f"Answer with ID {answer_id} does not exist."
+            }, status=404)
+
+        if question.author != self.current_user:
+            return JsonResponse({
+                "success": False,
+                "error_type": f"not_an_author",
+                "message": f"You can not mark answers correct under other people's question."
+            }, status=403)
+
+        try:
+            answer.is_correct = True
+            answer.save()
+
+            return JsonResponse({
+                "success": True
+            }, status=200)
+
+        except Exception as e:
+            print(e)
 
         return JsonResponse({
             "success": False,

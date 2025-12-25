@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block main_title %}
   <h1>{{ main_title }}</h1>
@@ -7,7 +8,7 @@
 
 {% block main_title_extra %}
   <h1><a href="{% url "current_user_profile" %}" class="user-name">
-    {% include "snippets/user-display-name.html" with user=current_user %}
+    {{ current_user|get_display_name }}
   </a></h1>
 {% endblock  %}
 

@@ -3,7 +3,9 @@
 <div class="question {{ modifier_classes }}">
   {% include "snippets/avatar-source.html" with avatar=question.author.avatar component_name="question__avatar" %}
 
-  {% include "snippets/rating-input.html" with content_item=question component_name="question__rating" %}
+  {% if current_user %}
+    {% include "snippets/rating-input.html" with content_item=question component_name="question__rating" model_name="question" %}
+  {% endif %}
 
   <div class="question__body">
     <a href="{% url "question_discussion" question.id question.slug %}" class="question__title">{{ question.title }}</a>

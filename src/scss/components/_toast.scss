@@ -1,0 +1,43 @@
+@use "../config.scss" as *;
+
+.toast {
+    --border-color: #{$color-text-main};
+
+    position: fixed;
+    right: 10px;
+    bottom: 60px;
+
+    z-index: 999;
+    display: flex;
+    padding: 12px;
+    flex-direction: column;
+    gap: 8px;
+    background-color: $color-bg-secondary;
+
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0px 0px 6px inset var(--border-color);
+
+    transition: opacity $timing-animation-long;
+    animation: jumpIn $timing-animation-long;
+
+    @keyframes jumpIn {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0%);
+        }
+    }
+
+    &--success {
+        --border-color: #{$color-accent-main};
+    }
+
+    &--error {
+        --border-color: #{$color-text-error};
+    }
+}

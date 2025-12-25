@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 
 <header>
   <a href="{% url "homepage" %}">
@@ -23,7 +24,7 @@
       {% include "snippets/avatar-source.html" with avatar=current_user.avatar component_name="profile__avatar" %}
 
       <a href="{% url "current_user_profile" %}" class="profile__name">
-        {% include "snippets/user-display-name.html" with user=current_user %}
+        {{ user|get_display_name }}
       </a>
 
       <div class="profile__actions">

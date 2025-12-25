@@ -34,6 +34,7 @@ class HomepageView(BaseContextViewMixin, ListView):
         search_query = self.request.GET.get("query", "").lower()
 
         queryset = Question.objects.get_question_list(search_query=search_query)
+        queryset = Question.objects.add_user_votes(queryset, self.current_user)
         queryset = Question.objects.exclude_disliked_by_user(queryset, self.current_user)
 
         return queryset

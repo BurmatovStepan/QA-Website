@@ -8,6 +8,7 @@
 
 .question {
     display: grid;
+    min-height: 120px;
     grid-template-areas:
         "avatar body"
         "rating footer";

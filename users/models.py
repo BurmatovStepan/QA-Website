@@ -57,7 +57,7 @@ class CustomUserManager(BaseUserManager):
                 total_answers_posted=Count("answers", distinct=True)
             )
         )
-
+    
 
 class CustomUser(TimeStampedModel, AbstractBaseUser, PermissionsMixin):
     objects: CustomUserManager = CustomUserManager()

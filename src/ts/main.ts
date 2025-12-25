@@ -311,7 +311,7 @@ class NewAnswerHandler {
 
         } catch (error) {
             console.error("Network or unexpected error:", error);
-            alert("A network error occurred.");
+            Toaster.makeToast(["A network error occurred."], "error");
 
         } finally {
             this.submitButton.disabled = false;
@@ -376,7 +376,190 @@ class NewAnswerHandler {
     }
 }
 
+
+// TODO maybe refresh page on another tab logout
+class ToggleVoteHandler {
+    private CSRFToken: string = "";
+
+    constructor() {
+        this.readCSRFToken();
+        document.body.addEventListener("click", this.handleClick)
+    }
+
+    private readCSRFToken = (): void => {
+        if (document.cookie && document.cookie != "") {
+            const cookies = Object.fromEntries(
+                document.cookie.split("; ").map(value => value.split("="))
+            );
+
+            if ("csrftoken" in cookies) {
+                this.CSRFToken = cookies.csrftoken;
+            }
+        }
+    }
+
+    private handleClick = (event: Event): void => {
+        const target = event.target as HTMLElement
+        const button = target.closest(".js-vote-button")
+
+        if (button instanceof HTMLDivElement) {
+            this.handleVote(button);
+        }
+    }
+
+    private handleVote = async (voteButton: HTMLDivElement): Promise<void> => {
+        const ratingInput = voteButton.closest(".js-rating-input") as HTMLDivElement;
+        if (!ratingInput) {
+            return;
+        }
+
+        const objectId = ratingInput.dataset.objectId;
+        const objectType = ratingInput.dataset.objectType;
+        const voteType = voteButton.dataset.voteType;
+
+        const url = `/vote/${objectType}/${objectId}/${voteType}/`;
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": this.CSRFToken,
+                }
+            });
+
+            const result = await response.json()
+
+            if (response.ok) {
+                const ratingDisplay = ratingInput.querySelector(".js-rating-display");
+                const likeButton = ratingInput.querySelector('[data-vote-type="1"]');
+                const dislikeButton = ratingInput.querySelector('[data-vote-type="-1"]');
+
+                if (ratingDisplay) {
+                    ratingDisplay.textContent = result.new_rating;
+                }
+
+                likeButton.classList.remove("rating-input__button--active");
+                dislikeButton.classList.remove("rating-input__button--active");
+
+                if (result.vote_status == "liked") {
+                    likeButton.classList.add("rating-input__button--active");
+                } else if (result.vote_status == "disliked") {
+                    dislikeButton.classList.add("rating-input__button--active");
+                }
+            } else {
+                Toaster.makeToast([result.message], "error");
+            }
+        }
+
+        catch (error) {
+            console.error("Network or unexpected error:", error);
+            Toaster.makeToast(["A network error occurred."], "error");
+        }
+    }
+}
+
+
+class MarkAnswerCorrectHandler {
+    private CSRFToken: string = "";
+
+    constructor() {
+        this.readCSRFToken();
+        document.body.addEventListener("click", this.handleClick)
+    }
+
+    private readCSRFToken = (): void => {
+        if (document.cookie && document.cookie != "") {
+            const cookies = Object.fromEntries(
+                document.cookie.split("; ").map(value => value.split("="))
+            );
+
+            if ("csrftoken" in cookies) {
+                this.CSRFToken = cookies.csrftoken;
+            }
+        }
+    }
+
+    private handleClick = (event: Event): void => {
+        const target = event.target as HTMLElement
+
+        if (target instanceof HTMLButtonElement && target.matches(".js-mark-correct-button")) {
+            this.handleMarkCorrect(target);
+        }
+    }
+
+    private handleMarkCorrect = async (button: HTMLButtonElement): Promise<void> => {
+        const questionId = button.dataset.questionId;
+        const answerId = button.dataset.answerId;
+        const questionCard = button.closest(".js-answer-card");
+
+        const url = `/questions/${questionId}/${answerId}/mark-correct/`;
+
+        try {
+            const response = await fetch(url, {
+                "method": "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": this.CSRFToken,
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok && questionCard) {
+                questionCard.classList.add("answer--correct");
+            }
+
+            if (!response.ok) {
+                Toaster.makeToast([result.message], "error");
+            }
+        }
+
+        catch (error) {
+            console.error("Network or unexpected error:", error);
+            Toaster.makeToast(["A network error occurred."], "error");
+        }
+    }
+}
+
+class Toaster {
+    private static body = document.body;
+
+    static makeToast = (messages: string[], toastType: string = ""): void => {
+        const toast = Object.assign(document.createElement("div"), {
+            className: "toast",
+        });
+
+        switch (toastType) {
+            case "success":
+                toast.classList.add("toast--success")
+                break;
+
+            case "error":
+                toast.classList.add("toast--error")
+                break;
+        }
+
+        for (const message of messages) {
+            toast.appendChild(Object.assign(document.createElement("div"), {
+                className: "toast__message",
+                textContent: message
+            }))
+        }
+        this.body.appendChild(toast);
+
+        setTimeout(() => this.removeToast(toast), 3000);
+    }
+
+    private static removeToast = (toast: HTMLDivElement): void => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", checkActiveTab);
 document.addEventListener("DOMContentLoaded", initTheme);
 CustomFileInput.create()
 NewAnswerHandler.create()
+new ToggleVoteHandler;
+new MarkAnswerCorrectHandler;
