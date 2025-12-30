@@ -56,7 +56,7 @@ class AnswerAdmin(admin.ModelAdmin):
 
     list_display = ("question_title", "author", "content_trimmed", "is_correct", "created_at")
     list_filter = ("is_correct", "created_at", "author")
-    search_fields = ("body", "user__login", "question__title")
+    search_fields = ("content", "author__login", "question__title", "id")
 
     raw_id_fields = ("question", "author")
     readonly_fields = ("content_trimmed", "created_at", "updated_at")

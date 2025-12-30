@@ -8,21 +8,42 @@ $p: 0.9rem / 1.6em $ff;
 
 $font-text-default: 1em / 1em $ff;
 
-$color-bg-main: var(--color-bg-main);
-$color-bg-secondary: var(--color-bg-secondary);
-$color-bg-filename: var(--color-bg-filename);
+$white: #FFFFFF;
+$black: #000000;
+
+$gray-50: #f2f2f2;
+$gray-600: #5e5d5d;
+$gray-700: #323232;
+$gray-900: #1f1f1f;
+
+$qa-primary: #ffff47;
+
+$status-error: #fe4040;
+$status-success: #28a745;
+
+$surface-0: var(--surface-0);
+$surface-1: var(--surface-1);
+$surface-inverse: var(--surface-inverse);
 
 $color-text-main: var(--color-text-main);
-$color-text-error: var(--color-text-error);
-$color-text-filename: var(--color-text-filename);
+$color-status-danger: var(--color-status-danger);
+$color-text-inverse: var(--color-text-inverse);
+$color-text-muted: var(--color-text-muted);
 
-$color-border-filename: var(--color-border-filename);
+
+$color-border-inverse: var(--color-border-inverse);
 $color-border-card: var(--color-border-card);
 
-$color-interactive-idle: var(--color-interactive-idle);
-$color-accent-main: var(--color-accent-main);
+$color-indicator-highlight: var(--color-indicator-highlight);
 
-$filter-accent-main: var(--filter-accent-main);
+$color-action-idle: var(--color-action-idle);
+$color-indicator-idle: var(--color-indicator-idle);
+$color-action-active: var(--color-action-active);
+$color-indicator-active: var(--color-indicator-active);
+
+$color-page-primary: var(--color-page-primary);
+
+$filter-page-primary: var(--filter-page-primary);
 $filter-text-main: var(--filter-text-main);
 $filter-color-red: var(--filter-color-red);
 

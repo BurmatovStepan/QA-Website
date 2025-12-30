@@ -1,8 +1,3 @@
-const THEME_CLASS = "theme-light";
-const THEME_STORAGE_KEY = "user-theme";
-
-const LIGHT_ICON_PATH: string = "/static/assets/light-theme.svg";
-const DARK_ICON_PATH: string = "/static/assets/dark-theme.svg";
 const DEFAULT_AVATAR_PATH: string = "/static/assets/avatar.svg";
 const INVALID_FILE_ICON_PATH: string = "/static/assets/invalid-file.svg";
 
@@ -23,53 +18,6 @@ function checkActiveTab(): void {
             }
             return;
         }
-    }
-}
-
-
-function initTheme(): void {
-    const body = document.body;
-    const icon = document.querySelector(".js-theme-switch__icon") as HTMLImageElement;
-
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-
-    if (icon && savedTheme === "light") {
-        icon.src = DARK_ICON_PATH;
-    } else if (icon) {
-        icon.src = LIGHT_ICON_PATH;
-    }
-
-    if (savedTheme === "light") {
-        body.classList.add(THEME_CLASS);
-    }
-
-    const themeSwitch = document.querySelector(".js-theme-switch")
-    if (themeSwitch) {
-        themeSwitch.addEventListener("click", toggleTheme);
-        themeSwitch.addEventListener("keydown", themeSwitchKeyboardHandler);
-    }
-}
-
-
-function toggleTheme(): void {
-    const body = document.body;
-    const icon = document.querySelector(".js-theme-switch__icon") as HTMLImageElement;
-
-    body.classList.toggle(THEME_CLASS);
-
-    const isLight = body.classList.contains(THEME_CLASS);
-
-    if (icon) {
-        icon.src = isLight ? DARK_ICON_PATH : LIGHT_ICON_PATH;
-    }
-    localStorage.setItem(THEME_STORAGE_KEY, isLight ? "light" : "dark");
-}
-
-
-function themeSwitchKeyboardHandler(event: KeyboardEvent): void {
-    if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        toggleTheme();
     }
 }
 
@@ -491,7 +439,7 @@ class MarkAnswerCorrectHandler {
     private readCSRFToken = (): void => {
         if (document.cookie && document.cookie != "") {
             const cookies = Object.fromEntries(
-                document.cookie.split("; ").map(value => value.split("=", 1))
+                document.cookie.split("; ").map(value => value.split("="))
             );
 
             if ("csrftoken" in cookies) {
@@ -568,7 +516,6 @@ class Toaster {
 }
 
 document.addEventListener("DOMContentLoaded", checkActiveTab);
-document.addEventListener("DOMContentLoaded", initTheme);
 document.addEventListener("DOMContentLoaded", checkDjangoMessages)
 CustomFileInput.create()
 NewAnswerHandler.create()

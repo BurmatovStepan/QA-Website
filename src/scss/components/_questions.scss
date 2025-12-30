@@ -9,20 +9,46 @@
 .question {
     display: grid;
     min-height: 120px;
+
     grid-template-areas:
-        "avatar body"
+        "rating header"
+        "rating body"
         "rating footer";
-    place-items: center;
 
-    column-gap: 16px;
+    grid-template-columns: 60px 1fr;
 
-    &__avatar {
-        grid-area: avatar;
+    column-gap: 12px;
+    background-color: $surface-1;
+    border-radius: 4px;
+
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.4),
+        0 10px 20px rgba(0, 0, 0, 0.05);
+
+    &__header {
+        display: flex;
+        margin-bottom: 8px;
+        grid-area: header;
+        align-items: center;
+        gap: 8px
+    }
+
+    &__author-name {
+        @include light-up-link;
+        text-decoration: none;
+    }
+
+    &__created-at {
+        flex-grow: 1;
+        align-self: start;
+        color: $color-text-muted;
+        text-align: end;
     }
 
     &__rating {
         padding-top: 4px;
         grid-area: rating;
+        place-self: center;
     }
 
     &__body {
@@ -33,8 +59,10 @@
     }
 
     &__title {
-        color: $color-accent-main;
+        color: $color-text-main;
         font: $h2;
+
+        transition: color $timing-animation-short;
     }
 
     &__content--clamped {
@@ -47,6 +75,7 @@
 
     &__footer {
         display: flex;
+        margin-top: 16px;
         grid-area: footer;
         justify-self: start;
         gap: 24px;
@@ -67,33 +96,63 @@
             content: ", ";
         }
     }
+
+    &:hover &__title {
+        color: $color-page-primary;
+    }
 }
 
 .homepage .question,
 .question-listing .question {
+    position: relative;
+
     padding: 8px;
-    grid-template-columns: 80px 1fr;
-    border: 2px solid $color-border-card;
-    box-shadow: $shadow-main;
+    transition: all $timing-animation-short;
 
     &__avatar {
-        width: 60px;
+        width: 28px;
+        border-radius: 4px;
     }
 
     &__body {
         gap: 4px;
     }
+
+    &::before {
+        position: absolute;
+
+        top: 4px;
+        bottom: 4px;
+        left: -8px;
+        width: 2px;
+
+        background-color: transparent;
+        transition: all $timing-animation-short;
+
+        content: "";
+    }
+
+    &:hover {
+        box-shadow:
+            0 4px 6px rgba(0, 0, 0, 0.4),
+            0 20px 40px rgba(0, 0, 0, 0.08);
+
+        transform: translateY(-2px);
+
+        &::before {
+            background-color: $color-page-primary;
+        }
+    }
+
 }
 
 .question-discussion-page .question {
     margin: 8px 24px;
     padding: 16px;
-    grid-template-columns: 140px 1fr;
-    border-bottom: 2px solid $color-accent-main;
-
 
     &__avatar {
-        width: 120px;
+        width: 32px;
+        border-radius: 8px;
     }
 
     &__rating {
@@ -101,10 +160,19 @@
     }
 
     &__title {
+        color: $color-page-primary;
         font: $h1;
     }
 
     &__body {
         gap: 12px;
+    }
+
+    &__content {
+        font-size: 16px;
+    }
+
+    &__footer {
+        margin-top: 24px;
     }
 }

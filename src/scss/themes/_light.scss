@@ -1,17 +1,21 @@
+@use '../config' as *;
+
 .theme-light {
-    --color-bg-main: #FFFFFF;
-    --color-bg-secondary: hsl(60, 80%, 97%);
-    --color-bg-filename: #FFFFFF;
-    --color-interactive-idle: hsl(50, 100%, 85%);
+    color-scheme: light;
+
+    --surface-0: #{$white};
+    --surface-1: hsl(60, 80%, 97%);
+    --surface-inverse: #FFFFFF;
+    --color-action-idle: hsl(50, 100%, 85%);
     --color-text-main: #1A1A1A;
-    --color-text-filename: #1A1A1A;
-    --color-text-error: #ec0800;
-    --color-border-filename: #97979e;
-    --color-accent-main: hsl(50, 100%, 50%);
+    --color-text-inverse: #1A1A1A;
+    --color-status-danger: #ec0800;
+    --color-border-inverse: #97979e;
+    --color-page-primary: hsl(50, 100%, 50%);
     --color-border-card: hsla(0, 0%, 10%, 0.4);
-    --filter-accent-main: brightness(0) saturate(100%) invert(11%) sepia(19%) saturate(5816%) hue-rotate(187deg) brightness(99%) contrast(104%);
+    --filter-page-primary: brightness(0) saturate(100%) invert(11%) sepia(19%) saturate(5816%) hue-rotate(187deg) brightness(99%) contrast(104%);
     --filter-text-main: brightness(0) saturate(100%) invert(0%) sepia(4%) saturate(2594%) hue-rotate(10deg) brightness(83%) contrast(80%);
     --filter-color-red: brightness(0) saturate(100%) invert(15%) sepia(69%) saturate(5944%) hue-rotate(358deg) brightness(100%) contrast(115%);
-    --shadow-main: 4px 4px 10px rgba(0, 0, 0, 0.1);
-    --shadow-small: 2px 2px 6px rgba(0, 0, 0, 0.1);
+    --shadow-main: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --shadow-small: 0 2px 6px rgba(0, 0, 0, 0.1);
 }

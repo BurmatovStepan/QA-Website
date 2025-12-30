@@ -21,7 +21,7 @@
         line-height: 1.05em;
 
         & > a {
-            color: $color-accent-main;
+            color: $color-page-primary;
             transition: font-size $timing-animation-long;
         }
 
@@ -32,7 +32,7 @@
     }
 
     &__red-highlight {
-        color: $color-text-error;
+        color: $color-status-danger;
     }
 
 }

@@ -7,24 +7,32 @@
 
     &__total-rating {
         grid-row: 1 / span 2;
-        place-self: center;
+        place-self: center end;
         font: $h3;
     }
 
     &__button {
         @include rating-button;
-
-        --filter-active: #{$filter-accent-main};
-
+        --filter-active: #{$filter-page-primary};
         width: 24px;
-        place-self: end center;
     }
 
     &__button--like {
-        --filter-active: #{$filter-accent-main};
+        --filter-active: #{$filter-page-primary};
+        place-self: end center;
     }
 
     &__button--dislike {
         --filter-active: #{$filter-color-red};
+        place-self: start center;
+    }
+
+    &--signed-out {
+        display: flex;
+        place-content: center;
+
+        .rating-input__button {
+            display: none;
+        }
     }
 }

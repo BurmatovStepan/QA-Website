@@ -159,20 +159,12 @@ class MarkAnswerCorrectView(LoginRequiredMixin, BaseContextViewMixin, View):
         answer_id = kwargs.get("answer_id")
 
         question = Question.objects.filter(id=question_id).prefetch_related().first()
-        answer = Answer.objects.filter(id=answer_id).first()
-
+        
         if question is None:
             return JsonResponse({
                 "success": False,
                 "error_type": f"question_not_found",
                 "message": f"Question with ID {question_id} does not exist."
-            }, status=404)
-
-        if answer is None:
-            return JsonResponse({
-                "success": False,
-                "error_type": f"answer_not_found",
-                "message": f"Answer with ID {answer_id} does not exist."
             }, status=404)
 
         if question.author != self.current_user:
@@ -181,6 +173,14 @@ class MarkAnswerCorrectView(LoginRequiredMixin, BaseContextViewMixin, View):
                 "error_type": f"not_an_author",
                 "message": f"You can not mark answers correct under other people's question."
             }, status=403)
+
+        answer = question.answers.filter(id=answer_id).first()
+        if answer is None:
+            return JsonResponse({
+                "success": False,
+                "error_type": f"answer_not_found",
+                "message": f"Answer with ID {answer_id} does not exist."
+            }, status=404)
 
         try:
             answer.is_correct = True

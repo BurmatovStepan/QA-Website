@@ -12,7 +12,7 @@
     padding: 12px;
     flex-direction: column;
     gap: 8px;
-    background-color: $color-bg-secondary;
+    background-color: $surface-1;
 
     border: 2px solid var(--border-color);
     border-radius: 4px;
@@ -34,10 +34,10 @@
     }
 
     &--success {
-        --border-color: #{$color-accent-main};
+        --border-color: #{$status-success};
     }
 
     &--error {
-        --border-color: #{$color-text-error};
+        --border-color: #{$color-status-danger};
     }
 }

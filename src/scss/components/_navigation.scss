@@ -1,8 +1,8 @@
 @use "../config.scss" as *;
 
 .navigation {
-    background-color: $color-bg-secondary;
-    border-top: 2px solid $color-interactive-idle;
+    background-color: $surface-1;
+    border-top: 2px solid $color-action-idle;
 
     &__pages-list {
         display: flex;
@@ -44,11 +44,11 @@
     &__page-link:focus-within,
     &__page-link--current {
         &::after {
-            background-color: $color-accent-main;
+            background-color: $color-page-primary;
         }
 
         & > a {
-            color: $color-accent-main;
+            color: $color-page-primary;
         }
     }
 }

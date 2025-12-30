@@ -30,7 +30,7 @@
     }
 
     &__error-message {
-        color: $color-text-error;
+        color: $color-status-danger;
     }
 
     &__field-label {
@@ -40,7 +40,7 @@
     &__field-label--required {
         &::after {
             margin-left: 0.25em;
-            color: $color-accent-main;
+            color: $color-page-primary;
             font-weight: bold;
             content: "*";
         }

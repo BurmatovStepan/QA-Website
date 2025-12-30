@@ -1,11 +1,18 @@
 {% load static %}
+{% load custom_tags %}
 
 <div class="question {{ modifier_classes }}">
-  {% include "snippets/avatar-source.html" with avatar=question.author.avatar component_name="question__avatar" %}
+  <div class="question__header">
+    <a href="{% url "profile" question.author.id %}">
+      {% include "snippets/avatar-source.html" with avatar=question.author.avatar component_name="question__avatar" %}
+    </a>
 
-  {% if current_user %}
-    {% include "snippets/rating-input.html" with content_item=question component_name="question__rating" model_name="question" %}
-  {% endif %}
+    <a href="{% url "profile" question.author.id %}" class="question__author-name">{{ question.author|get_display_name }}</a>
+
+    <span class="question__created-at">{{ question.created_at }}</span>
+  </div>
+
+  {% include "snippets/rating-input.html" with content_item=question component_name="question__rating" model_name="question" %}
 
   <div class="question__body">
     <a href="{% url "question_discussion" question.id question.slug %}" class="question__title">{{ question.title }}</a>
@@ -20,14 +27,17 @@
         <a href="{% url "question_discussion" question.id question.slug %}">no answers yet</a>
       {% endif %}
     {% endif %}
-    <div class="question__tags-section">
-      Tags:
-      <ul class="question__tags-list">
-        {% for tag in question.tags.all %}
-          <li class="question__tag"><a href="{% url "tag_question_listing" tag.slug %}">{{ tag.name }}</a></li>
-        {% empty %}
-        {% endfor %}
-      </ul>
-    </div>
+
+    {% if question.tags.all %}
+      <div class="question__tags-section">
+        Tags:
+        <ul class="question__tags-list">
+          {% for tag in question.tags.all %}
+            <li class="question__tag"><a href="{% url "tag_question_listing" tag.slug %}">{{ tag.name }}</a></li>
+          {% empty %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
   </div>
 </div>

@@ -1,17 +1,36 @@
+@use '../config' as *;
+
 :root {
-    --color-bg-main: #1f1f1f;
-    --color-bg-secondary: #323232;
-    --color-bg-filename: #FFFFFF;
-    --color-interactive-idle: #5e5d5d;
-    --color-text-main: hsl(202, 100%, 98%);
-    --color-text-filename: #1f1f1f;
-    --color-text-error: #ff0800;
-    --color-border-filename: transparent;
-    --color-border-card: hsla(204, 100%, 98%, 0.85);
-    --color-accent-main: #ffff47;
-    --filter-accent-main: brightness(0) saturate(100%) invert(82%) sepia(98%) saturate(351%) hue-rotate(355deg) brightness(104%) contrast(102%);
+    color-scheme: dark;
+
+    --surface-0: #{$gray-900};
+    --surface-1: #{$gray-700};
+
+    --color-text-main: #{$gray-50};
+    --color-text-muted: color-mix(in srgb, var(--color-text-main), transparent 50%);
+
+    --color-page-primary: #{$qa-primary};
+
+    --color-status-success: #{$status-success};
+    --color-status-danger: #{$status-error};
+
+    --color-action-active: #{$qa-primary};
+    --color-action-idle: #{$gray-600};
+
+    --color-indicator-active: #{$qa-primary};
+    --color-indicator-idle: #{$gray-600};
+    --color-indicator-highlight: #{$gray-50};
+
+    --color-link-primary: #{$gray-50};
+    --color-link-active: #{$qa-primary};
+
+    --surface-inverse: #{$white};
+    --color-text-inverse: #{$gray-900};
+    --color-border-inverse: transparent;
+
+    --filter-page-primary: brightness(0) saturate(100%) invert(82%) sepia(98%) saturate(351%) hue-rotate(355deg) brightness(104%) contrast(102%);
     --filter-text-main: brightness(0) saturate(100%) invert(84%) sepia(74%) saturate(1021%) hue-rotate(180deg) brightness(111%) contrast(108%);
     --filter-color-red: brightness(0) saturate(100%) invert(15%) sepia(69%) saturate(5944%) hue-rotate(358deg) brightness(100%) contrast(115%);
-    --shadow-main: 4px 4px 8px rgba(0, 0, 0, 0.4);
-    --shadow-small: 4px 4px 8px rgba(0, 0, 0, 0.4);
+    --shadow-main: 0 4px 8px rgba(0, 0, 0, 0.4);
+    --shadow-small: 0 4px 8px rgba(0, 0, 0, 0.4);
 }

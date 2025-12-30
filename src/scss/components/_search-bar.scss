@@ -13,14 +13,14 @@
         left: -8px;
         height: 2px;
 
-        background-color: $color-interactive-idle;
+        background-color: $color-indicator-idle;
 
         transition: background-color $timing-animation-short;
         content: "";
     }
 
     &:focus-within::before {
-        background-color: $color-accent-main
+        background-color: $color-indicator-active
     }
 
     &__input {

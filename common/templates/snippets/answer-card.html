@@ -1,14 +1,21 @@
 {% load static %}
+{% load custom_tags %}
 
 <div class="answer {{ modifier_classes }} js-answer-card" id="{{ answer.id }}">
+  <div class="answer__header">
+    <a href="{% url "profile" answer.author.id %}">
+      {% include "snippets/avatar-source.html" with avatar=answer.author.avatar component_name="answer__avatar" %}
+    </a>
 
-  {% include "snippets/avatar-source.html" with avatar=answer.author.avatar component_name="answer__avatar" %}
+    <a href="{% url "profile" answer.author.id %}" class="answer__author-name">{{ answer.author|get_display_name }}</a>
 
-  {% if current_user %}
-    {% include "snippets/rating-input.html" with content_item=answer component_name="answer__rating" model_name="answer" %}
-  {% endif %}
+    <span class="answer__created-at">{{ answer.created_at }}</span>
+  </div>
 
-  <p class="answer__content">
+
+  {% include "snippets/rating-input.html" with content_item=answer component_name="answer__rating" model_name="answer" %}
+
+  <p class="answer__body">
     {% if forloop.first %}
       <a name="first-answer"></a>
     {% endif %}
