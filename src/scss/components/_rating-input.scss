@@ -3,7 +3,7 @@
 .rating-input {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px 4px;
+    column-gap: 2px;
 
     &__total-rating {
         grid-row: 1 / span 2;
@@ -12,19 +12,40 @@
     }
 
     &__button {
-        @include rating-button;
-        --filter-active: #{$filter-page-primary};
+        display: flex;
+
+        padding: 4px;
+
+        place-content: center;
+        outline: none;
+        cursor: pointer;
+
+        &:hover, &:focus-visible, &--active {
+            [class*="-icon"] {
+                background-color: var(--color-local-highlight, $color-text-main);
+                scale: 1.1;
+            }
+        }
+    }
+
+    &__like-button-icon {
+        @include rating-button-icon($qa-primary);
+
         width: 24px;
+        height: 24px;
+
+        mask-image: url("/static/assets/up-arrow.svg");
+        mask-position: bottom;
     }
 
-    &__button--like {
-        --filter-active: #{$filter-page-primary};
-        place-self: end center;
-    }
+    &__dislike-button-icon {
+        @include rating-button-icon($status-error);
 
-    &__button--dislike {
-        --filter-active: #{$filter-color-red};
-        place-self: start center;
+        width: 24px;
+        height: 24px;
+
+        mask-image: url("/static/assets/down-arrow.svg");
+        mask-position: top;
     }
 
     &--signed-out {

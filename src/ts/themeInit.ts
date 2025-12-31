@@ -1,20 +1,21 @@
 const THEME_CLASS = "theme-light";
 const THEME_STORAGE_KEY = "user-theme";
 
-const LIGHT_ICON_PATH: string = "/static/assets/light-theme.svg";
-const DARK_ICON_PATH: string = "/static/assets/dark-theme.svg";
+const SUN_ICON_PATH: string = "url('/static/assets/sun-icon.svg')";
+const MOON_ICON_PATH: string = "url('/static/assets/moon-icon.svg')";
 
 
 function initTheme(): void {
     const body = document.body;
-    const icon = document.querySelector(".js-theme-switch__icon") as HTMLImageElement;
+    const icon = document.querySelector(".js-theme-switch-icon") as HTMLDivElement;
 
     const preferredTheme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
     // TODO Add theme to settings,
     if (icon && preferredTheme === "light") {
-        icon.src = DARK_ICON_PATH;
+        icon.style.maskImage = MOON_ICON_PATH;
+
     } else if (icon) {
-        icon.src = LIGHT_ICON_PATH;
+        icon.style.maskImage = SUN_ICON_PATH;
     }
 
     if (preferredTheme === "light") {
@@ -31,16 +32,15 @@ function initTheme(): void {
 
 function toggleTheme(): void {
     const body = document.body;
-    const icon = document.querySelector(".js-theme-switch__icon") as HTMLImageElement;
+    const icon = document.querySelector(".js-theme-switch-icon") as HTMLDivElement;
 
     body.classList.toggle(THEME_CLASS);
 
     const isLight = body.classList.contains(THEME_CLASS);
 
     if (icon) {
-        icon.src = isLight ? DARK_ICON_PATH : LIGHT_ICON_PATH;
+        icon.style.maskImage = isLight ? MOON_ICON_PATH : SUN_ICON_PATH;
     }
-    localStorage.setItem(THEME_STORAGE_KEY, isLight ? "light" : "dark");
 }
 
 

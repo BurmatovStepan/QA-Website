@@ -10,10 +10,8 @@
       data-vote-type="1"
       aria-label="Like this"
       tabindex="0">
-    <img src="{% static "assets/up-arrow.svg" %}"
-        alt="like-icon"
-        class="rating-input__like-button-icon"
-    >
+
+      <div class="rating-input__like-button-icon"></div>
   </div>
 
   <div class="rating-input__button rating-input__button--dislike {% if question.user_vote == -1 %}rating-input__button--active{% endif %} js-vote-button"
@@ -21,9 +19,6 @@
       data-vote-type="-1"
       aria-label="Dislike this"
       tabindex="0">
-    <img src="{% static "assets/down-arrow.svg" %}"
-        alt="dislike-icon"
-        class="rating-input__dislike-button-icon"
-    >
+      <div class="rating-input__dislike-button-icon"></div>
   </div>
 </div>

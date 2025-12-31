@@ -15,13 +15,11 @@
         min-height: 32px;
         outline: none;
 
-        box-shadow: $shadow-small;
-
         &::after {
             position: absolute;
-            right: -8px;
-            bottom: -12px;
-            left: -8px;
+            right: -4px;
+            bottom: -8px;
+            left: -4px;
             height: 2px;
 
             background-color: transparent;
@@ -35,14 +33,6 @@
             &::after {
                 background-color: $color-page-primary;
             }
-        }
-
-        & > a {
-            position: absolute;
-            inset: 0;
-
-            color: $color-text-main;
-            text-align: center;
         }
     }
 }

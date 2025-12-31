@@ -5,14 +5,13 @@
     {% for i in page_range %}
 
       {% if i == paginator.ELLIPSIS %}
-        <div class="paginator__button paginator__button--no-click">
+        <span class="paginator__button paginator__button--no-click">
           {{ i }}
-        </div>
+        </span>
       {% else %}
-        <div class="paginator__button {% if page_obj.number == i %}paginator__button--current-page{% endif %}">
-          <a href="?{% url_replace page=i %}"></a>
-          <span class="paginator__page-number">{{ i }}</span>
-        </div>
+          <a href="?{% url_replace page=i %}"
+             class="paginator__button {% if page_obj.number == i %}paginator__button--current-page{% endif %}"
+          >{{ i }}</a>
       {% endif %}
 
     {% endfor %}

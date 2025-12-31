@@ -28,9 +28,13 @@
     --color-text-inverse: #{$gray-900};
     --color-border-inverse: transparent;
 
-    --filter-page-primary: brightness(0) saturate(100%) invert(82%) sepia(98%) saturate(351%) hue-rotate(355deg) brightness(104%) contrast(102%);
     --filter-text-main: brightness(0) saturate(100%) invert(84%) sepia(74%) saturate(1021%) hue-rotate(180deg) brightness(111%) contrast(108%);
-    --filter-color-red: brightness(0) saturate(100%) invert(15%) sepia(69%) saturate(5944%) hue-rotate(358deg) brightness(100%) contrast(115%);
-    --shadow-main: 0 4px 8px rgba(0, 0, 0, 0.4);
-    --shadow-small: 0 4px 8px rgba(0, 0, 0, 0.4);
+
+    --shadow-z1:
+        0 1px 4px rgb(0 0 0 / 0.4),
+        0 10px 20px rgb(0 0 0 / 0.05);
+
+    --shadow-z2:
+        0 4px 6px rgb(0 0 0 / 0.4),
+        0 20px 40px rgb(0 0 0 / 0.08);
 }

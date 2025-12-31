@@ -120,16 +120,11 @@ class CustomFileInput {
         }
 
         if (file instanceof File && file.type.startsWith("image/")) {
-            const reader = new FileReader()
-
-            const updateFilePreview = (event: ProgressEvent<FileReader>): void =>  {
-                if (event.target && event.target.result && this.filePreview) {
-                    this.filePreview.src = event.target.result as string;
-                }
+            if (this.filePreview.src.startsWith('blob:')) {
+                URL.revokeObjectURL(this.filePreview.src);
             }
-            reader.onload = updateFilePreview;
-
-            reader.readAsDataURL(file);
+            
+            this.filePreview.src = URL.createObjectURL(file);
         }
 
         if (typeof(file) === "string") {

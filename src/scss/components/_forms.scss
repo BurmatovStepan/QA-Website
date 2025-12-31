@@ -54,6 +54,7 @@
     &__avatar {
         width: 140px;
         margin-block: 12px;
+        border-radius: 16px;
     }
 
     &__clear-avatar {
@@ -62,7 +63,6 @@
         height: 32px;
         margin-top: 12px;
         font-size: 20px;
-        box-shadow: $shadow-small;
     }
 
     &__submit-button {
