@@ -402,14 +402,15 @@ class ToggleVoteHandler {
                     ratingDisplay.textContent = result.new_rating;
                 }
 
-                likeButton.classList.remove("rating-input__button--active");
-                dislikeButton.classList.remove("rating-input__button--active");
+                likeButton?.classList?.remove("rating-input__button--active");
+                dislikeButton?.classList?.remove("rating-input__button--active");
 
                 if (result.vote_status == "liked") {
-                    likeButton.classList.add("rating-input__button--active");
+                    likeButton?.classList?.add("rating-input__button--active");
                 } else if (result.vote_status == "disliked") {
-                    dislikeButton.classList.add("rating-input__button--active");
+                    dislikeButton?.classList?.add("rating-input__button--active");
                 }
+
             } else {
                 Toaster.makeToast([result.message], "error");
             }
