@@ -4,7 +4,7 @@
     color-scheme: dark;
 
     --surface-0: #{$gray-900};
-    --surface-1: #{$gray-700};
+    --surface-1: #{$gray-800};
 
     --color-text-main: #{$gray-50};
     --color-text-muted: color-mix(in srgb, var(--color-text-main), transparent 50%);
@@ -21,20 +21,17 @@
     --color-indicator-idle: #{$gray-600};
     --color-indicator-highlight: #{$gray-50};
 
-    --color-link-primary: #{$gray-50};
-    --color-link-active: #{$qa-primary};
-
-    --surface-inverse: #{$white};
-    --color-text-inverse: #{$gray-900};
-    --color-border-inverse: transparent;
+    --surface-form-field: var(--surface-1);
+    --color-text-form-field: var(--color-text-main);
+    --color-border-form-field: transparent;
 
     --filter-text-main: brightness(0) saturate(100%) invert(84%) sepia(74%) saturate(1021%) hue-rotate(180deg) brightness(111%) contrast(108%);
 
     --shadow-z1:
-        0 1px 4px rgb(0 0 0 / 0.4),
-        0 10px 20px rgb(0 0 0 / 0.05);
+        0 1px 4px hsla(0 0% 0% /  0.4),
+        0 10px 20px hsla(0 0% 0% / 0.05);
 
     --shadow-z2:
-        0 4px 6px rgb(0 0 0 / 0.4),
-        0 20px 40px rgb(0 0 0 / 0.08);
+        0 4px 6px hsla(0 0% 0% / 0.4),
+        0 20px 40px hsla(0 0% 0% / 0.08);
 }

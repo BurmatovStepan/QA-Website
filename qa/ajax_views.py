@@ -8,6 +8,7 @@ from django.views.generic import View
 from common.mixins import BaseContextViewMixin, LoginRequiredMixin
 from qa.forms import AnswerForm
 from qa.models import DISLIKE, LIKE, Answer, AnswerVote, Question, QuestionVote
+from users.models import Activity
 
 
 # TODO Make enum for error types
@@ -73,13 +74,13 @@ class ToggleVoteView(LoginRequiredMixin, BaseContextViewMixin, View):
         except (TypeError, ValueError):
             return JsonResponse({
                 "success": False,
-                "errors": "Некорректный формат типа оценки"
+                "message": "Некорректный формат типа оценки"
             }, status=400)
 
         if vote_type not in [LIKE, DISLIKE]:
             return JsonResponse({
                 "success": False,
-                "errors": "Неизвестный тип оценки.",
+                "message": "Неизвестный тип оценки.",
             }, status=400)
 
         mapping_data = self._MAPPING.get(model_type)
@@ -87,7 +88,7 @@ class ToggleVoteView(LoginRequiredMixin, BaseContextViewMixin, View):
         if mapping_data is None:
             return JsonResponse({
                 "success": False,
-                "errors": "Неизвестная модель.",
+                "message": "Неизвестная модель.",
             }, status=400)
 
         Model, VoteModel, relation_field = mapping_data
@@ -147,11 +148,10 @@ class ToggleVoteView(LoginRequiredMixin, BaseContextViewMixin, View):
 
         return JsonResponse({
             "success": False,
-            "errors": "Произошла непредвиденная ошибка. Попробуйте еще раз.",
+            "message": "Произошла непредвиденная ошибка. Попробуйте еще раз.",
         }, status=500)
 
 
-# TODO Make errors popup, define error structure
 # TODO Allow unmark answer correct
 class MarkAnswerCorrectView(LoginRequiredMixin, BaseContextViewMixin, View):
     def post(self, request, *args, **kwargs):
@@ -159,7 +159,7 @@ class MarkAnswerCorrectView(LoginRequiredMixin, BaseContextViewMixin, View):
         answer_id = kwargs.get("answer_id")
 
         question = Question.objects.filter(id=question_id).prefetch_related().first()
-        
+
         if question is None:
             return JsonResponse({
                 "success": False,
@@ -183,17 +183,25 @@ class MarkAnswerCorrectView(LoginRequiredMixin, BaseContextViewMixin, View):
             }, status=404)
 
         try:
-            answer.is_correct = True
-            answer.save()
+            with transaction.atomic():
+                new_activity = Activity(
+                    user=answer.author,
+                    type="A_MARKED_CORRECT",
+                    target=answer
+                )
+                new_activity.save()
 
-            return JsonResponse({
-                "success": True
-            }, status=200)
+                answer.is_correct = True
+                answer.save()
+
+                return JsonResponse({
+                    "success": True
+                }, status=200)
 
         except Exception as e:
             print(e)
 
         return JsonResponse({
             "success": False,
-            "errors": "Произошла непредвиденная ошибка. Попробуйте еще раз.",
+            "message": "Произошла непредвиденная ошибка. Попробуйте еще раз.",
         }, status=500)

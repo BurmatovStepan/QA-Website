@@ -123,7 +123,7 @@ class CustomFileInput {
             if (this.filePreview.src.startsWith('blob:')) {
                 URL.revokeObjectURL(this.filePreview.src);
             }
-            
+
             this.filePreview.src = URL.createObjectURL(file);
         }
 

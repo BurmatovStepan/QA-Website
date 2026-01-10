@@ -105,7 +105,9 @@
     position: relative;
 
     padding: 8px;
-    transition: all $timing-animation-short;
+    transition:
+        transform $timing-animation-short,
+        box-shadow $timing-animation-short;
 
     &__avatar {
         width: 28px;
@@ -125,14 +127,13 @@
         width: 2px;
 
         background-color: transparent;
-        transition: all $timing-animation-short;
+        transition: background-color $timing-animation-short;
 
         content: "";
     }
 
     &:hover {
         box-shadow: $shadow-z2;
-
         transform: translateY(-2px);
 
         &::before {
@@ -149,10 +150,6 @@
     &__avatar {
         width: 32px;
         border-radius: 8px;
-    }
-
-    &__rating {
-        place-self: stretch;
     }
 
     &__title {

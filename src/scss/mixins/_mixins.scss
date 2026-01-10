@@ -44,7 +44,7 @@
     }
 }
 
-@mixin rating-button-icon($active-color: $qa-primary) {
+@mixin rating-button-icon($active-color: $color-page-primary) {
     --color-local-highlight: #{$active-color};
 
     display: inline-block;
@@ -53,5 +53,7 @@
     mask-repeat: no-repeat;
     mask-size: contain;
 
-    transition: all $timing-animation-short;
+    transition:
+        background-color $timing-animation-short,
+        scale $timing-animation-short;
 }

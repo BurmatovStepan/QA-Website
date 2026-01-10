@@ -7,6 +7,14 @@
     grid-template-columns: max-content 35vw;
     gap: 20px 8px;
 
+    &__input-text {
+        padding: 4px;
+        color: $color-text-form-field;
+        background-color: $surface-form-field;
+        border: 1px solid $color-border-form-field;
+        border-radius: 2px;
+    }
+
     &__row {
         display: flex;
         flex-direction: column;

@@ -12,7 +12,7 @@ from qa.constants import (MAX_ANSWER_CONTENT_LENGTH,
                           MIN_QUESTION_CONTENT_LENGTH,
                           MIN_QUESTION_TITLE_LENGTH)
 from qa.models import Answer, Question, Tag
-from users.models import CustomUser
+from users.models import CustomUser, Activity
 
 
 class NewQuestionForm(forms.Form):
@@ -121,18 +121,26 @@ class AnswerForm(forms.Form):
 
     def save(self) -> Answer:
         try:
-            answer_content = self.cleaned_data["content"]
-            new_answer = Answer(
-                question=self.question,
-                author=self.author,
-                content=answer_content
-            )
-            new_answer.save()
+            with transaction.atomic():
+                answer_content = self.cleaned_data["content"]
+                new_answer = Answer(
+                    question=self.question,
+                    author=self.author,
+                    content=answer_content
+                )
+                new_answer.save()
 
-            self.question.answer_count = F("answer_count") + 1
-            self.question.save(update_fields=["answer_count"])
+                self.question.answer_count = F("answer_count") + 1
+                self.question.save(update_fields=["answer_count"])
 
-            return new_answer
+                new_activity = Activity(
+                    user=self.question.author,
+                    type="Q_RECEIVED_ANSWER",
+                    target=self.question
+                )
+                new_activity.save()
+
+                return new_answer
 
         except Exception as e:
             print(e)

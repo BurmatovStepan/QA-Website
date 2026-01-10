@@ -100,10 +100,7 @@ class QuestionManager(models.Manager):
             .prefetch_related("tags")
         )
 
-    def get_hot_questions(self, queryset: QuerySet[Question], lookback_period: int, user: CustomUser | None):
-        # TODO Probably remove because too hard
-        lookback_period_ago = timezone.now() - timedelta(days=lookback_period)
-
+    def get_hot_questions(self, queryset: QuerySet[Question], user: CustomUser | None):
         if user is not None:
             queryset = Question.objects.exclude_disliked_by_user(queryset, user)
             return queryset.order_by("sort_last", "-rating_total", "-created_at")
@@ -119,7 +116,6 @@ class QuestionManager(models.Manager):
         return queryset.annotate(user_vote=user_vote)
 
 
-# TODO Add views and timestamp to question-card
 class Question(TimeStampedModel):
     objects: QuestionManager = QuestionManager()
 
@@ -160,7 +156,6 @@ class AnswerManager(models.Manager):
         return queryset.annotate(user_vote=user_vote)
 
 
-# TODO Add timestamp to answer-card
 class Answer(TimeStampedModel):
     objects: AnswerManager = AnswerManager()
 

@@ -57,7 +57,7 @@ class CustomUserManager(BaseUserManager):
                 total_answers_posted=Count("answers", distinct=True)
             )
         )
-    
+
 
 class CustomUser(TimeStampedModel, AbstractBaseUser, PermissionsMixin):
     objects: CustomUserManager = CustomUserManager()
@@ -105,21 +105,13 @@ class ActivityManager(models.Manager):
 class Activity(models.Model):
     objects: ActivityManager = ActivityManager()
     ACTIVITY_TYPES = [
-        ("Q_RECEIVED_LIKE", "Question received a like"),
         ("Q_RECEIVED_ANSWER", "Question received an answer"),
-        ("A_RECEIVED_LIKE", "Answer received a like"),
         ("A_MARKED_CORRECT", "Answer was marked correct"),
-        ("U_CHANGED_AVATAR", "Changed avatar"),
-        ("U_CHANGED_NAME", "Changed name"),
     ]
 
     _DISPLAY_MAP = {
-        "Q_RECEIVED_LIKE": ("received a like on question: \"{title}\"", "question_discussion"),
         "Q_RECEIVED_ANSWER": ("received an answer to question: \"{title}\"", "question_discussion"),
-        "A_RECEIVED_LIKE": ("received a like on answer to \"{title}\"", "question_discussion"),
         "A_MARKED_CORRECT": ("had an answer marked correct to \"{title}\"", "question_discussion"),
-        "U_CHANGED_AVATAR": ("changed their avatar", "profile"),
-        "U_CHANGED_NAME": ("changed their display name", "profile"),
     }
 
     type = models.CharField(choices=ACTIVITY_TYPES)
@@ -182,10 +174,6 @@ class Activity(models.Model):
 
             page_query = f"?page={page_number}"
             fragment = f"#{answer.id}"
-
-        if self.type.startswith("U_"):
-            user: CustomUser = self.target
-            link_kwargs = {"id": user.id}
 
         description = template.format(title=title)
         link_url = reverse(url, kwargs=link_kwargs) + page_query + fragment

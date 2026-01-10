@@ -12,7 +12,7 @@ from django.views.generic import DetailView, FormView, ListView
 
 from common.constants import DEFAULT_PAGINATION_SIZE
 from common.mixins import BaseContextViewMixin, LoginRequiredMixin
-from qa.constants import DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS, TAG_DELIMITER
+from qa.constants import TAG_DELIMITER
 from qa.forms import AnswerForm, NewQuestionForm
 from qa.models import Question
 
@@ -100,8 +100,6 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
     paginate_by = DEFAULT_PAGINATION_SIZE
     context_object_name = "questions"
 
-    hot_period = DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS
-
     def get(self, request, *args, **kwargs):
         self.paginate_by = self.page_size or self.paginate_by
         self.hot_period = kwargs.get("day_amount") or self.hot_period
@@ -113,8 +111,7 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
 
         queryset = Question.objects.get_question_list(search_query)
 
-        #* this is just ORDER BY rating_total DESC
-        queryset = Question.objects.get_hot_questions(queryset, self.hot_period, self.current_user)
+        queryset = Question.objects.get_hot_questions(queryset, self.current_user)
 
         return queryset
 

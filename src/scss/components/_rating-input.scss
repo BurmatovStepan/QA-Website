@@ -29,7 +29,7 @@
     }
 
     &__like-button-icon {
-        @include rating-button-icon($qa-primary);
+        @include rating-button-icon;
 
         width: 24px;
         height: 24px;
@@ -39,7 +39,7 @@
     }
 
     &__dislike-button-icon {
-        @include rating-button-icon($status-error);
+        @include rating-button-icon($color-status-danger);
 
         width: 24px;
         height: 24px;

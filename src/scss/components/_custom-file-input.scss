@@ -7,11 +7,11 @@
 
     &__filename {
         padding: 4px;
-        color: $color-text-inverse;
+        color: $color-text-form-field;
         text-overflow: ellipsis;
         white-space: nowrap;
-        background-color: $surface-inverse;
-        border: 1px solid $color-border-inverse;
+        background-color: $surface-form-field;
+        border: 1px solid $color-border-form-field;
         border-radius: 2px;
         overflow: hidden;
     }

@@ -8,11 +8,47 @@
         display: flex;
         padding-left: 16px;
         flex-direction: column;
-        gap: 8px;
+        gap: 16px;
+    }
+
+    &__record {
+        position: relative;
+        width: max-content;
+        border-radius: 4px;
+        transition: transform $timing-animation-short;
+        pointer-events: none;
+
+        &::before {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 8px;
+            height: 2px;
+            background-color: $color-text-main;
+            transition:
+                left $timing-animation-short,
+                width $timing-animation-short,
+                background-color $timing-animation-short;
+            content: "";
+        }
+
+        &:hover,
+        &:focus-within {
+            transform: translateX(8px);
+
+            &::before {
+                left: -8px;
+                width: 16px;
+                background-color: $color-page-primary;
+            }
+        }
     }
 
     &__record > a {
         @include light-up-link;
+        display: inline-block;
+        margin-left: 16px;
         text-decoration: none;
+        pointer-events: auto;
     }
 }

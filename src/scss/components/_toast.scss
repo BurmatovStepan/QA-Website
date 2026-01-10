@@ -12,7 +12,7 @@
     padding: 12px;
     flex-direction: column;
     gap: 8px;
-    background-color: $surface-1    ;
+    background-color: $surface-1;
 
     border: 2px solid var(--border-color);
     border-radius: 4px;
@@ -34,7 +34,7 @@
     }
 
     &--success {
-        --border-color: #{$status-success};
+        --border-color: #{$color-status-success};
     }
 
     &--error {
