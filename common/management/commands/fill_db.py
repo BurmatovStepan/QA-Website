@@ -10,8 +10,9 @@ from django.db import connections, transaction
 from django.utils.text import slugify
 from faker import Faker
 
-from qa.models import (DISLIKE, LIKE, Answer, AnswerVote, Question,
+from qa.models import (Answer, AnswerVote, Question,
                        QuestionVote, Tag)
+from qa.constants import LIKE, DISLIKE
 from users.models import Activity, CustomUser
 
 # TODO Add support for appending data

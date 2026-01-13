@@ -1,3 +1,5 @@
+from django.template.defaultfilters import date
+from django.forms.models import model_to_dict
 from django.db import transaction
 from django.db.models import F
 from django.forms import ValidationError
@@ -5,14 +7,14 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views.generic import View
 
-from common.mixins import BaseContextViewMixin, LoginRequiredMixin
 from qa.forms import AnswerForm
-from qa.models import DISLIKE, LIKE, Answer, AnswerVote, Question, QuestionVote
+from qa.models import Answer, AnswerVote, Question, QuestionVote
+from qa.constants import LIKE, DISLIKE
 from users.models import Activity
-
+from common.mixins import APIAuthRequiredMixin
 
 # TODO Make enum for error types
-class CreateAnswerView(LoginRequiredMixin, BaseContextViewMixin, View):
+class CreateAnswerView(APIAuthRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         question_id = kwargs.get("id")
         question = Question.objects.filter(id=question_id).prefetch_related().first()
@@ -34,15 +36,13 @@ class CreateAnswerView(LoginRequiredMixin, BaseContextViewMixin, View):
             try:
                 new_answer = form.save()
 
-                answer_card_html = render_to_string(
-                    "snippets/answer-card.html",
-                    {"answer": new_answer, "question": question,"request": request, "current_user": self.current_user}
-                )
-
                 return JsonResponse({
                     "success": True,
-                    "answer_id": new_answer.id,
-                    "answer_html": answer_card_html,
+                    "answer_data": {
+                        "id": new_answer.id,
+                        "created_at": date(new_answer.created_at, "DATETIME_FORMAT"),
+                        "content": new_answer.content,
+                    }
                 }, status=201)
 
             except ValidationError as e:
@@ -59,18 +59,22 @@ class CreateAnswerView(LoginRequiredMixin, BaseContextViewMixin, View):
         }, status=400)
 
 
-class ToggleVoteView(LoginRequiredMixin, BaseContextViewMixin, View):
-    _MAPPING = {
-        "question": (Question, QuestionVote, "question"),
-        "answer": (Answer, AnswerVote, "answer"),
-    }
-
+class ToggleQuestionVoteView(APIAuthRequiredMixin, View):
     def post(self, request, *args, **kwargs):
-        model_type = kwargs.get("model_type")
-        object_id = kwargs.get("id")
+        question_id = kwargs.get("id")
+        vote_type_raw = kwargs.get("vote_type")
+
+        question = Question.objects.filter(id=question_id).first()
+
+        if question is None:
+            return JsonResponse({
+                "success": False,
+                "error_type": f"question_not_found",
+                "message": f"Question with ID {question_id} does not exist."
+            }, status=404)
 
         try:
-            vote_type = int(kwargs.get("vote_type"))
+            vote_type = int(vote_type_raw)
         except (TypeError, ValueError):
             return JsonResponse({
                 "success": False,
@@ -83,77 +87,42 @@ class ToggleVoteView(LoginRequiredMixin, BaseContextViewMixin, View):
                 "message": "Неизвестный тип оценки.",
             }, status=400)
 
-        mapping_data = self._MAPPING.get(model_type)
+        return question.add_vote(request.user, vote_type)
 
-        if mapping_data is None:
+
+class ToggleAnswerVoteView(APIAuthRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        answer_id = kwargs.get("id")
+        vote_type_raw = kwargs.get("vote_type")
+
+        answer = Answer.objects.filter(id=answer_id).first()
+
+        if answer is None:
             return JsonResponse({
                 "success": False,
-                "message": "Неизвестная модель.",
-            }, status=400)
-
-        Model, VoteModel, relation_field = mapping_data
-
-        obj = Model.objects.filter(id=object_id).first()
-
-        if obj is None:
-            return JsonResponse({
-                "success": False,
-                "error_type": f"{relation_field}_not_found",
-                "message": f"{relation_field.capitalize()} with ID {object_id} does not exist."
+                "error_type": f"question_not_found",
+                "message": f"Question with ID {answer_id} does not exist."
             }, status=404)
 
-        with transaction.atomic():
-            try:
-                existing_vote = VoteModel.objects.filter(user=self.current_user, **{relation_field: obj}).first()
-                rating_delta = 0
+        try:
+            vote_type = int(vote_type_raw)
+        except (TypeError, ValueError):
+            return JsonResponse({
+                "success": False,
+                "message": "Некорректный формат типа оценки"
+            }, status=400)
 
-                vote_status = "none"
+        if vote_type not in [LIKE, DISLIKE]:
+            return JsonResponse({
+                "success": False,
+                "message": "Неизвестный тип оценки.",
+            }, status=400)
 
-                if existing_vote:
-                    if existing_vote.type == vote_type:
-                        rating_delta = -vote_type
-                        existing_vote.delete()
-
-                    else:
-                        rating_delta = 2 * vote_type
-                        existing_vote.type = vote_type
-                        existing_vote.save()
-
-                        vote_status = "liked" if existing_vote.type == 1 else "disliked"
-
-                else:
-                    rating_delta = vote_type
-                    new_vote = VoteModel.objects.create(
-                        user=self.current_user,
-                        type=vote_type,
-                        **{relation_field: obj},
-                    )
-
-                    vote_status = "liked" if new_vote.type == 1 else "disliked"
-
-                if rating_delta != 0:
-                    obj.rating_total = F("rating_total") + rating_delta
-                    obj.save(update_fields=["rating_total"])
-
-                    obj.refresh_from_db()
-
-                return JsonResponse({
-                    "success": True,
-                    "new_rating": obj.rating_total,
-                    "vote_status": vote_status,
-                }, status=200)
-
-            except Exception as e:
-                print(e)
-
-        return JsonResponse({
-            "success": False,
-            "message": "Произошла непредвиденная ошибка. Попробуйте еще раз.",
-        }, status=500)
+        return answer.add_vote(request.user, vote_type)
 
 
 # TODO Allow unmark answer correct
-class MarkAnswerCorrectView(LoginRequiredMixin, BaseContextViewMixin, View):
+class MarkAnswerCorrectView(APIAuthRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         question_id = kwargs.get("question_id")
         answer_id = kwargs.get("answer_id")
@@ -167,7 +136,7 @@ class MarkAnswerCorrectView(LoginRequiredMixin, BaseContextViewMixin, View):
                 "message": f"Question with ID {question_id} does not exist."
             }, status=404)
 
-        if question.author != self.current_user:
+        if question.author != request.user:
             return JsonResponse({
                 "success": False,
                 "error_type": f"not_an_author",

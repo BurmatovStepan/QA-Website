@@ -4,27 +4,22 @@ from datetime import timedelta
 
 from django.core.validators import MinLengthValidator
 from django.db import models
-from django.db.models import OuterRef, Q, QuerySet, Sum, UniqueConstraint
+from django.db.models import F, OuterRef, Q, QuerySet, Sum, UniqueConstraint
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.text import slugify
 
 from common.base_models import TimeStampedModel
 from common.constants import POPULAR_TAGS_FETCH_LIMIT
-from qa.constants import (MAX_ANSWER_CONTENT_LENGTH, MAX_ANSWER_PREVIEW_LENGTH,
+from common.mixins import VotableMixin
+from qa.constants import (DISLIKE, MAX_ANSWER_CONTENT_LENGTH,
+                          MAX_ANSWER_PREVIEW_LENGTH,
                           MAX_QUESTION_CONTENT_LENGTH,
                           MAX_QUESTION_TITLE_LENGTH, MAX_TAG_NAME_LENGTH,
                           MIN_ANSWER_CONTENT_LENGTH,
                           MIN_QUESTION_CONTENT_LENGTH,
-                          MIN_QUESTION_TITLE_LENGTH)
+                          MIN_QUESTION_TITLE_LENGTH, VOTE_CHOICES)
 from users.models import CustomUser
-
-LIKE = 1
-DISLIKE = -1
-VOTE_CHOICES = [
-    (LIKE, "Like"),
-    (DISLIKE, "Dislike"),
-]
 
 
 class TagManager(models.Manager):
@@ -100,7 +95,11 @@ class QuestionManager(models.Manager):
             .prefetch_related("tags")
         )
 
-    def get_hot_questions(self, queryset: QuerySet[Question], user: CustomUser | None):
+    def get_best_questions(self, queryset: QuerySet[Question], lookback_period: int, user: CustomUser | None):
+        time_threshold = timezone.now() - timedelta(days=lookback_period)
+
+        queryset = queryset.filter(created_at__gte=time_threshold)
+
         if user is not None:
             queryset = Question.objects.exclude_disliked_by_user(queryset, user)
             return queryset.order_by("sort_last", "-rating_total", "-created_at")
@@ -116,7 +115,7 @@ class QuestionManager(models.Manager):
         return queryset.annotate(user_vote=user_vote)
 
 
-class Question(TimeStampedModel):
+class Question(VotableMixin, TimeStampedModel):
     objects: QuestionManager = QuestionManager()
 
     slug = models.SlugField(max_length=100, unique=True)
@@ -156,7 +155,7 @@ class AnswerManager(models.Manager):
         return queryset.annotate(user_vote=user_vote)
 
 
-class Answer(TimeStampedModel):
+class Answer(VotableMixin, TimeStampedModel):
     objects: AnswerManager = AnswerManager()
 
     question = models.ForeignKey(to=Question, on_delete=models.CASCADE, related_name="answers")

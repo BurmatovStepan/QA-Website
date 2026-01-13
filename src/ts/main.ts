@@ -207,6 +207,7 @@ class NewAnswerHandler {
         private form: HTMLFormElement,
         private answersSection: HTMLElement,
         private answerContent: HTMLTextAreaElement,
+        private answerTemplate: HTMLDivElement,
         private submitButton: HTMLButtonElement
     ) {
         form.addEventListener("submit", this.formSubmitHandler)
@@ -248,10 +249,14 @@ class NewAnswerHandler {
             }
 
             const result = await response.json()
+            console.log(result);
 
             if (response.ok) {
                 this.answerContent.value = "";
-                this.answersSection.insertAdjacentHTML("afterbegin", result.answer_html);
+
+                const newAnswerCard = this.makeAnswerCard(result.answer_data);
+                this.answersSection.appendChild(newAnswerCard);
+                // this.answersSection.insertAdjacentHTML("afterbegin", newAnswer);
 
                 const answerElements = this.answersSection.querySelectorAll(".js-answer-card");
                 if (this.pageSize && answerElements.length > this.pageSize) {
@@ -280,6 +285,21 @@ class NewAnswerHandler {
             this.submitButton.disabled = false;
             this.submitButton.textContent = "Answer";
         }
+    }
+
+    private makeAnswerCard(answer_data): HTMLElement {
+        const newAnswerCard = this.answerTemplate.cloneNode(true) as HTMLDivElement;
+
+        newAnswerCard.id = answer_data.id;
+        newAnswerCard.querySelector('[data-search="answer-content"]').textContent = answer_data.content;
+        newAnswerCard.querySelector('[data-search="answer-created-at"]').textContent = answer_data.created_at
+
+        newAnswerCard.querySelector(".js-rating-input").dataset.objectId = answer_data.id;
+        newAnswerCard.querySelector(".js-rating-display").textContent = "0";
+
+        newAnswerCard.querySelector(".js-mark-correct-button").dataset.answerId = answer_data.id;
+
+        return newAnswerCard;
     }
 
     private clearErrors(): void {
@@ -319,12 +339,16 @@ class NewAnswerHandler {
     static create = (): NewAnswerHandler | null => {
         const form = document.querySelector(".js-user-answer-form");
         const answersSection = document.querySelector(".js-answers-list");
-        const answerContent = document.querySelector("[name=content]")
-        const submitButton = document.querySelector(".js-submit-button")
+        const answerContent = document.querySelector("[name=content]");
+        const submitButton = document.querySelector(".js-submit-button");
+
+        const templateElement = document.querySelector("#answer-template") as HTMLTemplateElement;
+        const answerTemplate = templateElement?.content.querySelector(".js-answer-card");
 
         if (!(form instanceof HTMLFormElement) ||
             !(answersSection instanceof HTMLElement) ||
             !(answerContent instanceof HTMLTextAreaElement) ||
+            !(answerTemplate instanceof HTMLDivElement) ||
             !(submitButton instanceof HTMLButtonElement)) {
             console.error("Crucial elements required for NewAnswerHandler are missing or wrong type");
             return null;
@@ -334,6 +358,7 @@ class NewAnswerHandler {
             form,
             answersSection,
             answerContent,
+            answerTemplate,
             submitButton
         )
     }
@@ -390,6 +415,16 @@ class ToggleVoteHandler {
                     "X-CSRFToken": this.CSRFToken,
                 }
             });
+
+            const contentType = response.headers.get("content-type");
+            const isJsonResponse = contentType && contentType.includes("application/json");
+
+            if (response.status === 404 && !isJsonResponse) {
+
+                Toaster.makeToast(["The submission endpoint was not found. Please reload the page."], "error")
+                return;
+            }
+
 
             const result = await response.json()
 

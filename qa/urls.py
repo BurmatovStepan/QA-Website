@@ -1,7 +1,7 @@
 from django.urls import path
 
 from qa.ajax_views import CreateAnswerView, MarkAnswerCorrectView
-from qa.views import (HotQuestionsView, NewQuestionView,
+from qa.views import (BestQuestionsView, NewQuestionView,
                       QuestionDiscussionView, TagsQuestionListingView)
 
 urlpatterns = [
@@ -10,8 +10,8 @@ urlpatterns = [
     path("question/<int:id>/", QuestionDiscussionView.as_view(), name="question_discussion_no_slug"),
     path("question/<int:id>/<str:slug>/", QuestionDiscussionView.as_view(), name="question_discussion"),
 
-    path("hot-questions/", HotQuestionsView.as_view(), name="hot_questions"),
-    path("hot-questions/<int:day_amount>/", HotQuestionsView.as_view(), name="hot_questions_period"),
+    path("best-questions/", BestQuestionsView.as_view(), name="best_questions"),
+    path("best-questions/<int:day_amount>/", BestQuestionsView.as_view(), name="best_questions_period"),
 
     path("tags/<str:tags_list>/", TagsQuestionListingView.as_view(), name="tag_question_listing"),
 

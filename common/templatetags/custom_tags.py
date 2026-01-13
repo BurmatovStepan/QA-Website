@@ -1,10 +1,9 @@
 from typing import Any
 
 from django import template
-from users.models import CustomUser
 from django.core.paginator import Page
 
-# TODO Rename or split these
+from users.models import CustomUser
 
 register = template.Library()
 
@@ -33,7 +32,10 @@ def get_elided_page_range(page_obj: Page, on_each_side: int):
 
 @register.filter
 def get_display_name(user: CustomUser):
-    return user.display_name if user.display_name else user.login
+    if user:
+        return user.display_name or user.login
+
+    return ""
 
 
 @register.filter
@@ -49,3 +51,8 @@ def is_disabled(field):
 @register.filter
 def is_required(field):
     return field.field.required
+
+
+@register.filter
+def is_template(classes: str):
+    return "--template" in classes

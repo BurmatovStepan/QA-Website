@@ -5,6 +5,7 @@
      data-object-type="{{ model_name }}">
   <span class="rating-input__total-rating js-rating-display">{{ content_item.rating_total }}</span>
 
+  {% if current_user %}
   <div class="rating-input__button rating-input__button--like {% if question.user_vote == 1 %}rating-input__button--active{% endif %} js-vote-button"
       role="button"
       data-vote-type="1"
@@ -21,4 +22,5 @@
       tabindex="0">
       <div class="rating-input__dislike-button-icon"></div>
   </div>
+  {% endif %}
 </div>

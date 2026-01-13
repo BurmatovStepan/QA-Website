@@ -10,7 +10,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, FormView, ListView
 
-from common.constants import DEFAULT_PAGINATION_SIZE
+from common.constants import (DEFAULT_BEST_QUESTIONS_LOOKBACK_DAYS,
+                              DEFAULT_PAGINATION_SIZE)
 from common.mixins import BaseContextViewMixin, LoginRequiredMixin
 from qa.constants import TAG_DELIMITER
 from qa.forms import AnswerForm, NewQuestionForm
@@ -21,7 +22,7 @@ class HomepageView(BaseContextViewMixin, ListView):
     template_name = "index.html"
     page_title = "AskMe"
     main_title = "New Questions"
-    main_title_extra = "Hot Questions"
+    main_title_extra = "Best Questions"
 
     paginate_by = DEFAULT_PAGINATION_SIZE
     context_object_name = "questions"
@@ -92,17 +93,19 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
         return context
 
 
-class HotQuestionsView(BaseContextViewMixin, ListView):
+class BestQuestionsView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
-    page_title = "Hot Questions"
-    main_title = "Hot: "
+    page_title = "Best Questions"
+    main_title = "Best: "
 
     paginate_by = DEFAULT_PAGINATION_SIZE
     context_object_name = "questions"
 
+    best_period = DEFAULT_BEST_QUESTIONS_LOOKBACK_DAYS
+
     def get(self, request, *args, **kwargs):
         self.paginate_by = self.page_size or self.paginate_by
-        self.hot_period = kwargs.get("day_amount") or self.hot_period
+        self.best_period = kwargs.get("day_amount") or self.best_period
 
         return super().get(request, *args, **kwargs)
 
@@ -111,14 +114,14 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
 
         queryset = Question.objects.get_question_list(search_query)
 
-        queryset = Question.objects.get_hot_questions(queryset, self.current_user)
+        queryset = Question.objects.get_best_questions(queryset, self.best_period, self.current_user)
 
         return queryset
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
-        context["main_title_extra"] = f"last {self.hot_period} {'day' if self.hot_period == 1 else 'days'}"
+        context["main_title_extra"] = f"last {self.best_period} {'day' if self.best_period == 1 else 'days'}"
 
         return context
 

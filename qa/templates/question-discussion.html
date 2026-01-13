@@ -24,12 +24,15 @@
 </form>
 
 <section class="answers js-answers-list" data-page-size="{{ paginator.per_page }}">
+  <template id="answer-template">
+    {% include "snippets/answer-card.html" with answer_author=current_user %}
+  </template>
 
   {% for answer in answers %}
     {% if answer.is_correct %}
-      {% include "snippets/answer-card.html" with modifier_classes="answer--correct"%}
+      {% include "snippets/answer-card.html" with answer_author=answer.author modifier_classes="answer--correct"%}
     {% else %}
-      {% include "snippets/answer-card.html"%}
+      {% include "snippets/answer-card.html" with answer_author=answer.author%}
     {% endif %}
   {% endfor %}
 
