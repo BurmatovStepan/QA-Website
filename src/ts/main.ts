@@ -248,7 +248,7 @@ class NewAnswerHandler {
                 return;
             }
 
-            const result = await response.json()
+            const result = await response.json();
 
             if (response.ok) {
                 this.answerContent.value = "";
