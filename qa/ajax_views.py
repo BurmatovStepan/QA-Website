@@ -1,17 +1,15 @@
-from django.template.defaultfilters import date
-from django.forms.models import model_to_dict
 from django.db import transaction
-from django.db.models import F
 from django.forms import ValidationError
 from django.http import JsonResponse
-from django.template.loader import render_to_string
+from django.template.defaultfilters import date
 from django.views.generic import View
 
-from qa.forms import AnswerForm
-from qa.models import Answer, AnswerVote, Question, QuestionVote
-from qa.constants import LIKE, DISLIKE
-from users.models import Activity
 from common.mixins import APIAuthRequiredMixin
+from qa.constants import DISLIKE, LIKE
+from qa.forms import AnswerForm
+from qa.models import Answer, Question
+from users.models import Activity
+
 
 # TODO Make enum for error types
 class CreateAnswerView(APIAuthRequiredMixin, View):

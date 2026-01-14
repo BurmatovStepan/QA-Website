@@ -249,14 +249,12 @@ class NewAnswerHandler {
             }
 
             const result = await response.json()
-            console.log(result);
 
             if (response.ok) {
                 this.answerContent.value = "";
 
                 const newAnswerCard = this.makeAnswerCard(result.answer_data);
-                this.answersSection.appendChild(newAnswerCard);
-                // this.answersSection.insertAdjacentHTML("afterbegin", newAnswer);
+                this.answersSection.prepend(newAnswerCard);
 
                 const answerElements = this.answersSection.querySelectorAll(".js-answer-card");
                 if (this.pageSize && answerElements.length > this.pageSize) {
@@ -294,10 +292,10 @@ class NewAnswerHandler {
         newAnswerCard.querySelector('[data-search="answer-content"]').textContent = answer_data.content;
         newAnswerCard.querySelector('[data-search="answer-created-at"]').textContent = answer_data.created_at
 
-        newAnswerCard.querySelector(".js-rating-input").dataset.objectId = answer_data.id;
+        newAnswerCard.querySelector(".js-rating-input")?.setAttribute("data-object-id", answer_data.id);
         newAnswerCard.querySelector(".js-rating-display").textContent = "0";
 
-        newAnswerCard.querySelector(".js-mark-correct-button").dataset.answerId = answer_data.id;
+        newAnswerCard.querySelector(".js-mark-correct-button")?.setAttribute("data-answer-id", answer_data.id);
 
         return newAnswerCard;
     }
