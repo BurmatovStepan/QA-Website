@@ -44,6 +44,7 @@ INSTALLED_APPS += [
     'qa',
     'users',
     'common',
+    'simple_wsgi',
     'django_extensions',
     'debug_toolbar'
 ]
@@ -81,12 +82,11 @@ WSGI_APPLICATION = 'QA_Website.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': config('ENGINE', default='django.db.backends.postgresql'),
-        'NAME': config('NAME', default='qa_database'),
-        'USER': config('USER', default='qa_user'),
+        'NAME': config('DB_NAME', default='qa_database'),
+        'USER': config('DB_USER', default='qa_admin'),
         'PASSWORD': config('PASSWORD', default=''),
         'HOST': config('HOST', default='localhost'),
         'PORT': config('PORT', default='5432'),
@@ -131,11 +131,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'dist' / 'static',
 ]
 
+STATIC_ROOT = BASE_DIR / 'static'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
