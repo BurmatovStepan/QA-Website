@@ -2,6 +2,14 @@
 
 <!DOCTYPE html>
 <html lang="en">
+  {% if messages %}
+    <div id="js-django-messages" style="display: none;">
+      {% for message in messages %}
+        <span class="js-django-message" data-type="{{ message.tags }}">{{ message }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   {% include "snippets/head.html" %}
 
   <body class="{% block body_class %}{% endblock %}">

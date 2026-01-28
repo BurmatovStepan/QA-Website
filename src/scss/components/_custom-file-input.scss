@@ -7,17 +7,17 @@
 
     &__filename {
         padding: 4px;
-        color: $color-text-filename;
+        color: $color-text-form-field;
         text-overflow: ellipsis;
         white-space: nowrap;
-        background-color: $color-bg-filename;
-        border: 1px solid $color-border-filename;
+        background-color: $surface-form-field;
+        border: 1px solid $color-border-form-field;
         border-radius: 2px;
         overflow: hidden;
     }
 
     &__shadow-wrapper {
-        filter: drop-shadow($shadow-main);
+        filter: drop-shadow($shadow-z1);
     }
 
     &__button {
@@ -34,7 +34,7 @@
     &__button:hover  &__button-outline,
     &__button:focus-visible &__button-outline,
     &__button:has(&__input:focus-visible) &__button-outline {
-        background-color: $color-accent-main;
+        background-color: $color-page-primary;
     }
 
     &__button-background {
@@ -42,7 +42,7 @@
         inset: 0px;
         z-index: 10;
 
-        background-color: $color-interactive-idle;
+        background-color: $color-action-idle;
         border-radius: 2px;
     }
 

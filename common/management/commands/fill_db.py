@@ -10,8 +10,9 @@ from django.db import connections, transaction
 from django.utils.text import slugify
 from faker import Faker
 
-from qa.models import (DISLIKE, LIKE, Answer, AnswerVote, Question,
+from qa.models import (Answer, AnswerVote, Question,
                        QuestionVote, Tag)
+from qa.constants import LIKE, DISLIKE
 from users.models import Activity, CustomUser
 
 # TODO Add support for appending data
@@ -454,10 +455,7 @@ class Command(BaseCommand):
         question_ids = list(Question.objects.values_list("id", flat=True))
         answer_ids = list(Answer.objects.values_list("id", flat=True))
 
-        if len(user_ids) > 0:
-            user_content_type = ContentType.objects.get_for_model(CustomUser)
-            TARGET_OPTIONS.append((user_content_type.id, user_ids))
-        else:
+        if len(user_ids) == 0:
             raise CommandError("No users were found to link activities.")
 
         if len(question_ids) > 0:
@@ -467,6 +465,9 @@ class Command(BaseCommand):
         if len(answer_ids) > 0:
             answer_content_type = ContentType.objects.get_for_model(Answer)
             TARGET_OPTIONS.append((answer_content_type.id, answer_ids))
+
+        if len(TARGET_OPTIONS) == 0:
+            raise CommandError("No questions/answers were found to link activities.")
 
         new_activities = []
 
@@ -482,11 +483,7 @@ class Command(BaseCommand):
                     user_id = choice(user_ids)
                     target_content_type_id, target_ids = choice(TARGET_OPTIONS)
 
-                    if target_content_type_id == user_content_type.id:
-                        activity_type = choice(list(filter(lambda activity: activity[0].startswith("U_"), Activity.ACTIVITY_TYPES)))
-                        target_id = user_id
-
-                    elif target_content_type_id == question_content_type.id:
+                    if target_content_type_id == question_content_type.id:
                         activity_type = choice(list(filter(lambda activity: activity[0].startswith("Q_"), Activity.ACTIVITY_TYPES)))
                         target_id = choice(target_ids)
 

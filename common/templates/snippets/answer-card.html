@@ -1,12 +1,22 @@
 {% load static %}
+{% load custom_tags %}
+
+{% with is_template=modifier_classes|is_template %}
 
 <div class="answer {{ modifier_classes }} js-answer-card" id="{{ answer.id }}">
+  <div class="answer__header">
+    <a href="{% url "profile" answer_author.id %}">
+      {% include "snippets/avatar-source.html" with avatar=answer_author.avatar component_name="answer__avatar" %}
+    </a>
 
-  {% include "snippets/avatar-source.html" with avatar=answer.author.avatar component_name="answer__avatar" %}
+    <a href="{% url "profile" answer_author.id %}" class="answer__author-name">{{ answer_author|get_display_name }}</a>
 
-  {% include "snippets/rating-input.html" with content_item=answer component_name="answer__rating"%}
+    <span class="answer__created-at" data-search="answer-created-at">{{ answer.created_at }}</span>
+  </div>
 
-  <p class="answer__content">
+  {% include "snippets/rating-input.html" with content_item=answer component_name="answer__rating" model_name="answer" %}
+
+  <p class="answer__body" data-search="answer-content">
     {% if forloop.first %}
       <a name="first-answer"></a>
     {% endif %}
@@ -15,6 +25,10 @@
   </p>
 
   {% if question.author.id == current_user.id %}
-    <button class="answer__button-correct">Mark as correct!</button>
+    <button class="answer__button-correct js-mark-correct-button"
+            data-question-id="{{ question.id }}"
+            data-answer-id="{{ answer.id }}">Mark as correct!</button>
   {% endif %}
 </div>
+
+{% endwith %}

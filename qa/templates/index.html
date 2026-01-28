@@ -6,11 +6,11 @@
 {% endblock main_title %}
 
 {% block main_title_extra %}
-  <h3><a href="{% url "hot_questions" %}" class="hot-questions">{{ main_title_extra }}</a></h3>
+  <h3><a href="{% url "best_questions" %}" class="best-questions">{{ main_title_extra }}</a></h3>
 {% endblock main_title_extra %}
 
 {% block body_class %}homepage{% endblock body_class %}
-
+{{ current_user.question_votes }}
 {% block main_content %}
   <section class="questions">
 

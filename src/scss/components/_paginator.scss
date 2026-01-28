@@ -8,6 +8,7 @@
 
     &__button {
         @include default-button;
+
         position: relative;
         width: max-content;
         min-width: 40px;
@@ -16,9 +17,9 @@
 
         &::after {
             position: absolute;
-            right: -8px;
-            bottom: -12px;
-            left: -8px;
+            right: -4px;
+            bottom: -8px;
+            left: -4px;
             height: 2px;
 
             background-color: transparent;
@@ -30,19 +31,8 @@
         &:not(&--no-click):focus-within,
         &--current-page {
             &::after {
-                background-color: $color-accent-main;
+                background-color: $color-page-primary;
             }
-        }
-
-        & > a {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-
-            color: $color-text-main;
-            text-align: center;
         }
     }
 }

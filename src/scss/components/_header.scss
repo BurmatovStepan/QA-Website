@@ -9,10 +9,13 @@ header {
     justify-content: space-around;
     gap: 8px;
 
-    background-color: $color-bg-secondary;
-    border-bottom: 2px solid $color-accent-main;
+    background-color: $surface-1;
+    border-bottom: 2px solid $color-page-primary;
+
+    box-shadow: $shadow-z1;
 }
 
 .website-icon {
     width: 40px;
+    border-radius: 4px;
 }

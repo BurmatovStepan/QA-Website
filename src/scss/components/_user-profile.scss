@@ -14,6 +14,7 @@
     &__avatar {
         width: 200px;
         grid-area: avatar;
+        border-radius: 12px;
     }
 
     &__name {
@@ -33,13 +34,12 @@
         display: flex;
         grid-area: actions;
         align-items: center;
+        align-items: center;
         gap: 8px;
     }
 
     &__action {
         @include default-button;
-        padding: 1px;
-        box-shadow: $shadow-small;
     }
 
     &__actions-separator {
@@ -76,7 +76,7 @@
             "avatar name"
             "avatar actions";
 
-        grid-template-columns: 80px 200px;
+        grid-template-columns: 80px 220px;
 
         gap: 0px;
 

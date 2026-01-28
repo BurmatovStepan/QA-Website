@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+from qa.ajax_views import ToggleQuestionVoteView, ToggleAnswerVoteView
 from qa.views import HomepageView
 
 urlpatterns = [
@@ -11,6 +12,9 @@ urlpatterns = [
 
     path("questions/", include("qa.urls")),
     path("users/", include("users.urls")),
+
+    path("vote/question/<int:id>/<str:vote_type>/", ToggleQuestionVoteView.as_view(), name="toggle_question_vote"),
+    path("vote/answer/<int:id>/<str:vote_type>/", ToggleAnswerVoteView.as_view(), name="toggle_answer_vote"),
 
     path("test/", include("simple_wsgi.urls")),
 

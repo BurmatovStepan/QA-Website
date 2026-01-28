@@ -4,16 +4,16 @@ from django.core.paginator import Paginator
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
 from django.forms import ValidationError
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.template.loader import render_to_string
 from django.urls import reverse
-from django.views.generic import DetailView, FormView, ListView, View
+from django.views.generic import DetailView, FormView, ListView
 
-from common.constants import DEFAULT_PAGINATION_SIZE
+from common.constants import (DEFAULT_BEST_QUESTIONS_LOOKBACK_DAYS,
+                              DEFAULT_PAGINATION_SIZE)
 from common.mixins import BaseContextViewMixin, LoginRequiredMixin
-from qa.constants import DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS, TAG_DELIMITER
+from qa.constants import TAG_DELIMITER
 from qa.forms import AnswerForm, NewQuestionForm
 from qa.models import Question
 
@@ -22,7 +22,7 @@ class HomepageView(BaseContextViewMixin, ListView):
     template_name = "index.html"
     page_title = "AskMe"
     main_title = "New Questions"
-    main_title_extra = "Hot Questions"
+    main_title_extra = "Best Questions"
 
     paginate_by = DEFAULT_PAGINATION_SIZE
     context_object_name = "questions"
@@ -35,6 +35,7 @@ class HomepageView(BaseContextViewMixin, ListView):
         search_query = self.request.GET.get("query", "").lower()
 
         queryset = Question.objects.get_question_list(search_query=search_query)
+        queryset = Question.objects.add_user_votes(queryset, self.current_user)
         queryset = Question.objects.exclude_disliked_by_user(queryset, self.current_user)
 
         return queryset
@@ -91,66 +92,20 @@ class QuestionDiscussionView(BaseContextViewMixin, DetailView):
 
         return context
 
-# TODO Make enum for error types
-class QuestionAnswerView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        question_id = kwargs.get("id")
-        question = Question.objects.filter(id=question_id).first()
 
-        if question is None:
-            return JsonResponse({
-                "success": False,
-                "error_type": "question_not_found",
-                "message": f"Question with ID {question_id} does not exist."
-            }, status=404)
-
-        form = AnswerForm(
-            request.POST,
-            author=request.user,
-            question=question
-        )
-
-        if form.is_valid():
-            try:
-                new_answer = form.save()
-                answer_card_html = render_to_string(
-                    "snippets/answer-card.html",
-                    {"answer": new_answer, "request": request}
-                )
-
-                return JsonResponse({
-                    "success": True,
-                    "answer_id": new_answer.id,
-                    "answer_html": answer_card_html,
-                }, status=201)
-
-            except ValidationError as e:
-                form.add_error(None, e)
-
-            except Exception as e:
-                print(e)
-                form.add_error(None, "Произошла непредвиденная ошибка. Попробуйте еще раз.")
-
-        return JsonResponse({
-            "success": False,
-            "errors": form.errors,
-            "error_type": "validation_error",
-        }, status=400)
-
-
-class HotQuestionsView(BaseContextViewMixin, ListView):
+class BestQuestionsView(BaseContextViewMixin, ListView):
     template_name = "question-listing.html"
-    page_title = "Hot Questions"
-    main_title = "Hot: "
+    page_title = "Best Questions"
+    main_title = "Best: "
 
     paginate_by = DEFAULT_PAGINATION_SIZE
     context_object_name = "questions"
 
-    hot_period = DEFAULT_HOT_QUESTIONS_LOOKBACK_DAYS
+    best_period = DEFAULT_BEST_QUESTIONS_LOOKBACK_DAYS
 
     def get(self, request, *args, **kwargs):
         self.paginate_by = self.page_size or self.paginate_by
-        self.hot_period = kwargs.get("day_amount") or self.hot_period
+        self.best_period = kwargs.get("day_amount") or self.best_period
 
         return super().get(request, *args, **kwargs)
 
@@ -159,15 +114,14 @@ class HotQuestionsView(BaseContextViewMixin, ListView):
 
         queryset = Question.objects.get_question_list(search_query)
 
-        #* this is just ORDER BY rating_total DESC
-        queryset = Question.objects.get_hot_questions(queryset, self.hot_period, self.current_user)
+        queryset = Question.objects.get_best_questions(queryset, self.best_period, self.current_user)
 
         return queryset
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
 
-        context["main_title_extra"] = f"last {self.hot_period} {'day' if self.hot_period == 1 else 'days'}"
+        context["main_title_extra"] = f"last {self.best_period} {'day' if self.best_period == 1 else 'days'}"
 
         return context
 

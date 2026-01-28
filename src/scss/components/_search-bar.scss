@@ -4,28 +4,28 @@
     position: relative;
     max-width: 50vw;
     flex-grow: 1;
-    box-shadow: $shadow-main;
 
     &::before {
         position: absolute;
         right: -8px;
-        bottom: -8px;
+        bottom: -4px;
         left: -8px;
         height: 2px;
 
-        background-color: $color-interactive-idle;
+        background-color: $color-indicator-idle;
 
         transition: background-color $timing-animation-short;
         content: "";
     }
 
     &:focus-within::before {
-        background-color: $color-accent-main
+        background-color: $color-indicator-active
     }
 
     &__input {
         width: 100%;
         height: 100%;
+        border: none;
         outline: none;
     }
 }

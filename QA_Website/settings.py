@@ -3,8 +3,6 @@ from pathlib import Path
 
 from decouple import config
 
-# TODO Organize settings
-
 mimetypes.add_type("application/javascript", ".js", True)
 
 BASE_DIR = Path(__file__).resolve().parent.parent

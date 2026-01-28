@@ -1,8 +1,3 @@
-const THEME_CLASS = "theme-light";
-const THEME_STORAGE_KEY = "user-theme";
-
-const LIGHT_ICON_PATH: string = "/static/assets/light-theme.svg";
-const DARK_ICON_PATH: string = "/static/assets/dark-theme.svg";
 const DEFAULT_AVATAR_PATH: string = "/static/assets/avatar.svg";
 const INVALID_FILE_ICON_PATH: string = "/static/assets/invalid-file.svg";
 
@@ -26,53 +21,26 @@ function checkActiveTab(): void {
     }
 }
 
+function checkDjangoMessages(): void {
+    const messageElements = document.querySelectorAll("#js-django-messages .js-django-message");
 
-function initTheme(): void {
-    const body = document.body;
-    const icon = document.querySelector(".js-theme-switch__icon") as HTMLImageElement;
+    const result = Array.from(messageElements).reduce(
+        (acc, value: HTMLSpanElement) => {
+            acc.messages.push(value.textContent);
 
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            if (value.dataset.type === "error") {
+                acc.type = "error";
+            }
 
-    if (icon && savedTheme === "light") {
-        icon.src = DARK_ICON_PATH;
-    } else if (icon) {
-        icon.src = LIGHT_ICON_PATH;
-    }
+            return acc;
+        },
+        { messages: [] as string[], type: "success"}
+    );
 
-    if (savedTheme === "light") {
-        body.classList.add(THEME_CLASS);
-    }
-
-    const themeSwitch = document.querySelector(".js-theme-switch")
-    if (themeSwitch) {
-        themeSwitch.addEventListener("click", toggleTheme);
-        themeSwitch.addEventListener("keydown", themeSwitchKeyboardHandler);
+    if (result.messages.length) {
+        Toaster.makeToast(result.messages, result.type);
     }
 }
-
-
-function toggleTheme(): void {
-    const body = document.body;
-    const icon = document.querySelector(".js-theme-switch__icon") as HTMLImageElement;
-
-    body.classList.toggle(THEME_CLASS);
-
-    const isLight = body.classList.contains(THEME_CLASS);
-
-    if (icon) {
-        icon.src = isLight ? DARK_ICON_PATH : LIGHT_ICON_PATH;
-    }
-    localStorage.setItem(THEME_STORAGE_KEY, isLight ? "light" : "dark");
-}
-
-
-function themeSwitchKeyboardHandler(event: KeyboardEvent): void {
-    if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        toggleTheme();
-    }
-}
-
 
 class CustomFileInput {
     private initialFileName: string | null;
@@ -152,16 +120,11 @@ class CustomFileInput {
         }
 
         if (file instanceof File && file.type.startsWith("image/")) {
-            const reader = new FileReader()
-
-            const updateFilePreview = (event: ProgressEvent<FileReader>): void =>  {
-                if (event.target && event.target.result && this.filePreview) {
-                    this.filePreview.src = event.target.result as string;
-                }
+            if (this.filePreview.src.startsWith('blob:')) {
+                URL.revokeObjectURL(this.filePreview.src);
             }
-            reader.onload = updateFilePreview;
 
-            reader.readAsDataURL(file);
+            this.filePreview.src = URL.createObjectURL(file);
         }
 
         if (typeof(file) === "string") {
@@ -244,13 +207,14 @@ class NewAnswerHandler {
         private form: HTMLFormElement,
         private answersSection: HTMLElement,
         private answerContent: HTMLTextAreaElement,
+        private answerTemplate: HTMLDivElement,
         private submitButton: HTMLButtonElement
     ) {
         form.addEventListener("submit", this.formSubmitHandler)
         this.pageSize = +this.answersSection.dataset.pageSize;
     }
 
-    // TODO remove correct button on new cards, add pagination button
+    // TODO add pagination button
     private formSubmitHandler = async (event: Event): Promise<void> => {
         event.preventDefault();
         this.clearErrors();
@@ -284,11 +248,13 @@ class NewAnswerHandler {
                 return;
             }
 
-            const result = await response.json()
+            const result = await response.json();
 
             if (response.ok) {
                 this.answerContent.value = "";
-                this.answersSection.insertAdjacentHTML("afterbegin", result.answer_html);
+
+                const newAnswerCard = this.makeAnswerCard(result.answer_data);
+                this.answersSection.prepend(newAnswerCard);
 
                 const answerElements = this.answersSection.querySelectorAll(".js-answer-card");
                 if (this.pageSize && answerElements.length > this.pageSize) {
@@ -311,12 +277,27 @@ class NewAnswerHandler {
 
         } catch (error) {
             console.error("Network or unexpected error:", error);
-            alert("A network error occurred.");
+            Toaster.makeToast(["A network error occurred."], "error");
 
         } finally {
             this.submitButton.disabled = false;
             this.submitButton.textContent = "Answer";
         }
+    }
+
+    private makeAnswerCard(answer_data): HTMLElement {
+        const newAnswerCard = this.answerTemplate.cloneNode(true) as HTMLDivElement;
+
+        newAnswerCard.id = answer_data.id;
+        newAnswerCard.querySelector('[data-search="answer-content"]').textContent = answer_data.content;
+        newAnswerCard.querySelector('[data-search="answer-created-at"]').textContent = answer_data.created_at
+
+        newAnswerCard.querySelector(".js-rating-input")?.setAttribute("data-object-id", answer_data.id);
+        newAnswerCard.querySelector(".js-rating-display").textContent = "0";
+
+        newAnswerCard.querySelector(".js-mark-correct-button")?.setAttribute("data-answer-id", answer_data.id);
+
+        return newAnswerCard;
     }
 
     private clearErrors(): void {
@@ -356,12 +337,16 @@ class NewAnswerHandler {
     static create = (): NewAnswerHandler | null => {
         const form = document.querySelector(".js-user-answer-form");
         const answersSection = document.querySelector(".js-answers-list");
-        const answerContent = document.querySelector("[name=content]")
-        const submitButton = document.querySelector(".js-submit-button")
+        const answerContent = document.querySelector("[name=content]");
+        const submitButton = document.querySelector(".js-submit-button");
+
+        const templateElement = document.querySelector("#answer-template") as HTMLTemplateElement;
+        const answerTemplate = templateElement?.content.querySelector(".js-answer-card");
 
         if (!(form instanceof HTMLFormElement) ||
             !(answersSection instanceof HTMLElement) ||
             !(answerContent instanceof HTMLTextAreaElement) ||
+            !(answerTemplate instanceof HTMLDivElement) ||
             !(submitButton instanceof HTMLButtonElement)) {
             console.error("Crucial elements required for NewAnswerHandler are missing or wrong type");
             return null;
@@ -371,12 +356,197 @@ class NewAnswerHandler {
             form,
             answersSection,
             answerContent,
+            answerTemplate,
             submitButton
         )
     }
 }
 
+
+// TODO maybe refresh page on another tab logout
+class ToggleVoteHandler {
+    private CSRFToken: string = "";
+
+    constructor() {
+        this.readCSRFToken();
+        document.body.addEventListener("click", this.handleClick)
+    }
+
+    private readCSRFToken = (): void => {
+        if (document.cookie && document.cookie != "") {
+            const cookies = Object.fromEntries(
+                document.cookie.split("; ").map(value => value.split("="))
+            );
+
+            if ("csrftoken" in cookies) {
+                this.CSRFToken = cookies.csrftoken;
+            }
+        }
+    }
+
+    private handleClick = (event: Event): void => {
+        const target = event.target as HTMLElement
+        const button = target.closest(".js-vote-button")
+
+        if (button instanceof HTMLDivElement) {
+            this.handleVote(button);
+        }
+    }
+
+    private handleVote = async (voteButton: HTMLDivElement): Promise<void> => {
+        const ratingInput = voteButton.closest(".js-rating-input") as HTMLDivElement;
+        if (!ratingInput) {
+            return;
+        }
+
+        const objectId = ratingInput.dataset.objectId;
+        const objectType = ratingInput.dataset.objectType;
+        const voteType = voteButton.dataset.voteType;
+
+        const url = `/vote/${objectType}/${objectId}/${voteType}/`;
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": this.CSRFToken,
+                }
+            });
+
+            const contentType = response.headers.get("content-type");
+            const isJsonResponse = contentType && contentType.includes("application/json");
+
+            if (response.status === 404 && !isJsonResponse) {
+
+                Toaster.makeToast(["The submission endpoint was not found. Please reload the page."], "error")
+                return;
+            }
+
+
+            const result = await response.json()
+
+            if (response.ok) {
+                const ratingDisplay = ratingInput.querySelector(".js-rating-display");
+                const likeButton = ratingInput.querySelector('[data-vote-type="1"]');
+                const dislikeButton = ratingInput.querySelector('[data-vote-type="-1"]');
+
+                if (ratingDisplay) {
+                    ratingDisplay.textContent = result.new_rating;
+                }
+
+                likeButton?.classList?.remove("rating-input__button--active");
+                dislikeButton?.classList?.remove("rating-input__button--active");
+
+                if (result.vote_status == "liked") {
+                    likeButton?.classList?.add("rating-input__button--active");
+                } else if (result.vote_status == "disliked") {
+                    dislikeButton?.classList?.add("rating-input__button--active");
+                }
+
+            } else {
+                Toaster.makeToast([result.message], "error");
+            }
+        }
+
+        catch (error) {
+            console.error("Network or unexpected error:", error);
+            Toaster.makeToast(["A network error occurred."], "error");
+        }
+    }
+}
+
+
+class MarkAnswerCorrectHandler {
+    private CSRFToken: string = "";
+
+    constructor() {
+        this.readCSRFToken();
+        document.body.addEventListener("click", this.handleClick)
+    }
+
+    private readCSRFToken = (): void => {
+        if (document.cookie && document.cookie != "") {
+            const cookies = Object.fromEntries(
+                document.cookie.split("; ").map(value => value.split("="))
+            );
+
+            if ("csrftoken" in cookies) {
+                this.CSRFToken = cookies.csrftoken;
+            }
+        }
+    }
+
+    private handleClick = (event: Event): void => {
+        const target = event.target as HTMLElement
+
+        if (target instanceof HTMLButtonElement && target.matches(".js-mark-correct-button")) {
+            this.handleMarkCorrect(target);
+        }
+    }
+
+    private handleMarkCorrect = async (button: HTMLButtonElement): Promise<void> => {
+        const questionId = button.dataset.questionId;
+        const answerId = button.dataset.answerId;
+        const questionCard = button.closest(".js-answer-card");
+
+        const url = `/questions/${questionId}/${answerId}/mark-correct/`;
+
+        try {
+            const response = await fetch(url, {
+                "method": "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": this.CSRFToken,
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok && questionCard) {
+                questionCard.classList.add("answer--correct");
+            }
+
+            if (!response.ok) {
+                Toaster.makeToast([result.message], "error");
+            }
+        }
+
+        catch (error) {
+            console.error("Network or unexpected error:", error);
+            Toaster.makeToast(["A network error occurred."], "error");
+        }
+    }
+}
+
+class Toaster {
+    private static body = document.body;
+
+    static makeToast = (messages: string[], toastType: string = ""): void => {
+        const toast = Object.assign(document.createElement("div"), {
+            className: `toast ${toastType ? "toast--" + toastType : ""}`,
+        });
+
+        for (const message of messages) {
+            toast.appendChild(Object.assign(document.createElement("div"), {
+                className: "toast__message",
+                textContent: message
+            }))
+        }
+        this.body.appendChild(toast);
+
+        setTimeout(() => this.removeToast(toast), 3000);
+    }
+
+    private static removeToast = (toast: HTMLDivElement): void => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", checkActiveTab);
-document.addEventListener("DOMContentLoaded", initTheme);
+document.addEventListener("DOMContentLoaded", checkDjangoMessages)
 CustomFileInput.create()
 NewAnswerHandler.create()
+new ToggleVoteHandler;
+new MarkAnswerCorrectHandler;

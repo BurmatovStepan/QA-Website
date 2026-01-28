@@ -8,25 +8,47 @@ $p: 0.9rem / 1.6em $ff;
 
 $font-text-default: 1em / 1em $ff;
 
-$color-bg-main: var(--color-bg-main);
-$color-bg-secondary: var(--color-bg-secondary);
-$color-bg-filename: var(--color-bg-filename);
+$white: hsl(0 0% 100%);
+$black: hsl(0 0% 0%);
+
+$gray-50: hsl(0 0% 95%);
+$gray-200: hsl(0 0% 80%);
+$gray-400: hsl(0 0% 60%);
+$gray-600: hsl(0 0% 40%);
+$gray-800: hsl(0 0% 20%);
+$gray-900: hsl(0, 0%, 10%);
+
+$qa-primary: hsl(60 100% 64%);
+
+$status-error: hsl(0 99% 62%);
+$status-success: hsl(134 61% 41%);
+
+$surface-0: var(--surface-0);
+$surface-1: var(--surface-1);
 
 $color-text-main: var(--color-text-main);
-$color-text-error: var(--color-text-error);
-$color-text-filename: var(--color-text-filename);
+$color-text-muted: var(--color-text-muted);
 
-$color-border-filename: var(--color-border-filename);
-$color-border-card: var(--color-border-card);
+$color-page-primary: var(--color-page-primary);
 
-$color-interactive-idle: var(--color-interactive-idle);
-$color-accent-main: var(--color-accent-main);
+$color-status-success: var(--color-status-success);
+$color-status-danger: var(--color-status-danger);
 
-$filter-accent-main: var(--filter-accent-main);
+$color-action-idle: var(--color-action-idle);
+$color-action-active: var(--color-action-active);
+
+$color-indicator-idle: var(--color-indicator-idle);
+$color-indicator-active: var(--color-indicator-active);
+$color-indicator-highlight: var(--color-indicator-highlight);
+
+$surface-form-field: var(--surface-form-field);
+$color-text-form-field: var(--color-text-form-field);
+$color-border-form-field: var(--color-border-form-field);
+
 $filter-text-main: var(--filter-text-main);
 
-$shadow-main: var(--shadow-main);
-$shadow-small: var(--shadow-small);
+$shadow-z1: var(--shadow-z1);
+$shadow-z2: var(--shadow-z2);
 
 $timing-animation-long: 0.3s;
 $timing-animation-short: 0.15s;

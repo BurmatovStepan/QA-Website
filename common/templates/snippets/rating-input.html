@@ -1,25 +1,26 @@
 {% load static %}
 
-<div class="{{ component_name }} rating-input">
-  <span class="rating-input__total-rating">{{ content_item.rating_total }}</span>
+<div class="{{ component_name }} rating-input {% if not current_user %}rating-input--signed-out{% endif %} js-rating-input"
+     data-object-id="{{ content_item.id }}"
+     data-object-type="{{ model_name }}">
+  <span class="rating-input__total-rating js-rating-display">{{ content_item.rating_total }}</span>
 
-  <div class="rating-input__like-button"
+  {% if current_user %}
+  <div class="rating-input__button rating-input__button--like {% if question.user_vote == 1 %}rating-input__button--active{% endif %} js-vote-button"
       role="button"
+      data-vote-type="1"
       aria-label="Like this"
       tabindex="0">
-    <img src="{% static "assets/up-arrow.svg" %}"
-        alt="like-icon"
-        class="rating-input__like-button-icon"
-    >
+
+      <div class="rating-input__like-button-icon"></div>
   </div>
 
-  <div class="rating-input__dislike-button"
+  <div class="rating-input__button rating-input__button--dislike {% if question.user_vote == -1 %}rating-input__button--active{% endif %} js-vote-button"
       role="button"
+      data-vote-type="-1"
       aria-label="Dislike this"
       tabindex="0">
-    <img src="{% static "assets/down-arrow.svg" %}"
-        alt="dislike-icon"
-        class="rating-input__dislike-button-icon"
-    >
+      <div class="rating-input__dislike-button-icon"></div>
   </div>
+  {% endif %}
 </div>
